@@ -36,6 +36,7 @@ class Curve:
         # self.delta_t()
         self.identification_main_axis()
         self.normalization_data()
+        self.transform_distance_data()
         self.check_incomplete = self.segment_retraction_troncated(pulling_length)
         if not self.check_incomplete:
             print("\n========================================================================\n")
@@ -251,10 +252,26 @@ class Curve:
         data_total = pd.DataFrame()
         for segment in self.dict_segments.values():
             if type_data == "data_original":
-                data_total = pd.concat([data_total, segment.data])
+                data_total = pd.concat([data_total, segment.data]).reset_index(drop=True)
             else:
-                data_total = pd.concat([data_total,segment.corrected_data])
+                data_total = pd.concat([data_total,segment.corrected_data]).reset_index(drop=True)
         return data_total
+    
+    ##############################################################################################
+    
+    def transform_distance_data(self):
+        distance_max = 0
+        if list(self.dict_segments.values())[0].name == 'Press':
+            for segment in self.dict_segments.values():
+                if segment.name == 'Press':
+                    distance_data  = segment.corrected_data['distance']
+                    distance_max = distance_data[len(distance_data)-1]
+                    segment.corrected_data['seriesDistance'] = distance_data
+                else:
+                    print(distance_max)
+                    distance_data  = segment.corrected_data['distance']
+                    segment.corrected_data['seriesDistance'] = distance_data + distance_max
+            
 
     ##############################################################################################
 
