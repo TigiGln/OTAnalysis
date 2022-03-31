@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 from scipy.signal import savgol_filter
 from scipy.interpolate import UnivariateSpline
+from lmfit import Model
 
 class Curve:
     """
@@ -65,7 +66,7 @@ class Curve:
             self.bead: used ball
             self.cell: cell number
         """
-        return self.bead + " " + self.cell
+        return self.output['bead'] + " " + self.output['cell']
 
     ###############################################################################################
 
@@ -442,24 +443,40 @@ class Curve:
         k = (y_2 - y_1) / (x_2 - x_1)
         contact_point = distance_data[index_contact-1]# x0
         self.features['contact_point'] = {'index': index_contact, 'value' : force_data[index_contact]}
-        # guesses_initiaux = [10**(9), 10**3, 1]
+        #initial_guesses_accuracy = [10**(9), 10**3, 1]
         initial_guesses_accuracy = [contact_point, k, baseline]
         f_parameters = curve_fit(self.fit_model_approach, distance_data, force_data, initial_guesses_accuracy)
-        self.message += str(f_parameters)
-        #print(f_parameters)
+        #self.message += str(f_parameters)
         fitted = self.fit_model_approach(distance_data, f_parameters[0][0], f_parameters[0][1], f_parameters[0][2])
-        #y_smooth_approach = Curve.smooth(force_data)
         self.graphics['fitted_Press'] = fitted
+        #y_smooth_approach = Curve.smooth(force_data)
+        
         # self.graphics['y_smooth_Press'] = y_smooth_approach
-        return f_parameters, fitted
+        
 
         # gmodel = Model(self.fit_model_approach)
-        # params = Parameters()
-        # params.add('x0', value=x0)
-        # params.add('a', value=a)
-        # params.add('b', value=b)
-        # result = gmodel.fit(Y, X, params=params)
-        # print(result)
+        # print(contact_point)
+        # print(k)
+        # print(baseline)
+        # print(force_data.shape)
+        # print(distance_data.shape)
+        # params = gmodel.make_params()
+        # params.add('contact_point', value=0, min=-2, max=2)
+        # #params.add('k', value=k)
+        # params.add('baseline', value=baseline)
+        # params.add('k', value=-1e-4, max=-0.001)
+
+        # result = gmodel.fit(force_data, params, data_corrected_stiffness=distance_data)
+        # print(result.values)
+        # fitted = self.fit_model_approach(distance_data, result.values['contact_point'], result.values['k'] , result.values['baseline'])
+        # self.graphics['fitted_Press'] = fitted
+        # f_parameters = np.array(list(result.values.values()))
+        # print(result.covar)
+        # f_covariance = np.array(result.covar)
+        # f_params= (f_parameters, f_covariance)
+        # print(f_params)
+    
+        return f_parameters, fitted
 
     ##################################################################################################
 
@@ -509,15 +526,20 @@ class Curve:
         if 'model' in self.features:
             f_parameters, fitted= self.fit_curve_approach(tolerance)
             #contact = np.round(f_parameters[0], decimals=1)
+            # if np.all(f_parameters[1] != None):
+            print(f_parameters)
             if np.isfinite(np.sum(f_parameters[1])) :
                 error = np.sqrt(np.diag(f_parameters[1]))
+                
                 #error_contact = np.around(error[1], decimals=2)
             if self.features['model'] == 'linear':
                 slope = f_parameters[0][1]
+                self.features['slope (pN/nm)'] = format(slope, '.2E')
                 if isinstance(error, np.ndarray):
                     error_young = error[1]
-                self.features['slope (pN/nm)'] = format(slope, '.2E')
-                self.features['error (pN/nm)'] = format(error_young, '.2E')
+                    self.features['error (pN/nm)'] = format(error_young, '.2E')
+                else:
+                    self.features['error (pN/nm)'] = error_young
                 self.message += "Slope (pN/nm) = " + str(slope) + " +/-" + str(error_young)
                 print("Slope (pN/nm) = " + str(slope) + " +/-" + str(error_young))
             elif self.features['model'] == 'sphere':
@@ -526,10 +548,13 @@ class Curve:
                 if young.any() < 0.0:
                     young = None
                     error_young = None
-                self.features['young (Pa)'] = young
-                self.features['error young (Pa)'] = error_young
-                self.message += "Young modulus (Pa) = " + str(young) + " +/-" + str(error_young)
-                print("Young modulus (Pa) = " + str(young) + " +/-" + str(error_young))
+                    self.features['young (Pa)'] = young
+                    self.features['error young (Pa)'] = error_young
+                else:
+                    self.features['young (Pa)'] = format(young, '.2E')
+                    self.features['error young (Pa)'] = format(error_young, '.2E')
+                    self.message += "Young modulus (Pa) = " + str(young) + " +/-" + str(error_young)
+                    print("Young modulus (Pa) = " + str(young) + " +/-" + str(error_young))
             else:
                 self.message += "Model error"
                 self.message += "Trace not processed"
@@ -786,153 +811,41 @@ class Curve:
     def manage_optical_effect(self, threshold_sup):
         print('optcal_effect')
         std = float(self.features['std_press'])
-        # threshol_optical = std*threshold_sup
-        segment_press = self.dict_segments['Press']
-        # segment_pull = self.dict_segments['Pull']
-        force_data_press =  segment_press.corrected_data[self.features['main_axis']['axe'] + 'Signal1']
-        # force_data_pull =  segment_pull.corrected_data[self.features['main_axis']['axe'] + 'Signal1']
-        # force_data_pull_inv = np.flipud(force_data_pull)
-        y_smooth = savgol_filter(force_data_press, 251, 3)
-        # y_smooth = pd.Series(y_smooth)
-        time_data_press = segment_press.corrected_data['seriesTime']
-        # time_data_pull = segment_pull.corrected_data['seriesTime']
-        # n=6
-        # derive = self.derivation(y_smooth, time_data_press, n)
-        # derive =  np.append(derive, derive[-n//2:])
-        # derive = np.insert(derive, [0], derive[0:int(n/2)], axis=0)
-        # derive_smooth = savgol_filter(derive, 201, 2)
-        # # print('derive: ', derive)
-        # index_contact_point = self.features['contact_point']['index'] - len(y_smooth)
-
-        # #print(force_data_press)
-        # force_data_press_inv = y_smooth.iloc[::-1].reset_index(drop=True)
-        # #force_data_press_inv.reindex(index = force_data_press_inv.index[::-1])
-        # # print(force_data_press_inv)
-        # # print(threshol_optical)
-        
-        # #list_point_optical_effect = []
-        # plt.ion()
-        figure_test = plt.figure()
-        ax1 = figure_test.add_subplot(211)
-        ax1.plot(time_data_press, y_smooth)
-        # ax1.plot(time_data_press[y_smooth.argmax()], y_smooth[y_smooth.argmax()], marker='D', color='green')
-        # ax_second = ax1.twinx()
-        # ax_second.plot(time_data_press, derive_smooth, color='orange')
-        # # ax2 = figure_test.add_subplot(222)
-        # # ax2.plot(time_data_pull, force_data_pull)
-
-        # # print(force_data_press_inv.argmax())
-        
-        # list_index_press_optical_effect = y_smooth[:index_contact_point][y_smooth[:index_contact_point] > threshol_optical].index
-        # list_index_optical_effect = force_data_press_inv[:index_contact_point][force_data_press_inv[:index_contact_point] > threshol_optical].index
-        # if len(list_index_press_optical_effect) > 0:
-        #     ax1.plot(time_data_press[list_index_press_optical_effect[0]], y_smooth[list_index_press_optical_effect[0]], marker="D", color='red')
-        #     ax1.plot(time_data_press[list_index_press_optical_effect[-1]], y_smooth[list_index_press_optical_effect[-1]], marker='D', color='brown')
-        #     ax1.plot(time_data_press[list_index_press_optical_effect], y_smooth[list_index_press_optical_effect])
-        
-        #     # if e == len(force_data_press) - force_data_press.argmax():
-        #     #     print('hello')
-        #     #     print(list_index_optical_effect.index(e))
-        # # print(force_data_press[list_index_optical_effect[len(list_index_optical_effect)//2]])
-        # # print(force_data_pull[list_index_optical_effect[len(list_index_optical_effect)//2]])
-        # if len(list_index_optical_effect) > 0 :
-        #     force_data_pull[list_index_optical_effect] = force_data_pull[list_index_optical_effect] - force_data_press_inv[list_index_optical_effect]
-        # #print(force_data_pull[list_index_optical_effect[len(list_index_optical_effect)//2]])
-        # force_data_press[:index_contact_point][force_data_press[:index_contact_point] >threshol_optical] = threshol_optical
-        #############################################################################################
-        y_smooth_test = pd.DataFrame(y_smooth)[0]
-        force_data_press_start = y_smooth_test[0:3000].reset_index(drop=True)
-        force_data_press_stop = y_smooth_test[-200:].reset_index(drop=True)
-        time_data_press_start = time_data_press[0:3000].reset_index(drop=True)
-        time_data_press_stop = time_data_press[-200:].reset_index(drop=True)
-        a_start = (force_data_press_start[len(force_data_press_start)-1] - force_data_press_start[0]) / (time_data_press_start[len(time_data_press_start)-1] - time_data_press_start[0])
-        a_stop = (force_data_press_stop[len(force_data_press_stop)-1] - force_data_press_stop[0]) / (time_data_press_stop[len(time_data_press_stop)-1] - time_data_press_stop[0])
-
-        b_start = force_data_press_start[0] - a_start * time_data_press_start[0]
-        b_stop = force_data_press_stop[0] - a_stop * time_data_press_stop[0]
-
-        # equation_start = a_start * force_data_press_start + b_start
-        # equation_stop = a_stop * force_data_press_stop + b_stop
-
-        coordonnée_x_point_contact_theorique = (b_stop - b_start)/(a_start - a_stop)
-        coordonnée_y_point_contact_theorique = a_start * coordonnée_x_point_contact_theorique + b_start
-        ax2 = figure_test.add_subplot(212)
-        # droite_start_x = [time_data_press_start[0], time_data_press_start[len(time_data_press_start)-1]]
-        droite_start_x = [time_data_press_start[0], coordonnée_x_point_contact_theorique]
-        # droite_start_y = [force_data_press_start[0], force_data_press_start[len(force_data_press_start)-1]]
-        droite_start_y = [force_data_press_start[0], coordonnée_y_point_contact_theorique]
-        droite_stop_x = [coordonnée_x_point_contact_theorique, time_data_press_stop[len(time_data_press_stop)-1]]
-        droite_stop_y = [coordonnée_y_point_contact_theorique, force_data_press_stop[len(force_data_press_stop)-1]]
-        
-        print(y_smooth_test)
-        force_data_press_test = y_smooth_test[y_smooth_test > std]
-        print(force_data_press_test)
-        time_data_press_test = time_data_press[force_data_press_test.index]
-        print(time_data_press_test)
-        ax2.plot(time_data_press, y_smooth)
-        ax2.plot(time_data_press_test, force_data_press_test)
-        ax2.plot(droite_start_x, droite_start_y, 'r-', lw=2)
-        ax2.plot(droite_stop_x, droite_stop_y, 'r-', lw=2)
-
-        
-
-        # ax2.plot(time_data_pull[list_index_optical_effect], force_data_pull[list_index_optical_effect])
-        #print(force_data_pull[list_index_optical_effect])
-        # for point in range(0, len(force_data_press_inv), 1):
-        #     if force_data_press_inv[point] > threshold_sup:
-        #         list_point_optical_effect.append(point)
-        
-        #ax1.plot(time_data_press, force_data_press)
-        #ax4 = figure_test.add_subplot(224)
-        # ax2.plot(time_data_pull, force_data_pull)
-    
-
-        
-        #ax2.plot(time_data_pull[list_index_optical_effect], force_data_pull[list_index_optical_effect])
-
-        # force_data_press[list_point_optical_effect] -= force_data_press[list_point_optical_effect]
-        
-        # force_data_pull_inv[list_point_optical_effect] -= force_data_press[list_point_optical_effect]
-
-        # force_data_pull = np.flipud(force_data_pull_inv)
-        # ax3 = figure_test.add_subplot(223)
-        # ax3.plot(time_data_press, force_data_press)
-        # ax4 = figure_test.add_subplot(224)
-        # ax4.plot(time_data_pull, force_data_pull)
-        #ax4.plot(time_data_pull[list_point_optical_effect], force_data_pull[list_point_optical_effect])
-        #ax1.plot(time_data[list_point_optical_effect], force_data_press[list_point_optical_effect])
-
+        if len(self.dict_segments) == 2:
+            segment_press = self.dict_segments['Press']
+            force_data_press =  segment_press.corrected_data[self.features['main_axis']['axe'] + 'Signal1']
+            time_data_press = segment_press.corrected_data['seriesTime']
+            
+            
+            figure_test = plt.figure()
+            ax1 = figure_test.add_subplot(211)
+            ax1.plot(time_data_press, force_data_press)
+            force_data_press_start = force_data_press[0:3000].reset_index(drop=True)
+            force_data_press_stop = force_data_press[-200:].reset_index(drop=True)
+            time_data_press_start = time_data_press[0:3000].reset_index(drop=True)
+            time_data_press_stop = time_data_press[-200:].reset_index(drop=True)
+            length_start = len(force_data_press[0:self.features['contact_point']['index']])
+            length_stop = len(force_data_press[self.features['contact_point']['index']:])
+            baseline = force_data_press_start.mean()
+            baseline_force_data = np.full(len(force_data_press), baseline)
+            f_param = curve_fit(Curve.test_fit, time_data_press_stop, force_data_press_stop)
+            fitted = Curve.test_fit(time_data_press[-length_stop:], f_param[0][0], f_param[0][1])
+            
+            coor_x_contact_point_extrapolated = (f_param[0][1] - baseline)/(-f_param[0][0])
+            coor_y_contact_point_extrapolated = f_param[0][0] * coor_x_contact_point_extrapolated + f_param[0][1]
+            
+            ax1.plot(time_data_press, baseline_force_data)
+            ax1.plot(time_data_press[-length_stop:], fitted)
+            ax1.plot(coor_x_contact_point_extrapolated, coor_y_contact_point_extrapolated, marker='D', color='yellow')
             
 
-        # if len(force_data_pull_inv) > len(force_data_press):
-        #     print('hey')
-        #     force_data_pull_inv = force_data_pull_inv[0:len(force_data_press)]
-        # elif len(force_data_press) > len(force_data_pull_inv):
-        #     print('yo')
-        #     force_data_press = force_data_press[0:len(force_data_pull_inv)]
-        #     time_data = time_data[0:len(force_data_pull_inv)] 
-        # force_data_cumul = force_data_pull_inv - force_data_press
+            plt.show()
 
-        # fig2 = plt.figure()
-
-        # ax1 = fig2.add_subplot(222)
-        # ax1.plot(time_data, force_data_pull_inv)
-        # ax1.set_title('Pull inv')
-        # ax2 = fig2.add_subplot(221)
-        # ax2.plot(time_data, force_data_press)
-        # ax2.set_title('Press')
-        # ax3 = fig2.add_subplot(223)
-        # ax3.plot(time_data, force_data_cumul)
-        # ax3.set_title('Cumul')
-
-        # fig, ax1, ax2, ax3 = plt.subplots()
-        # ax1.plot(time_data, force_data_pull_inv)
-        # ax2.plot(time_data, force_data_press)
-        # ax3.plot(time_data, force_data_cumul)
-
-        plt.show()
-
-        return figure_test
+            return figure_test
+    ##################################################################################################################
+    @staticmethod
+    def test_fit(time_data, slope, offset):
+        return slope*time_data + offset
 
 
 
@@ -1019,6 +932,7 @@ class Curve:
         # print(bspline)
         # print(dir(bspline))
         y_smooth = savgol_filter(force_data, window_length, order_polynome)
+
         return y_smooth
 
     ######################################################################################################################################

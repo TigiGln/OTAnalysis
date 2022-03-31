@@ -85,6 +85,7 @@ class View(QMainWindow, QWidget):
         self.abscissa_curve = True
         self.check_methods = False
         self.check_close_figure = False
+        self.dict_fig_open = {}
         self.clear()
         self.data_description()
         self.create_button_select_data()
@@ -607,11 +608,13 @@ class View(QMainWindow, QWidget):
         self.frame_supervised.setLayout(self.grid_supervised)
         self.dict_supervised[self.current_curve.file] = self.frame_supervised
         self.main_layout.addWidget(self.frame_supervised, 4, 6, 1, 2)
+        label_num_curve = QLabel("Courbe N°")
         self.num_curve_current = QLineEdit(str(self.n+1))
         self.num_curve_current.setMaximumWidth(100)
         self.num_curve_current.setAlignment(Qt.AlignRight)
         count_curves = QLabel('/' + str(self.length_list_curve))
         count_curves.setAlignment(Qt.AlignLeft)
+        self.main_layout.addWidget(label_num_curve, 5, 6, 1, 1, alignment=Qt.AlignRight)
         self.main_layout.addWidget(self.num_curve_current, 6, 6, 1, 1, alignment=Qt.AlignRight)
         self.main_layout.addWidget(count_curves, 6, 7, 1, 1)
 
@@ -862,21 +865,29 @@ class View(QMainWindow, QWidget):
     ###########################################################################################
 
     def optical_effect(self):
+        fig_test = None
         self.toggle = self.sender()
+        self.check_toggle = True
         if self.sender().isChecked():
             if self.dict_supervised[self.current_curve.file] ==  self.sender().parent():
                 fig_test = self.current_curve.manage_optical_effect(self.methods['threshold_optical'])
-            fig_test.canvas.mpl_connect('close_event', self.close_window_plot)
+                self.dict_fig_open[self.current_curve.file] = fig_test
+                if fig_test is not None:
+                    fig_test.canvas.mpl_connect('close_event', self.close_window_plot)
         else:
             plt.close()
             self.setFocus()
+        print(self.dict_fig_open)
 
     ###########################################################################################
     
-    def close_window_plot(self, sender):
+    def close_window_plot(self, event):
         self.setFocus()
-        self.toggle.setChecked(False)
-        del self.toggle
+        if self.check_toggle:
+            self.toggle.setChecked(False)
+            self.check_toggle = False
+            del self.dict_fig_open[self.current_curve.file]
+            del self.toggle
 
     ################################################################################################
     def save(self):
@@ -952,6 +963,11 @@ class View(QMainWindow, QWidget):
         """
         if self.info:
             self.info.close()
+        print(len(self.dict_fig_open))
+        # if len(self.dict_fig_open) > 0:
+        #     for key, fig in self.dict_fig_open.items():
+        #         del self.dict_fig_open[key]
+        #         plt.close()
         
 
 

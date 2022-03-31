@@ -403,15 +403,16 @@ class Controller:
                     ax4 = fig.add_subplot(gs[4:7, position_start_graph:position_end_graph])
                     position_start_graph = position_end_graph + 1
                     ax4.plot(segment.corrected_data['distance'], segment.corrected_data[main_axis + 'Signal1'], color="#c2a5cf")
+                    ax4.set_xlabel('Corrected distance (nm)')
                 else:
-                    position_end_graph = floor(position_start_graph + 10/length - 2)
+                    position_end_graph = floor(position_start_graph + 10/length - 1)
                     ax4 = fig.add_subplot(gs[4:7, position_start_graph:position_end_graph])
-                    ax4.plot(segment.corrected_data['distance'], segment.corrected_data[main_axis + 'Signal1'], color="#34b6cf")
+                    ax4.plot(segment.corrected_data['seriesTime'], segment.corrected_data[main_axis + 'Signal1'], color="#34b6cf")
                     position_start_graph = position_end_graph + 1
+                    ax4.set_xlabel('time (s)')
                 
                 ax4.set_title(segment.name + ' Segment')
-                ax4.set_xlabel('Corrected distance (nm)')
-                ax4.set_ylim(curve.features['force_min_curve']['value'] - 1, curve.features['force_max_pull']['value'] +1)
+                ax4.set_ylim(curve.features['force_min_curve']['value'] - 1, curve.features['force_max_pull']['value'] + 2)
                 num_segment += 1
 
         #version avec la courbe entière (pa cohérent mais plus visuel)
@@ -554,11 +555,14 @@ class Controller:
         """
         path_repository_study = Path(path)
         # Allows you to retrieve all the file names of the directory and store them in a list
-        for element in path_repository_study.iterdir():
-            if element.is_file():
-                self.files.append(element.__str__())
-            elif element.is_dir():
-                self.set_list_files(element)
+        if path_repository_study.is_dir():
+            for element in path_repository_study.iterdir():
+                if element.is_file():
+                    self.files.append(element.__str__())
+                elif element.is_dir():
+                    self.set_list_files(element)
+        else:
+            self.files = [path_repository_study.__str__()]
 
 
     ##############################################################################################
@@ -845,6 +849,7 @@ class Controller:
             dict_align = Controller.alignment_curve(file, new_curve, threshold_align)
             new_curve.features['automatic_AL'] = dict_align
             new_curve.features['AL'] = dict_align['AL']
+        print(new_curve)
         return new_curve, check_incomplete
 
     ############################################################################################
@@ -1004,7 +1009,9 @@ class Controller:
                 path_directory = Path("Result")
                 path_directory.mkdir(parents=True, exist_ok=True)
                 path_directory = path_directory.__str__()
-            self.output.to_csv(path_directory + sep + 'output_' + today + '_' + time_today + '.csv', sep='\t', encoding='utf-8', na_rep="NaN")
+            name_file = path_directory + sep + 'output_' + today + '_' + time_today + '.csv'
+            self.output.to_csv(name_file, sep='\t', encoding='utf-8', na_rep="NaN")
+            return Path(name_file)
 
     ##############################################################################################
 
@@ -1016,6 +1023,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Creation curve objects")
     parser.add_argument("-p", "--path", type=str, help="Name of the folder containing the curves", required=True)
     parser.add_argument("-o", "--output", help="Name of the folder where to save the results", required=True)
+    parser.add_argument("-m", "--method", type=argparse.FileType('r') ,help="path to a method file (.tsv)")
     return parser.parse_args()
 
 
