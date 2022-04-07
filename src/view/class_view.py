@@ -13,10 +13,13 @@ from PyQt5.QtCore import Qt, pyqtSignal, QEvent, QEventLoop, QTimer
 from PyQt5.QtGui import QIcon
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT
+from matplotlib.lines import Line2D
 from view.class_info import Infowindow
 from view.class_toggle import QtToggle
+from model.class_optical_effect import OpticalEffect
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 from re import match
 
 class View(QMainWindow, QWidget):
@@ -95,6 +98,7 @@ class View(QMainWindow, QWidget):
         self.create_physical_parameters()
         self.create_alignement_incomplete_parameters()
         self.create_condition_parameters_type()
+        self.create_select_correction_optical()
         
     ###########################################################################################################
     
@@ -259,15 +263,15 @@ class View(QMainWindow, QWidget):
         self.input_nb_points_jump = QSpinBox()
         self.factor = QLabel("Factor overcome noise (xSTD)")
         self.input_factor = QDoubleSpinBox()
-        self.factor_optical = QLabel("Factor optical effect (xSTD)")
-        self.input_factor_optical = QDoubleSpinBox()
+        # self.factor_optical = QLabel("Factor optical effect (xSTD)")
+        # self.input_factor_optical = QDoubleSpinBox()
         self.input_jump_force.setValue(5.0)
         self.input_jump_position.setMaximum(5000)
         self.input_jump_position.setValue(200)
         self.input_nb_points_jump.setMaximum(5000)
         self.input_nb_points_jump.setValue(200)
         self.input_factor.setValue(4.0)
-        self.input_factor_optical.setValue(1.0)
+        # self.input_factor_optical.setValue(1.0)
         layout_grid.addWidget(self.jump_force, 0, 0)
         layout_grid.addWidget(self.input_jump_force, 0, 1)
         layout_grid.addWidget(self.jump_position, 1, 0)
@@ -276,14 +280,32 @@ class View(QMainWindow, QWidget):
         layout_grid.addWidget(self.input_nb_points_jump, 2, 1)
         layout_grid.addWidget(self.factor, 3, 0)
         layout_grid.addWidget(self.input_factor, 3, 1)
-        layout_grid.addWidget(self.factor_optical, 4, 0)
-        layout_grid.addWidget(self.input_factor_optical, 4, 1)
+        # layout_grid.addWidget(self.factor_optical, 4, 0)
+        # layout_grid.addWidget(self.input_factor_optical, 4, 1)
         frame.setFrameStyle(QFrame.StyledPanel | QFrame.Raised)
         frame.setLineWidth(3)
         frame.setMidLineWidth(3)
         frame.setLayout(layout_grid)
         self.main_layout.addWidget(self.condition_type, 8, 0, 1, 2)
         self.main_layout.addWidget(frame, 9, 0, 1, 2)
+    ##########################################################################################################
+    def create_select_correction_optical(self):
+        """
+        TODO
+        """
+        self.groupbox_optical = QGroupBox("Automatic optical correction")
+        self.groupbox_optical.setStyleSheet('QGroupBox {font-weight:bold;}')
+        self.hbox = QHBoxLayout()
+        self.none_correction = QRadioButton("None")
+        self.none_correction.setChecked(True)
+        self.none_correction.clicked.connect(self.click_model)
+        self.automatic_correction = QRadioButton("Correction")
+        self.automatic_correction.clicked.connect(self.click_model)
+        self.hbox.addWidget(self.none_correction)
+        self.hbox.addWidget(self.automatic_correction)
+        self.groupbox_optical.setLayout(self.hbox)
+        self.main_layout.addWidget(self.groupbox_optical, 10, 0, 1, 2)
+
 
     ##########################################################################################################
 
@@ -321,7 +343,7 @@ class View(QMainWindow, QWidget):
             self.button_launch_analyze = QPushButton('Launch analysis')
             self.button_launch_analyze.clicked.connect(self.launch_analyze)
             self.button_launch_analyze.setStyleSheet("QPushButton { background-color: green; }")
-            self.main_layout.addWidget(self.button_launch_analyze, 10, 0, 1, 2)
+            self.main_layout.addWidget(self.button_launch_analyze, 11, 0, 1, 2)
 
     ####################################################################################################
 
@@ -341,6 +363,10 @@ class View(QMainWindow, QWidget):
                 if isinstance(child, QRadioButton):
                     if methods_data['model'][0] == child.text():
                         child.setChecked(True)
+            for child in self.groupbox_optical.children():
+                if isinstance(child, QRadioButton):
+                    if methods_data['optical'][0] == child.text():
+                        child.setChecked(True)
             self.input_eta.setValue(methods_data['eta'][0])
             self.input_pulling.setValue(methods_data['pulling_length'][0])
             self.input_epsilon.setValue(methods_data['threshold_align'][0])
@@ -348,7 +374,6 @@ class View(QMainWindow, QWidget):
             self.input_jump_position.setValue(methods_data['jump_distance'][0])
             self.input_nb_points_jump.setValue(methods_data['jump_point'][0])
             self.input_factor.setValue(methods_data['factor_noise'][0])
-            self.input_factor_optical.setValue(methods_data['threshold_optical'][0])
             self.button_load.deleteLater()
             self.check_methods = True
 
@@ -368,6 +393,7 @@ class View(QMainWindow, QWidget):
         print("launch")
         self.methods = {}
         model = ""
+        optical = ""
         threshold_align = self.input_epsilon.value()
         self.methods['threshold_align'] = threshold_align
         pulling_length = self.input_pulling.value()
@@ -389,8 +415,11 @@ class View(QMainWindow, QWidget):
         self.methods['jump_point'] = jump_point
         tolerance = self.input_factor.value()
         self.methods['factor_noise'] = tolerance
-        threshold_optical = self.input_factor_optical.value()
-        self.methods['threshold_optical'] = threshold_optical
+        if self.none_correction.isChecked():
+            optical = self.none_correction.text()
+        else:
+            optical = self.automatic_correction.text()
+        self.methods['optical'] = optical
         drug=""
         if self.input_drug.text() == "":
             drug = "NaN"
@@ -403,7 +432,7 @@ class View(QMainWindow, QWidget):
         else:
             condition = self.input_condition.text()
         self.methods['condition'] = condition
-        self.controller.set_list_curve(threshold_align, pulling_length, model.lower(), eta, bead_ray, tolerance, jump_force, jump_point, jump_distance, drug, condition, threshold_optical)
+        self.controller.set_list_curve(threshold_align, pulling_length, model.lower(), eta, bead_ray, tolerance, jump_force, jump_point, jump_distance, drug, condition, optical)
         if len(self.controller.dict_curve) != 0:
             self.button_launch_analyze.deleteLater()
             if not self.check_methods:
@@ -567,7 +596,6 @@ class View(QMainWindow, QWidget):
                 if self.n <= (self.length_list_curve-1):
                     #all pages between 2 pages and second last
                     button_next.setText('Next')
-                    button_next.clicked.connect(self.next_plot)
                     if self.check_supervised:
                         self.main_layout.addWidget(button_previous, 1, 6, 1, 1)
                         self.main_layout.addWidget(button_next, 1, 7, 1, 1)
@@ -579,7 +607,6 @@ class View(QMainWindow, QWidget):
             else:
                 #first page show_plot if nb page > 1
                 button_next.setText('Next')
-                button_next.clicked.connect(self.next_plot)
                 if self.check_supervised:
                     self.main_layout.addWidget(button_next, 1, 6, 1, 2)
                 else:
@@ -734,7 +761,7 @@ class View(QMainWindow, QWidget):
     ##################################################################################################
 
     def toggle_all_curve_characteristics_point(self):
-        self.toggle_display = QtToggle(120, 30, '#777', '#ffffff', '#0cc03c', 'All', 'Part')
+        self.toggle_display = QtToggle(120, 30, '#777', '#ffffff', '#0cc03c', 'Overview', 'Analyzed')
         self.toggle_display.setChecked(self.check_global_local_graph)
         self.toggle_display.clicked.connect(lambda: self.select_plot(self.toggle_display.isChecked(), self.animate_toggle.isChecked()))
         self.main_layout.addWidget(self.toggle_display, 3, 7, 1, 1, alignment=Qt.AlignRight)
@@ -753,15 +780,15 @@ class View(QMainWindow, QWidget):
          #Corrected optical effect
         grid_optical = QGridLayout()
         label_optical = QLabel("Correction optical effect")
-        toggle_optical = QtToggle(120, 30, '#777', '#ffffff', '#4997d0', 'Normal', 'Correct°')
+        toggle_optical = QtToggle(120, 30, '#777', '#ffffff', '#4997d0', 'None', 'Manual')
         toggle_optical.clicked.connect(self.optical_effect)
         toggle_optical.stateChanged.connect(toggle_optical.start_transition)
         toggle_optical.setObjectName('toggle_optical')
-        threshold_optical = QDoubleSpinBox()
-        threshold_optical.setValue(1.0)
-        threshold_optical.setSingleStep(0.1)
+        # threshold_optical = QDoubleSpinBox()
+        # threshold_optical.setValue(1.0)
+        # threshold_optical.setSingleStep(0.1)
         grid_optical.addWidget(label_optical, 0, 0, 1, 1)
-        grid_optical.addWidget(threshold_optical, 0, 1, 1, 1)
+        # grid_optical.addWidget(threshold_optical, 0, 1, 1, 1)
         grid_optical.addWidget(toggle_optical, 0, 2, 1, 1)
         self.grid_supervised.addLayout(grid_optical, 3, 0, 1, 2)
 
@@ -845,6 +872,7 @@ class View(QMainWindow, QWidget):
         if self.n+1 < self.length_list_curve:
             self.n += 1
             self.current_curve.output['treat_supervised'] = True
+            self.check_toggle = False
             self.show_graphic()
 
     ##################################################################################################
@@ -856,6 +884,7 @@ class View(QMainWindow, QWidget):
         if self.n != 0:
             self.n -= 1
             self.current_curve.output['treat_supervised'] = False
+            self.check_toggle = False
             self.show_graphic()
 
     #############################################################################################
@@ -885,50 +914,51 @@ class View(QMainWindow, QWidget):
     def optical_effect(self):
         fig_test = None
         self.toggle = self.sender()
-        self.check_toggle = True
+        self.check_toggle = self.toggle.isChecked()
         self.intreval_optical_effect = []
-        if self.sender().isChecked():
+         
+        if self.check_toggle:
             if self.dict_supervised[self.current_curve.file] ==  self.sender().parent():
-                fig_test = self.current_curve.manage_optical_effect(self.methods['threshold_optical'])
-                self.dict_fig_open[self.current_curve.file] = fig_test
-                if fig_test is not None:
-                    fig_test.canvas.mpl_connect('pick_event', self.data_select)
-                    fig_test.canvas.mpl_connect('close_event', self.close_window_plot)
+                fig = plt.figure()
+                self.dict_fig_open[self.current_curve.file] = fig
+                self.current_curve.correction_optical_effect_object.manual_correction(fig)
+                fig.canvas.mpl_connect('pick_event', self.data_select)
+                fig.canvas.mpl_connect('close_event', self.close_window_plot)
         else:
             plt.close()
-            self.setFocus()
-        print(self.dict_fig_open)
+        self.setFocus()
 
     ###########################################################################################
     
     def data_select(self, event):
-        from matplotlib.lines import Line2D
-        import numpy as np
-        print(event.artist)
         if isinstance(event.artist, Line2D):
-            # if self.dict_fig_open[self.current_curve.file] == 
             thisline = event.artist
             xdata = thisline.get_xdata()
             ydata = thisline.get_ydata()
             ind = event.ind
             self.intreval_optical_effect.append(ind[0])
-            ax = self.dict_fig_open[self.current_curve.file].axes[0]
-            ax.plot(xdata[ind], ydata[ind], marker='D', color='orange')
-            plt.draw()
-            if len(self.intreval_optical_effect) == 2:
-                self.current_curve.correction_optical_effect(self.intreval_optical_effect)
+            if len(self.intreval_optical_effect) > 2:
+                self.dict_fig_open[self.current_curve.file].clear()
+                self.current_curve.correction_optical_effect_object.manual_correction(self.dict_fig_open[self.current_curve.file])
+                self.toggle.setChecked(True)
+            if len(self.intreval_optical_effect) <= 2:
+                ax = self.dict_fig_open[self.current_curve.file].axes[0]
+                ax.plot(xdata[ind[0]], ydata[ind[0]], marker='D', color='orange')
+                plt.draw()
+                if len(self.intreval_optical_effect) == 2:
+                    self.current_curve.correction_optical_effect_object.correction_optical_effect(self.intreval_optical_effect, self.dict_fig_open[self.current_curve.file])
+            if len(self.intreval_optical_effect) > 2:
                 self.intreval_optical_effect = []
-            #print('onpick1 line:', np.column_stack([xdata[ind], ydata[ind]]))
 
     ###########################################################################################
 
     def close_window_plot(self, event):
-        self.setFocus()
+        # self.setFocus()
         if self.check_toggle:
             self.toggle.setChecked(False)
             self.check_toggle = False
             del self.dict_fig_open[self.current_curve.file]
-            del self.toggle
+            #del self.toggle
 
     ################################################################################################
     def save(self):
@@ -1005,9 +1035,8 @@ class View(QMainWindow, QWidget):
         Management of the closing of the main window
         """
         if self.info:
-            self.info.close()
-        for fig in self.dict_fig_open.values():          
-            plt.close(fig)
+            self.info.close()          
+        plt.close('all')
         
 
 

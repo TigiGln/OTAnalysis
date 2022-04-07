@@ -59,7 +59,7 @@ class Controller:
 
     ##############################################################################################
 
-    def set_list_curve(self, threshold_align=30, pulling_length=50, model='linear', eta=0.5, bead_ray=1, tolerance=5, jump_force=5, jump_points=200, jump_distance=200, drug='', condition='aCD3', threshold_optical=1):
+    def set_list_curve(self, threshold_align=30, pulling_length=50, model='linear', eta=0.5, bead_ray=1, tolerance=5, jump_force=5, jump_points=200, jump_distance=200, drug='', condition='aCD3', optical_correction=None):
         """
         creation of the curve list according to the file extension and its conformity
         """
@@ -101,6 +101,8 @@ class Controller:
                         # new_curve.detected_max_force(tolerance)
                         new_curve.curve_approach_analyze(model, eta, bead_ray, tolerance)
                         new_curve.curve_return_analyze(jump_force, jump_points, jump_distance, tolerance)
+                        if optical_correction == "Correction":
+                            new_curve.correction_optical_effect_object.automatic_correction()
                         #new_curve.manage_optical_effect(threshold_optical)
                         new_curve.features['drug'] = drug
                         new_curve.features['condition'] = condition
@@ -198,9 +200,14 @@ class Controller:
         main_axis = curve.features['main_axis']['axe']
         force_data = segment.corrected_data[main_axis + 'Signal1']
         distance_data = segment.corrected_data['distance']
+        time_data = segment.corrected_data['seriesTime']
         fitted_data = curve.graphics['fitted_' + segment.name]
         ax.plot(distance_data, force_data, color= "#c2a5cf")
         ax.plot(distance_data, fitted_data, color= "#5aae61", label = curve.features['model'] + " fit")
+        #y_smooth = curve.graphics['y_smooth_' + segment.name]
+        y_smooth = curve.smooth(force_data, time_data, 151, 2)
+        ax.plot(distance_data, y_smooth, color= "#80cdc1")
+        index_x_0 = 0
         if segment.name == 'Press':
             threshold_press = curve.graphics['threshold_press']
             threshold_press_neg = np.negative(threshold_press)
@@ -208,11 +215,15 @@ class Controller:
             legend_threshold = f"{curve.features['tolerance']} x STD = +/- {calcul_threshold:.2f} pN"
             ax.plot(distance_data, threshold_press, color='blue', label=legend_threshold, ls='-.', alpha=0.5)
             ax.plot(distance_data, threshold_press_neg, color='blue', alpha=0.5, ls='-.')
-            index_x_0 = curve.features['contact_point']['index']
+            if self.view.methods['optical'] == "Correction":
+                index_x_0 = curve.features['contact_theorical_press']['index']
+            else:
+                index_x_0 = curve.features['contact_point']['index']
             index_max = curve.features["force_min_press"]['index']
             max_curve = curve.features["force_min_curve"]['value']
             ax.plot(distance_data[index_max], force_data[index_max], color= '#1b7837', marker= 'o', label = 'max')
             ax.plot(distance_data[index_max], max_curve, color = 'yellow', marker='o', label='max_curve')
+            ax.set_ylabel("Force (pN)")
         elif segment.name == 'Pull':
             calcul_threshold = curve.features['tolerance'] * curve.graphics['threshold_pull'][0]/curve.features['tolerance']
             legend_threshold = f"{curve.features['tolerance']} x STD = +/- {calcul_threshold:.2f} pN"
@@ -220,9 +231,10 @@ class Controller:
             threshold_pull_neg = np.negative(threshold_pull)
             ax.plot(distance_data, threshold_pull, color='blue', label=legend_threshold, ls='-.', alpha=0.5)
             ax.plot(distance_data, threshold_pull_neg, color='blue', alpha=0.5, ls='-.')
-            y_smooth = curve.graphics['y_smooth_' + segment.name]
-            ax.plot(distance_data, y_smooth, color= "#80cdc1")
-            index_x_0 = curve.features['point_release']['index']
+            if self.view.methods['optical'] == "Correction":
+                index_x_0 = curve.features['contact_theorical_pull']['index']
+            else:
+                index_x_0 = curve.features['point_release']['index']
             index_max = curve.features['force_max_pull']['index']
             if curve.features['automatic_type'] != 'NAD' and curve.features['automatic_type'] != 'RE':
                 if 'milieu_pente' in curve.graphics:
@@ -244,9 +256,8 @@ class Controller:
                 if curve.features['automatic_type'] != 'NAD':
                     ax.plot(distance_data[index_max], force_data[index_max], color= '#1b7837', marker= 'o', label = 'max')
         ax.plot(distance_data[index_x_0], force_data[index_x_0], color= '#762a83', marker= 'o', label = 'contact/release')
-        ax.set_ylim(curve.features['force_min_curve']['value']-2 , curve.features['force_max_pull']['value'] + 2)
+        ax.set_ylim(curve.features['force_min_curve']['value']-2 , curve.features['force_max_curve']['value'] + 2)
         ax.set_xlabel("Corrected distance (nm)")
-        ax.set_ylabel("Force (pN)")
         graph_position += 1
             
         return graph_position
@@ -293,8 +304,8 @@ class Controller:
             ax1.plot(time_data_pull[index_trasition], force_data_pull[index_trasition], marker='o', color='#1E90FF', label='transition point')
             ax1.plot(time_data_pull[index_return_endline], force_data_pull[index_return_endline], marker='o', color='#50441b', label='return endline')
         ax1.plot(data_total['time'][index_contact], data_total[main_axis + 'Signal1'][index_contact], marker='o', color='#762a83', label='contact point')
-        ax1.plot(data_total['time'][index_min_press], data_total[main_axis + 'Signal1'][index_min_press], marker='o', color='#1b7837', label= 'min press')
-        ax1.plot(curve.features['time_min_curve']['value'], curve.features['force_min_curve']['value'], marker='o', label='min curve')
+        ax1.plot(data_total['time'][index_min_press], data_total[main_axis + 'Signal1'][index_min_press], marker='o', color='#8b5847', label= 'min press')
+        ax1.plot(curve.features['time_min_curve']['value'], curve.features['force_min_curve']['value'], marker='o', label='min curve', color='red')
         ax1.plot(time_data_pull[index_release], force_data_pull[index_release], marker='o', color='#762a83', label='release point')
         ax1.plot(time_data_pull[index_max], force_data_pull[index_max], marker='o', color='#1b7837', label='max curve')
         ax1.legend(loc="lower left", ncol = 2)
@@ -319,7 +330,7 @@ class Controller:
             #     xlabel='time (s)', ylabel='Force (pN)', ax=ax1, color='green', alpha=0.5, legend=None)
             ax1.plot(data_total['seriesTime'], data_total[main_axis + 'Signal1'], color='green', alpha=0.5)
             ax1.plot(data_total['seriesTime'], np.zeros(len(data_total[main_axis + 'Signal1'])),
-                        color='green', alpha=0.75)
+                        color='black', alpha=0.75)
             ax1.plot(curve.features['time_min_curve']['value'], curve.features['force_min_curve']['value'], marker='o', label='force_min')
             scale = 0
             if abs(ax1.get_ylim()[0]) < ax1.get_ylim()[1]:
@@ -335,7 +346,6 @@ class Controller:
                 ax2.plot(data_total['seriesTime'], data_total['ySignal1'],
                     color='grey', alpha=0.5)
                 ax2.set_xlabel('time (s)')
-                ax2.set_ylabel('Force (pN)')
                 ax2.plot(data_total['seriesTime'], np.zeros(len(data_total['ySignal1'])),
                         color='black', alpha=0.75)
                 ax2.plot(data_total['seriesTime'], threshold_line_pos, 
@@ -348,7 +358,6 @@ class Controller:
                 ax2.plot(data_total['seriesTime'], data_total['xSignal1'],
                     color='grey', alpha=0.5)
                 ax2.set_xlabel('time (s)')
-                ax2.set_ylabel('Force (pN)')
                 ax2.plot(data_total['seriesTime'], np.zeros(len(data_total['xSignal1'])),
                         color='black', alpha=0.75)
                 ax2.plot(data_total['seriesTime'], threshold_line_pos, 
@@ -360,7 +369,6 @@ class Controller:
             ax3.plot(data_total['seriesTime'], data_total['zSignal1'],
                 color='grey', alpha=0.5)
             ax3.set_xlabel('time (s)')
-            ax3.set_ylabel('Force (pN)')
             ax3.plot(data_total['seriesTime'], np.zeros(len(data_total['zSignal1'])),
                     color='black', alpha=0.75)
             ax3.plot(data_total['seriesTime'], threshold_line_pos, 
@@ -382,6 +390,7 @@ class Controller:
                     ax4 = fig.add_subplot(gs[4:7, position_start_graph:position_end_graph])
                     position_start_graph = position_end_graph + 1
                     ax4.plot(segment.corrected_data['distance'], segment.corrected_data[main_axis + 'Signal1'], color="#c2a5cf")
+                    ax4.plot(segment.corrected_data['distance'], np.zeros(len(segment.corrected_data[main_axis + 'Signal1'])), color='black', alpha=0.75)
                     ax4.set_xlabel('Corrected distance (nm)')
                 else:
                     position_end_graph = floor(position_start_graph + 10/length - 1)
@@ -389,64 +398,11 @@ class Controller:
                     ax4.plot(segment.corrected_data['seriesTime'], segment.corrected_data[main_axis + 'Signal1'], color="#34b6cf")
                     position_start_graph = position_end_graph + 1
                     ax4.set_xlabel('time (s)')
-                
+                if segment.name == 'Press':
+                    ax4.set_ylabel('Force (pN)')
                 ax4.set_title(segment.name + ' Segment')
                 ax4.set_ylim(curve.features['force_min_curve']['value'] - 1, curve.features['force_max_pull']['value'] + 2)
                 num_segment += 1
-
-        #version avec la courbe entière (pa cohérent mais plus visuel)
-            # print(data_total['seriesDistance'])
-            # data_total.plot(kind="line", x='seriesDistance', y=main_axis + 'Signal1', \
-            #     xlabel='corrected distance (s)', ylabel='Force (pN)', ax=ax4, color="#c2a5cf", legend=None)
-            # threshold_press = curve.graphics['threshold_press']
-            # threshold = np.full(len(data_total['seriesDistance']), threshold_press[0])
-            # threshold_neg = np.negative(threshold)
-            # calcul_threshold = curve.features['tolerance'] * curve.graphics['threshold_press'][0]/curve.features['tolerance']
-            # legend_threshold = f"{curve.features['tolerance']} x STD = +/- {calcul_threshold:.2f} pN"
-            # ax4.plot(data_total['seriesDistance'], threshold, color='blue', label=legend_threshold, ls='-.', alpha=0.5)
-            # ax4.plot(data_total['seriesDistance'], threshold_neg, color='blue', alpha=0.5, ls='-.')
-            # ax4.legend(loc="lower left")
-            # ax4.set_title('Courbe de deplacement')
-
-
-        #version avec les deux segment principaux
-            # segment_press = curve.dict_segments['Press']
-            # distance_data_press = segment_press.corrected_data['distance']
-            # force_data_press = segment_press.corrected_data[main_axis + 'Signal1']
-            # ax4.plot(distance_data_press, force_data_press, color= "#c2a5cf")
-            # threshold_press = curve.graphics['threshold_press']
-            # threshold_press_neg = np.negative(threshold_press)
-            # calcul_threshold = curve.features['tolerance'] * curve.graphics['threshold_press'][0]/curve.features['tolerance']
-            # legend_threshold = f"{curve.features['tolerance']} x STD = +/- {calcul_threshold:.2f} pN"
-            # ax4.plot(distance_data_press, threshold_press, color='blue', label=legend_threshold, ls='-.', alpha=0.5)
-            # ax4.plot(distance_data_press, threshold_press_neg, color='blue', alpha=0.5, ls='-.')
-            # ax4.set_xlabel("Corrected distance (nm)")
-            # ax4.set_ylabel("Force (pN)")
-            # if len(curve.dict_segments.values()) > 2:
-            #     if 'Press' == curve.dict_segments.values()[0].name:
-            #         segment_wait = curve.dict_segments['Wait1']
-            #         distance_data_wait = segment_wait.corrected_data['distance']
-            #         force_data_wait = segment_wait.corrected_data[main_axis + 'Signal1']
-            #         ax4.plot(distance_data_wait, force_data_wait, color= "#c2a5cf")
-            # # ax4.legend(loc="lower left")
-            # # ax5 = fig.add_subplot(gs[4:7, 6:10])
-            # segment_pull = curve.dict_segments['Pull']
-            # distance_data_pull = segment_pull.corrected_data['distance']
-            # force_data_pull = segment_pull.corrected_data[main_axis + 'Signal1']
-            # ax4.plot(distance_data_pull, force_data_pull, color= "#c2a5cf")
-            # calcul_threshold = curve.features['tolerance'] * curve.graphics['threshold_pull'][0]/curve.features['tolerance']
-            # legend_threshold = f"{curve.features['tolerance']} x STD = +/- {calcul_threshold:.2f} pN"
-            # threshold_pull = curve.graphics['threshold_pull']
-            # threshold_pull_neg = np.negative(threshold_pull)
-            # ax4.plot(distance_data_pull, threshold_pull, color='blue', label=legend_threshold, ls='-.', alpha=0.5)
-            # ax4.plot(distance_data_pull, threshold_pull_neg, color='blue', alpha=0.5, ls='-.')
-            # ax5.set_xlabel("Corrected distance (nm)")
-            # ax5.set_ylabel("Force (pN)")
-            # ax5.legend(loc="lower right")
-            
-
-        # fig.subplots_adjust(wspace=0.5, hspace=0.5)
-        # fig.tight_layout()
         return fig, curve
 
     
@@ -881,8 +837,7 @@ class Controller:
 
         """
         dict_align = new_curve.check_alignment_curve(threshold_align)
-        print(dict_align)
-        if dict_align['AL'] == 'False':
+        if dict_align['AL'] == 'No':
             path_dir_alignment = ""
             name_file = file.split(sep)[-1]
             if name_file.split('.')[-1] == "txt":

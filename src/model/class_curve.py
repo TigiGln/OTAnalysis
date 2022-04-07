@@ -5,10 +5,12 @@ import math
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 from scipy.optimize import curve_fit
 from scipy.signal import savgol_filter
 from scipy.interpolate import UnivariateSpline
 from lmfit import Model
+from model.class_optical_effect import OpticalEffect
 
 class Curve:
     """
@@ -29,6 +31,7 @@ class Curve:
         self.output ={'bead': bead, 'cell': cell}
         self.output['treat_supervised'] = False
         self.message = ""
+        
 
         self.message += "\n========================================================================\n"
        
@@ -37,6 +40,7 @@ class Curve:
         # self.delta_t()
         self.identification_main_axis()
         self.normalization_data()
+        self.correction_optical_effect_object = OpticalEffect(self)
         self.transform_distance_data()
         self.check_incomplete = self.segment_retraction_troncated(pulling_length)
         if not self.check_incomplete:
@@ -378,6 +382,8 @@ class Curve:
         data_min_curve = 0
         index_data_min_curve = 0
         time_min_curve = 0
+        index_data_max_curve = 0
+        force_max_curve = 0
         for segment in self.dict_segments.values():
             data = segment.corrected_data[main_axis + 'Signal1']
             time = segment.corrected_data['seriesTime']
@@ -385,6 +391,9 @@ class Curve:
                 time_min_curve = time[data.argmin()]
                 data_min_curve = data[data.argmin()]
                 index_data_min_curve = data.argmin()
+            if force_max_curve < data[data.argmax()]:
+                force_max_curve = data[data.argmax()]
+                index_data_max_curve = data.argmax()
         data_min_approach = 0
         index_data_min = 0
         segment = self.dict_segments["Press"]
@@ -404,6 +413,7 @@ class Curve:
         self.features["force_min_press"] = {'index': index_data_min, 'value' : data_min_approach}
         self.features['force_min_curve'] = {'index': index_data_min_curve, 'value' : data_min_curve}
         self.features['time_min_curve'] = {'index': index_data_min_curve, 'value': time_min_curve}
+        self.features['force_max_curve'] = {'index': index_data_max_curve, 'value': force_max_curve}
         return data_min_curve
 
     #############################################################################################
@@ -429,10 +439,13 @@ class Curve:
         """
         TODO
         """
+        print('fit_curve_approach')
         main_axis = self.features["main_axis"]['axe']
         segment = self.dict_segments["Press"]
         force_data = segment.corrected_data[main_axis + 'Signal1']
         distance_data = np.abs(segment.corrected_data['distance'])
+        time_data = segment.corrected_data['seriesTime']
+        #self.graphics['y_smooth_Press'] = self.smooth(force_data, time_data, 151, 2)
         index_contact, line_pos_threshold = Curve.retrieve_contact(force_data, "Press", tolerance)
         self.graphics['threshold_press'] = line_pos_threshold
         baseline = force_data[0:300].mean() + force_data[0:300].std()# y0
@@ -797,47 +810,6 @@ class Curve:
                 check_segment_troncated = False
         return check_segment_troncated
 
-    ######################################################################################################################################
-
-    def manage_optical_effect(self, threshold_sup):
-        print('optcal_effect')
-        std = float(self.features['std_press'])
-        if len(self.dict_segments) == 2:
-            segment_press = self.dict_segments['Press']
-            force_data_press =  segment_press.corrected_data[self.features['main_axis']['axe'] + 'Signal1']
-            time_data_press = segment_press.corrected_data['seriesTime']
-            
-            
-            figure_test = plt.figure()
-            ax1 = figure_test.add_subplot(211)
-            ax1.plot(time_data_press, force_data_press, picker=True, pickradius=0.1)
-            force_data_press_start = force_data_press[0:3000].reset_index(drop=True)
-            force_data_press_stop = force_data_press[-200:].reset_index(drop=True)
-            time_data_press_start = time_data_press[0:3000].reset_index(drop=True)
-            time_data_press_stop = time_data_press[-200:].reset_index(drop=True)
-            length_start = len(force_data_press[0:self.features['contact_point']['index']])
-            length_stop = len(force_data_press[self.features['contact_point']['index']:])
-            baseline = force_data_press_start.mean()
-            baseline_force_data = np.full(len(force_data_press), baseline)
-            f_param = curve_fit(Curve.test_fit, time_data_press_stop, force_data_press_stop)
-            fitted = Curve.test_fit(time_data_press[-length_stop:], f_param[0][0], f_param[0][1])
-            
-            coor_x_contact_point_extrapolated = (f_param[0][1] - baseline)/(-f_param[0][0])
-            coor_y_contact_point_extrapolated = f_param[0][0] * coor_x_contact_point_extrapolated + f_param[0][1]
-            
-            ax1.plot(time_data_press, baseline_force_data)
-            # ax1.plot(time_data_press[-length_stop:], fitted)
-            # ax1.plot(coor_x_contact_point_extrapolated, coor_y_contact_point_extrapolated, marker='D', color='yellow')
-            
-
-            plt.show()
-
-            return figure_test
-
-    ##################################################################################################################
-
-    def correction_optical_effect(list_ind_correction):
-        pass
     ##################################################################################################################
     @staticmethod
     def test_fit(time_data, slope, offset):
@@ -862,7 +834,7 @@ class Curve:
             values of y smoothing
         """
 
-        print("smooth")
+        #print("smooth")
         # tck, u = splprep([time_data[::50], force_data[::50]])
         # print('tck: ', tck)
         # print('u: ', u)
