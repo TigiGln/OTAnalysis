@@ -921,7 +921,7 @@ class View(QMainWindow, QWidget):
             if self.dict_supervised[self.current_curve.file] ==  self.sender().parent():
                 fig = plt.figure()
                 self.dict_fig_open[self.current_curve.file] = fig
-                self.current_curve.correction_optical_effect_object.manual_correction(fig)
+                self.current_curve.correction_optical_effect_object.manual_correction(fig, self.methods['factor_noise'])
                 fig.canvas.mpl_connect('pick_event', self.data_select)
                 fig.canvas.mpl_connect('close_event', self.close_window_plot)
         else:
@@ -939,7 +939,7 @@ class View(QMainWindow, QWidget):
             self.intreval_optical_effect.append(ind[0])
             if len(self.intreval_optical_effect) > 2:
                 self.dict_fig_open[self.current_curve.file].clear()
-                self.current_curve.correction_optical_effect_object.manual_correction(self.dict_fig_open[self.current_curve.file])
+                self.current_curve.correction_optical_effect_object.manual_correction(self.dict_fig_open[self.current_curve.file], self.methods['factor_noise'])
                 self.toggle.setChecked(True)
             if len(self.intreval_optical_effect) <= 2:
                 ax = self.dict_fig_open[self.current_curve.file].axes[0]
@@ -976,7 +976,7 @@ class View(QMainWindow, QWidget):
         output_methods = pd.DataFrame()
         output_methods = output_methods.from_dict(methods, orient='index')
         list_labels_methods = ['condition', 'drug', 'bead_radius', 'model', 'eta', 'pulling_length', 'threshold_align',\
-                                'jump_force', 'jump_distance', 'jump_point', 'factor_noise', 'threshold_optical']
+                                'jump_force', 'jump_distance', 'jump_point', 'factor_noise', 'optical']
         output_methods = output_methods[list_labels_methods]
         output_methods.to_csv(directory + sep + 'methods_' + today + '_' + time_today + '.tsv', sep='\t', encoding='utf-8', na_rep="NaN")
         

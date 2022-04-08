@@ -98,12 +98,11 @@ class Controller:
                     else:
                         self.dict_curve[new_curve.file] = new_curve
                         new_curve.compare_baseline_start_end(tolerance)
-                        # new_curve.detected_max_force(tolerance)
+                        if optical_correction == "Correction":
+                            new_curve.correction_optical_effect_object.automatic_correction(tolerance)
                         new_curve.curve_approach_analyze(model, eta, bead_ray, tolerance)
                         new_curve.curve_return_analyze(jump_force, jump_points, jump_distance, tolerance)
-                        if optical_correction == "Correction":
-                            new_curve.correction_optical_effect_object.automatic_correction()
-                        #new_curve.manage_optical_effect(threshold_optical)
+                        
                         new_curve.features['drug'] = drug
                         new_curve.features['condition'] = condition
                         new_curve.features['tolerance'] = tolerance
