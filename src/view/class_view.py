@@ -13,14 +13,16 @@ from PyQt5.QtCore import Qt, pyqtSignal, QEvent, QEventLoop, QTimer
 from PyQt5.QtGui import QIcon
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT
+from matplotlib.figure import Figure
 from matplotlib.lines import Line2D
 from view.class_info import Infowindow
 from view.class_toggle import QtToggle
-from model.class_optical_effect import OpticalEffect
+from view.class_optical_effect_view import GraphView
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 from re import match
+
 
 class View(QMainWindow, QWidget):
     """
@@ -28,6 +30,7 @@ class View(QMainWindow, QWidget):
     """
     # pylint: disable=too-many-instance-attributes
     keyPressed = pyqtSignal(QEvent)
+
     def __init__(self):
         """
         Constructor of our 'View' class initializing the main grid of the window
@@ -42,15 +45,14 @@ class View(QMainWindow, QWidget):
         self.info.setWindowIcon(QIcon('pictures' + sep + 'icon.png'))
         self.setWindowTitle("View")
         self.size_window()
-        
-        
 
     ###############################################################################################################
+
     def size_window(self):
         """
         initialization parameters for widget management according to screen resolution
         """
-        # screen = QApplication.desktop().screen   
+        # screen = QApplication.desktop().screen
         self.screen_display = QApplication.desktop().screenGeometry()
         if self.screen_display.height() < 1000:
             self.scrollArea = QScrollArea()
@@ -62,8 +64,10 @@ class View(QMainWindow, QWidget):
             self.scrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
             # self.scrollArea.setSizeAdjustPolicy(self.main_layout.setContentsMargins())
             self.scrollArea.setWidgetResizable(True)
-            self.setGeometry(0, 0, self.screen_display.width(), self.screen_display.height())
-            self.scrollArea.setGeometry(0, 0, self.screen_display.width(), self.screen_display.height()*2)
+            self.setGeometry(0, 0, self.screen_display.width(),
+                             self.screen_display.height())
+            self.scrollArea.setGeometry(
+                0, 0, self.screen_display.width(), self.screen_display.height()*2)
             self.scrollArea.setWidget(self.widget)
             self.setCentralWidget(self.scrollArea)
         else:
@@ -74,7 +78,7 @@ class View(QMainWindow, QWidget):
             self.setCentralWidget(self.widget)
             print(self.widget.geometry())
             #self.main_layout.addWidget(self.toogle, 0, 1, 1, 1)
-           
+
     ###############################################################################################################
 
     def initialize_window(self):
@@ -83,7 +87,7 @@ class View(QMainWindow, QWidget):
         """
         self.n = 0
         self.check_supervised = True
-        self.check_graph =False
+        self.check_graph = False
         self.option = False
         self.check_global_local_graph = False
         self.abscissa_curve = False
@@ -99,9 +103,9 @@ class View(QMainWindow, QWidget):
         self.create_alignement_incomplete_parameters()
         self.create_condition_parameters_type()
         self.create_select_correction_optical()
-        
+
     ###########################################################################################################
-    
+
     def change_button(self, button, name_button, method):
         """
         Allows you to change the method of a button
@@ -119,7 +123,7 @@ class View(QMainWindow, QWidget):
         layout_grid = QGridLayout()
         frame = QFrame()
         self.title_description = QLabel("Data Description")
-        self.title_description.setStyleSheet("QLabel {font-weight: bold;}")        
+        self.title_description.setStyleSheet("QLabel {font-weight: bold;}")
         self.condition = QLabel("condition 1")
         self.input_condition = QLineEdit()
         self.drug = QLabel("drug/condition 2")
@@ -135,7 +139,7 @@ class View(QMainWindow, QWidget):
         frame.setMidLineWidth(3)
         self.main_layout.addWidget(self.title_description, 0, 0, 1, 1)
         self.main_layout.addWidget(frame, 1, 0, 1, 2)
-    
+
     ##############################################################################################################
 
     def create_button_select_data(self):
@@ -144,11 +148,12 @@ class View(QMainWindow, QWidget):
         """
         self.button_select_files = QPushButton("Select Files")
         self.button_select_directory = QPushButton('Select Folder')
-        self.button_select_files.clicked.connect(lambda: self.download_files('files'))
-        self.button_select_directory.clicked.connect(lambda: self.download_files('directory'))
+        self.button_select_files.clicked.connect(
+            lambda: self.download_files('files'))
+        self.button_select_directory.clicked.connect(
+            lambda: self.download_files('directory'))
         self.main_layout.addWidget(self.button_select_directory, 2, 0, 1, 1)
         self.main_layout.addWidget(self.button_select_files, 2, 1, 1, 1)
-        
 
     ##############################################################################################################
 
@@ -198,7 +203,7 @@ class View(QMainWindow, QWidget):
         of the Young's modulus according to the object's comprehensibility 
         """
         self.physical_parameters = QLabel("Physical Parameters")
-        self.physical_parameters.setStyleSheet("QLabel {font-weight: bold;}") 
+        self.physical_parameters.setStyleSheet("QLabel {font-weight: bold;}")
         hlayout = QHBoxLayout()
         layout_grid = QGridLayout()
         self.frame_physical = QFrame()
@@ -217,7 +222,7 @@ class View(QMainWindow, QWidget):
         self.frame_physical.setFrameStyle(QFrame.Box | QFrame.Raised)
         self.frame_physical.setLineWidth(3)
         self.frame_physical.setMidLineWidth(3)
-    
+
     #############################################################################################################
 
     def create_alignement_incomplete_parameters(self):
@@ -225,7 +230,7 @@ class View(QMainWindow, QWidget):
         Creation of widgets for the management of the good alignment of the curves on an axis
         """
         self.align_parameters = QLabel("Alignement & Incomplete Parameters")
-        self.align_parameters.setStyleSheet("QLabel {font-weight: bold;}") 
+        self.align_parameters.setStyleSheet("QLabel {font-weight: bold;}")
         layout_grid = QGridLayout()
         frame = QFrame()
         self.epsilon = QLabel("Fmax epsilon (%)")
@@ -252,7 +257,7 @@ class View(QMainWindow, QWidget):
         Creation of widgets to set up the classification with the different thresholds
         """
         self.condition_type = QLabel("Conditions for Classification")
-        self.condition_type.setStyleSheet("QLabel {font-weight: bold;}") 
+        self.condition_type.setStyleSheet("QLabel {font-weight: bold;}")
         layout_grid = QGridLayout()
         frame = QFrame()
         self.jump_force = QLabel("NAD if jump is < (pN)")
@@ -289,6 +294,7 @@ class View(QMainWindow, QWidget):
         self.main_layout.addWidget(self.condition_type, 8, 0, 1, 2)
         self.main_layout.addWidget(frame, 9, 0, 1, 2)
     ##########################################################################################################
+
     def create_select_correction_optical(self):
         """
         TODO
@@ -305,7 +311,6 @@ class View(QMainWindow, QWidget):
         self.hbox.addWidget(self.automatic_correction)
         self.groupbox_optical.setLayout(self.hbox)
         self.main_layout.addWidget(self.groupbox_optical, 10, 0, 1, 2)
-
 
     ##########################################################################################################
 
@@ -326,12 +331,13 @@ class View(QMainWindow, QWidget):
         self.controller.clear()
         print("Loading file")
         if select == 'files':
-            files = QFileDialog.getOpenFileNames(self, u"", u"..",\
-                                             u"JPK Files (*.jpk-nt-force) ;; Text files(*.txt)")
-            files = files[0]   
+            files = QFileDialog.getOpenFileNames(self, u"", u"..",
+                                                 u"JPK Files (*.jpk-nt-force) ;; Text files(*.txt)")
+            files = files[0]
             self.controller.files = files
         elif select == 'directory':
-            directory = QFileDialog.getExistingDirectory(self, "Open folder", "..", QFileDialog.ShowDirsOnly)
+            directory = QFileDialog.getExistingDirectory(
+                self, "Open folder", "..", QFileDialog.ShowDirsOnly)
             path_directory = Path(directory)
             self.controller.set_list_files(path_directory)
         if files != [] or directory != None:
@@ -342,23 +348,24 @@ class View(QMainWindow, QWidget):
             self.main_layout.addWidget(self.button_load, 2, 0, 1, 2)
             self.button_launch_analyze = QPushButton('Launch analysis')
             self.button_launch_analyze.clicked.connect(self.launch_analyze)
-            self.button_launch_analyze.setStyleSheet("QPushButton { background-color: green; }")
+            self.button_launch_analyze.setStyleSheet(
+                "QPushButton { background-color: green; }")
             self.main_layout.addWidget(self.button_launch_analyze, 11, 0, 1, 2)
 
     ####################################################################################################
 
     def load_methods(self):
-        files_methods = QFileDialog.getOpenFileName(self, u"", u"",\
-                                             u"TSV Files (*.tsv)")                                   
+        files_methods = QFileDialog.getOpenFileName(self, u"", u"",
+                                                    u"TSV Files (*.tsv)")
         files_methods = files_methods[0]
         if files_methods != '':
             methods_data = pd.read_csv(files_methods, sep='\t', header=0)
             self.input_condition.setText(methods_data['condition'][0])
-            
+
             if isinstance(methods_data['drug'][0], str):
                 self.input_drug.setText(methods_data['drug'][0])
             self.input_radius.setValue(methods_data['bead_radius'][0])
-            
+
             for child in self.groupbox.children():
                 if isinstance(child, QRadioButton):
                     if methods_data['model'][0] == child.text():
@@ -411,7 +418,7 @@ class View(QMainWindow, QWidget):
         self.methods['jump_force'] = jump_force
         jump_distance = self.input_jump_position.value()
         self.methods['jump_distance'] = jump_distance
-        jump_point =  self.input_nb_points_jump.value()
+        jump_point = self.input_nb_points_jump.value()
         self.methods['jump_point'] = jump_point
         tolerance = self.input_factor.value()
         self.methods['factor_noise'] = tolerance
@@ -420,7 +427,7 @@ class View(QMainWindow, QWidget):
         else:
             optical = self.automatic_correction.text()
         self.methods['optical'] = optical
-        drug=""
+        drug = ""
         if self.input_drug.text() == "":
             drug = "NaN"
         else:
@@ -432,7 +439,7 @@ class View(QMainWindow, QWidget):
         else:
             condition = self.input_condition.text()
         self.methods['condition'] = condition
-        self.controller.set_list_curve(threshold_align, pulling_length, model.lower(), eta, bead_ray, tolerance, jump_force, jump_point, jump_distance, drug, condition, optical)
+        self.controller.set_list_curve(self.methods)
         if len(self.controller.dict_curve) != 0:
             self.button_launch_analyze.deleteLater()
             if not self.check_methods:
@@ -441,7 +448,7 @@ class View(QMainWindow, QWidget):
         else:
             self.create_button_select_data()
     ####################################################################################################
-    
+
     def choices_option(self):
         if self.option == False:
             groupbox_option = QGroupBox("Analysis mode and Save")
@@ -462,7 +469,8 @@ class View(QMainWindow, QWidget):
             self.button_option = QPushButton("Supervised")
             self.button_option.setAutoDefault(True)
             self.button_option.clicked.connect(self.show_graphic)
-            self.button_option.setStyleSheet("QPushButton { background-color: green; }")
+            self.button_option.setStyleSheet(
+                "QPushButton { background-color: green; }")
             layout_grid_option.addWidget(groupbox_option, 0, 0, 3, 1)
             layout_grid_option.addWidget(self.button_option, 1, 1, 1, 1)
             frame_option = QFrame()
@@ -473,15 +481,18 @@ class View(QMainWindow, QWidget):
             self.button_option.disconnect()
             if self.display_graphs.isChecked():
                 self.button_option.setText("Supervised")
-                self.button_option.setStyleSheet("QPushButton { background-color: green; }")
+                self.button_option.setStyleSheet(
+                    "QPushButton { background-color: green; }")
                 self.button_option.clicked.connect(self.show_graphic)
             elif self.save_table.isChecked():
                 self.button_option.setText("Save table")
-                self.button_option.setStyleSheet("QPushButton { background-color: red; }")
+                self.button_option.setStyleSheet(
+                    "QPushButton { background-color: red; }")
                 self.button_option.clicked.connect(self.save)
             else:
                 self.button_option.setText("Save with graphs")
-                self.button_option.setStyleSheet("QPushButton { background-color: red; }")
+                self.button_option.setStyleSheet(
+                    "QPushButton { background-color: red; }")
                 self.button_option.clicked.connect(self.save_and_save_graphs)
 
     ####################################################################################################
@@ -509,7 +520,7 @@ class View(QMainWindow, QWidget):
         """
         Counting the number of curve types found during the analysis  
         """
-        nb_nad = nb_ad = nb_tui = nb_tuf = nb_re = nb_none  = 0
+        nb_nad = nb_ad = nb_tui = nb_tuf = nb_re = nb_none = 0
         for curve in self.controller.dict_curve.values():
             type_curve = curve.features['automatic_type']
             if curve.features['automatic_type'] == 'NAD':
@@ -523,8 +534,10 @@ class View(QMainWindow, QWidget):
             elif curve.features['automatic_type'] == 'RE' or curve.features['automatic_type'] == None:
                 nb_re += 1
         label = "files processing: " + nb + "\n"
+        label += "\nvalid curves for analysis:  " + \
+            str(len(self.controller.dict_curve))
         label += '\nNAD:' + str(nb_nad) + ' AD:' + str(nb_ad) + ' FTU:' + str(nb_tuf) \
-                + ' ITU:' + str(nb_tui) + ' RE:' +str(nb_re)
+            + ' ITU:' + str(nb_tui) + ' RE:' + str(nb_re)
         self.info.set_title()
         self.info.set_info_curve(label)
 
@@ -538,11 +551,13 @@ class View(QMainWindow, QWidget):
                 self.animate_toggle.show()
             if abscissa_data:
                 self.abscissa_curve = True
-                self.fig, self.current_curve = self.controller.show_plot(self.n, 'time')
+                self.fig, self.current_curve = self.controller.show_plot(
+                    self.n, 'time')
             else:
                 self.abscissa_curve = False
-                self.fig, self.current_curve = self.controller.show_plot(self.n, 'distance')
-            
+                self.fig, self.current_curve = self.controller.show_plot(
+                    self.n, 'distance')
+
         else:
             self.check_global_local_graph = False
             self.abscissa_curve = False
@@ -550,8 +565,7 @@ class View(QMainWindow, QWidget):
                 self.animate_toggle.hide()
                 self.animate_toggle.setChecked(False)
             self.fig, self.current_curve = self.controller.global_plot(self.n)
-            
-            
+
         if self.fig is not None:
             self.canvas = FigureCanvasQTAgg(self.fig)
             self.canvas.mpl_connect('button_press_event', self.mousePressEvent)
@@ -567,7 +581,8 @@ class View(QMainWindow, QWidget):
         self.clear()
         self.setMouseTracking(True)
         if self.screen_display.height() > 1000:
-            self.setGeometry(0, 0, self.screen_display.width(), self.screen_display.height()-self.screen_display.height()//3)
+            self.setGeometry(0, 0, self.screen_display.width(
+            ), self.screen_display.height()-self.screen_display.height()//3)
         self.check_graph = True
         self.select_plot(self.check_global_local_graph, self.abscissa_curve)
         self.length_list_curve = len(self.controller.dict_curve.values())
@@ -576,13 +591,15 @@ class View(QMainWindow, QWidget):
         if self.fig is not None:
             if not self.check_supervised:
                 self.button_supervised = QPushButton('Open supervision Panel')
-                self.button_supervised.clicked.connect(lambda: self.option_supervised(True))   
-                self.button_supervised.setStyleSheet("QPushButton { height: 2em; background-color: green;}")
+                self.button_supervised.clicked.connect(
+                    lambda: self.option_supervised(True))
+                self.button_supervised.setStyleSheet(
+                    "QPushButton { height: 2em; background-color: green;}")
                 self.main_layout.addWidget(self.button_supervised, 9, 0, 1, 6)
             self.navigation_button()
 
     ###################################################################################################
-    
+
     def navigation_button(self):
         button_next = QPushButton()
         button_next.setFocusPolicy(Qt.StrongFocus)
@@ -594,7 +611,7 @@ class View(QMainWindow, QWidget):
             if self.n > 0:
                 # switch to the second page previous button always present
                 if self.n <= (self.length_list_curve-1):
-                    #all pages between 2 pages and second last
+                    # all pages between 2 pages and second last
                     button_next.setText('Next')
                     if self.check_supervised:
                         self.main_layout.addWidget(button_previous, 1, 6, 1, 1)
@@ -605,14 +622,14 @@ class View(QMainWindow, QWidget):
                     if self.n == (self.length_list_curve-1):
                         button_next.setDisabled(True)
             else:
-                #first page show_plot if nb page > 1
+                # first page show_plot if nb page > 1
                 button_next.setText('Next')
                 if self.check_supervised:
                     self.main_layout.addWidget(button_next, 1, 6, 1, 2)
                 else:
                     self.main_layout.addWidget(button_next, 8, 0, 1, 6)
         else:
-            #page show plot if single page
+            # page show plot if single page
             button_save.setText("Save")
             button_save.clicked.connect(self.save)
             if not self.check_supervised:
@@ -623,14 +640,17 @@ class View(QMainWindow, QWidget):
     def supervision_panel(self):
         self.check_supervised = True
         self.button_supervised = QPushButton('Close supervision Panel')
-        self.button_supervised.clicked.connect(lambda: self.option_supervised(False))
-        self.button_supervised.setStyleSheet("QPushButton { height: 2em; background-color: green;}")
+        self.button_supervised.clicked.connect(
+            lambda: self.option_supervised(False))
+        self.button_supervised.setStyleSheet(
+            "QPushButton { height: 2em; background-color: green;}")
         self.main_layout.addWidget(self.button_supervised, 0, 6, 1, 2)
         self.dict_supervised = {}
         self.frame_supervised = QFrame()
         self.grid_supervised = QGridLayout()
         self.save_supervision_panel()
-        label_curve = QLabel(self.current_curve.file.strip())#label for the name of each curve
+        # label for the name of each curve
+        label_curve = QLabel(self.current_curve.file.strip())
         if self.current_curve.features['automatic_AL']['AL'] == 'No':
             self.alignment_supervised()
         self.grid_supervised.addWidget(label_curve, 0, 0, 1, 1)
@@ -651,8 +671,10 @@ class View(QMainWindow, QWidget):
         self.num_curve_current.setAlignment(Qt.AlignRight)
         count_curves = QLabel('/' + str(self.length_list_curve))
         count_curves.setAlignment(Qt.AlignLeft)
-        self.main_layout.addWidget(label_num_curve, 5, 6, 1, 1, alignment=Qt.AlignRight)
-        self.main_layout.addWidget(self.num_curve_current, 6, 6, 1, 1, alignment=Qt.AlignRight)
+        self.main_layout.addWidget(
+            label_num_curve, 5, 6, 1, 1, alignment=Qt.AlignRight)
+        self.main_layout.addWidget(
+            self.num_curve_current, 6, 6, 1, 1, alignment=Qt.AlignRight)
         self.main_layout.addWidget(count_curves, 6, 7, 1, 1)
 
     ###################################################################################################
@@ -663,12 +685,11 @@ class View(QMainWindow, QWidget):
             num_page = int(num_page)
             if isinstance(num_page, int):
                 if 0 < num_page <= self.length_list_curve:
-                    self.n = num_page -1
+                    self.n = num_page - 1
                     self.show_graphic()
 
-        
-
     ###################################################################################################
+
     def alignment_supervised(self):
         axe_align = ""
         if len(self.current_curve.features['automatic_AL']['axe']) > 1:
@@ -678,10 +699,12 @@ class View(QMainWindow, QWidget):
                 elif index_axe < len(self.current_curve.features['automatic_AL']['axe'])-1:
                     axe_align += self.current_curve.features['automatic_AL']['axe'][index_axe]
                 else:
-                    axe_align += ' and ' + self.current_curve.features['automatic_AL']['axe'][index_axe]
+                    axe_align += ' and ' + \
+                        self.current_curve.features['automatic_AL']['axe'][index_axe]
         else:
             axe_align = self.current_curve.features['automatic_AL']['axe'][0]
-        label_alignment = QLabel("<html><img src= \".." + sep + "pictures" + sep + "warning.png\" /></html> Bad alignement on " + axe_align)
+        label_alignment = QLabel("<html><img src= \".." + sep + "pictures" +
+                                 sep + "warning.png\" /></html> Bad alignement on " + axe_align)
         group_box_align = QGroupBox('Accept')
         group_align = QButtonGroup()
         hbox_align = QHBoxLayout()
@@ -700,8 +723,8 @@ class View(QMainWindow, QWidget):
         self.grid_supervised.addWidget(label_alignment, 1, 0, 1, 1)
         self.grid_supervised.addWidget(group_box_align, 1, 1, 1, 1)
 
-
     ###################################################################################################
+
     def save_supervision_panel(self):
         button_save_graph = QPushButton("Save graphics")
         button_save_graph.clicked.connect(self.save_graph)
@@ -730,19 +753,20 @@ class View(QMainWindow, QWidget):
         hbox_fit_press.addWidget(no_press)
         group_button_fit_press.setLayout(hbox_fit_press)
         for button in group_fit_press.buttons():
-            button.clicked.connect(lambda: self.modif_supervised('valid_fit_press'))
+            button.clicked.connect(
+                lambda: self.modif_supervised('valid_fit_press'))
             button.setFocusPolicy(Qt.NoFocus)
             if 'valid_fit_press' in self.current_curve.features:
                 if button.text() == self.current_curve.features['valid_fit_press']:
                     button.setChecked(True)
-        
-        #radio group for the validation of the "Pull" segment fit
+
+        # radio group for the validation of the "Pull" segment fit
         group_button_fit_pull = QGroupBox("Pull: Fit valid ?")
         group_fit_pull = QButtonGroup()
         hbox_fit_pull = QHBoxLayout()
         yes_pull = QRadioButton('True')
         no_pull = QRadioButton('False')
-        if 'valid_fit_pull' not in self.current_curve.features: 
+        if 'valid_fit_pull' not in self.current_curve.features:
             no_pull.setChecked(True)
         group_fit_pull.addButton(yes_pull)
         group_fit_pull.addButton(no_pull)
@@ -750,7 +774,8 @@ class View(QMainWindow, QWidget):
         hbox_fit_pull.addWidget(no_pull)
         group_button_fit_pull.setLayout(hbox_fit_pull)
         for button in group_fit_pull.buttons():
-            button.clicked.connect(lambda: self.modif_supervised('valid_fit_pull'))
+            button.clicked.connect(
+                lambda: self.modif_supervised('valid_fit_pull'))
             button.setFocusPolicy(Qt.NoFocus)
             if 'valid_fit_pull' in self.current_curve.features:
                 if button.text() == self.current_curve.features['valid_fit_pull']:
@@ -761,26 +786,33 @@ class View(QMainWindow, QWidget):
     ##################################################################################################
 
     def toggle_all_curve_characteristics_point(self):
-        self.toggle_display = QtToggle(120, 30, '#777', '#ffffff', '#0cc03c', 'Overview', 'Analyzed')
+        self.toggle_display = QtToggle(
+            120, 30, '#777', '#ffffff', '#0cc03c', 'Overview', 'Analyzed')
         self.toggle_display.setChecked(self.check_global_local_graph)
-        self.toggle_display.clicked.connect(lambda: self.select_plot(self.toggle_display.isChecked(), self.animate_toggle.isChecked()))
-        self.main_layout.addWidget(self.toggle_display, 3, 7, 1, 1, alignment=Qt.AlignRight)
+        self.toggle_display.clicked.connect(lambda: self.select_plot(
+            self.toggle_display.isChecked(), self.animate_toggle.isChecked()))
+        self.main_layout.addWidget(
+            self.toggle_display, 3, 7, 1, 1, alignment=Qt.AlignRight)
     ##################################################################################################
 
     def toggle_abscissa_curve(self):
-        self.animate_toggle = QtToggle(110, 30, '#777', '#ffffff', 'orange', 'Distance', 'Time')
+        self.animate_toggle = QtToggle(
+            110, 30, '#777', '#ffffff', 'orange', 'Distance', 'Time')
         self.animate_toggle.setChecked(self.abscissa_curve)
-        self.animate_toggle.clicked.connect(lambda: self.select_plot(self.toggle_display.isChecked(), self.animate_toggle.isChecked()))
-        self.grid_supervised.addWidget(self.animate_toggle, 0, 1, 1, 1, alignment=Qt.AlignRight)
+        self.animate_toggle.clicked.connect(lambda: self.select_plot(
+            self.toggle_display.isChecked(), self.animate_toggle.isChecked()))
+        self.grid_supervised.addWidget(
+            self.animate_toggle, 0, 1, 1, 1, alignment=Qt.AlignRight)
         if not self.check_global_local_graph:
             self.animate_toggle.hide()
     #################################################################################################
 
     def toggle_optical_effect(self):
-         #Corrected optical effect
+        # Corrected optical effect
         grid_optical = QGridLayout()
         label_optical = QLabel("Correction optical effect")
-        toggle_optical = QtToggle(120, 30, '#777', '#ffffff', '#4997d0', 'None', 'Manual')
+        toggle_optical = QtToggle(
+            120, 30, '#777', '#ffffff', '#4997d0', 'None', 'Manual')
         toggle_optical.clicked.connect(self.optical_effect)
         toggle_optical.stateChanged.connect(toggle_optical.start_transition)
         toggle_optical.setObjectName('toggle_optical')
@@ -793,9 +825,9 @@ class View(QMainWindow, QWidget):
         self.grid_supervised.addLayout(grid_optical, 3, 0, 1, 2)
 
     ##################################################################################################
-   
+
     def type_supervised(self):
-         #radio group for the type of each curve
+        # radio group for the type of each curve
         group_button_type = QGroupBox('Pull: Type?')
         group_type = QButtonGroup()
         vbox_type = QHBoxLayout()
@@ -833,7 +865,7 @@ class View(QMainWindow, QWidget):
         self.grid_supervised.addWidget(group_button_type, 5, 0, 1, 2)
 
     ##################################################################################################
-    
+
     def keyPressEvent(self, event):
         super(View, self).keyPressEvent(event)
         self.keyPressed.emit(event)
@@ -843,8 +875,8 @@ class View(QMainWindow, QWidget):
         if self.check_graph:
             self.setFocus()
 
-
     ##################################################################################################
+
     def on_key(self, event):
         """
         management of the left and right arrows 
@@ -888,16 +920,17 @@ class View(QMainWindow, QWidget):
             self.show_graphic()
 
     #############################################################################################
-    
+
     def modif_supervised(self, name_group):
         """
         Action when clicking on the checkboxes
         """
         sender = self.sender()
         if self.dict_supervised[self.current_curve.file] == sender.parent().parent():
-            self.controller.add_feature(self.current_curve.file, name_group, sender.text())
+            self.controller.add_feature(
+                self.current_curve.file, name_group, sender.text())
         self.show_graphic()
-    
+
     ############################################################################################
 
     def option_supervised(self, option):
@@ -916,20 +949,34 @@ class View(QMainWindow, QWidget):
         self.toggle = self.sender()
         self.check_toggle = self.toggle.isChecked()
         self.intreval_optical_effect = []
-         
         if self.check_toggle:
-            if self.dict_supervised[self.current_curve.file] ==  self.sender().parent():
-                fig = plt.figure()
+            if self.dict_supervised[self.current_curve.file] == self.sender().parent():
+                fig = Figure()
                 self.dict_fig_open[self.current_curve.file] = fig
-                self.current_curve.correction_optical_effect_object.manual_correction(fig, self.methods['factor_noise'])
+                fig = self.current_curve.correction_optical_effect_object.manual_correction(
+                    fig, self.methods['factor_noise'])
                 fig.canvas.mpl_connect('pick_event', self.data_select)
                 fig.canvas.mpl_connect('close_event', self.close_window_plot)
+                self.graph_view = GraphView()
+                canvas = FigureCanvasQTAgg(fig)
+                toolbar_optical = NavigationToolbar2QT(canvas, self.graph_view)
+                button_accept_correction = QPushButton('Accept correction')
+                self.graph_view.main_layout_optical.addWidget(
+                    toolbar_optical, 0, 0, 1, 1)
+                self.graph_view.main_layout_optical.addWidget(
+                    canvas, 1, 0, 4, 2)
+                self.graph_view.main_layout_optical.addWidget(
+                    button_accept_correction, 0, 1, 1, 1)
+                button_accept_correction.clicked.connect(
+                    self.accept_manual_correction)
+                button_accept_correction.hide()
+                self.graph_view.showMaximized()
         else:
             plt.close()
         self.setFocus()
 
     ###########################################################################################
-    
+
     def data_select(self, event):
         if isinstance(event.artist, Line2D):
             thisline = event.artist
@@ -939,16 +986,43 @@ class View(QMainWindow, QWidget):
             self.intreval_optical_effect.append(ind[0])
             if len(self.intreval_optical_effect) > 2:
                 self.dict_fig_open[self.current_curve.file].clear()
-                self.current_curve.correction_optical_effect_object.manual_correction(self.dict_fig_open[self.current_curve.file], self.methods['factor_noise'])
+                self.dict_fig_open[self.current_curve.file] = self.current_curve.correction_optical_effect_object.manual_correction(
+                    self.dict_fig_open[self.current_curve.file], self.methods['factor_noise'])
+                for child in self.graph_view.children():
+                    if isinstance(child, QPushButton):
+                        child.hide()
                 self.toggle.setChecked(True)
             if len(self.intreval_optical_effect) <= 2:
                 ax = self.dict_fig_open[self.current_curve.file].axes[0]
-                ax.plot(xdata[ind[0]], ydata[ind[0]], marker='D', color='orange')
+                ax.plot(xdata[ind[0]], ydata[ind[0]],
+                        marker='D', color='orange')
                 plt.draw()
                 if len(self.intreval_optical_effect) == 2:
-                    self.current_curve.correction_optical_effect_object.correction_optical_effect(self.intreval_optical_effect, self.dict_fig_open[self.current_curve.file])
+                    self.current_curve.correction_optical_effect_object.correction_optical_effect(
+                        self.intreval_optical_effect, self.dict_fig_open[self.current_curve.file])
+                    for child in self.graph_view.children():
+                        if isinstance(child, QPushButton):
+                            child.show()
             if len(self.intreval_optical_effect) > 2:
                 self.intreval_optical_effect = []
+            canvas = FigureCanvasQTAgg(
+                self.dict_fig_open[self.current_curve.file])
+            self.graph_view.main_layout_optical.addWidget(canvas, 1, 0, 4, 2)
+            self.graph_view.showMaximized()
+
+    #####################################################################################################
+
+    def accept_manual_correction(self):
+        """
+        TODO
+        """
+        print(self.current_curve.features['optical_state'])
+        self.current_curve.correction_optical_effect_object.accept_correction()
+        self.graph_view.close()
+        self.current_curve.analyzed_curve(self.methods)
+        self.current_curve.features['optical_state'] = "Manual"
+        self.show_graphic()
+        print(self.current_curve.features['optical_state'])
 
     ###########################################################################################
 
@@ -965,9 +1039,11 @@ class View(QMainWindow, QWidget):
         """
         Generates the output file when Save is clicked
         """
-        directory = QFileDialog.getExistingDirectory(self, "Open folder", ".", QFileDialog.ShowDirsOnly)
+        directory = QFileDialog.getExistingDirectory(
+            self, "Open folder", ".", QFileDialog.ShowDirsOnly)
         today = str(date.today())
-        time_today = str(datetime.now().time().replace(microsecond=0)).replace(':', '-')
+        time_today = str(datetime.now().time().replace(
+            microsecond=0)).replace(':', '-')
         if self.check_graph:
             self.current_curve.output['treat_supervised'] = True
         self.controller.output_save(directory)
@@ -975,11 +1051,12 @@ class View(QMainWindow, QWidget):
         methods['methods'] = self.methods
         output_methods = pd.DataFrame()
         output_methods = output_methods.from_dict(methods, orient='index')
-        list_labels_methods = ['condition', 'drug', 'bead_radius', 'model', 'eta', 'pulling_length', 'threshold_align',\
-                                'jump_force', 'jump_distance', 'jump_point', 'factor_noise', 'optical']
+        list_labels_methods = ['condition', 'drug', 'bead_radius', 'model', 'eta', 'pulling_length', 'threshold_align',
+                               'jump_force', 'jump_distance', 'jump_point', 'factor_noise', 'optical']
         output_methods = output_methods[list_labels_methods]
-        output_methods.to_csv(directory + sep + 'methods_' + today + '_' + time_today + '.tsv', sep='\t', encoding='utf-8', na_rep="NaN")
-        
+        output_methods.to_csv(directory + sep + 'methods_' + today + '_' +
+                              time_today + '.tsv', sep='\t', encoding='utf-8', na_rep="NaN")
+
         if self.check_graph or self.save_table.isChecked():
             self.close()
 
@@ -990,11 +1067,14 @@ class View(QMainWindow, QWidget):
         self.nb_save_graph += 1
         name_img = ""
         if self.nb_save_graph == 1:
-            self.directory_graphs = QFileDialog.getExistingDirectory(self, "Open folder", ".", QFileDialog.ShowDirsOnly)
+            self.directory_graphs = QFileDialog.getExistingDirectory(
+                self, "Open folder", ".", QFileDialog.ShowDirsOnly)
         if self.abscissa_curve:
-            name_img = self.controller.save_plot_step(self.fig, self.current_curve, 'global', self.directory_graphs)
+            name_img = self.controller.save_plot_step(
+                self.fig, self.current_curve, 'global', self.directory_graphs)
         else:
-            name_img = self.controller.save_plot_step(self.fig, self.current_curve, 'distance', self.directory_graphs)
+            name_img = self.controller.save_plot_step(
+                self.fig, self.current_curve, 'distance', self.directory_graphs)
         #label_save_graphs = QLabel('graph registered under the name: \n' + name_img)
         label_save_graphs = QLabel('well registered graphic')
         self.main_layout.addWidget(label_save_graphs, 3, 6, 1, 1)
@@ -1014,7 +1094,6 @@ class View(QMainWindow, QWidget):
         sleep(2.0)
         self.controller.save_graphs(directory)
         self.close()
-        
 
     #########################################################################################
 
@@ -1026,18 +1105,16 @@ class View(QMainWindow, QWidget):
             child = self.main_layout.takeAt(0)
             if child.widget():
                 child.widget().deleteLater()
-        
 
     ########################################################################################
-          
+
     def closeEvent(self, event):
         """
         Management of the closing of the main window
         """
         if self.info:
-            self.info.close()          
+            self.info.close()
         plt.close('all')
-        
 
 
 if __name__ == "__main__":

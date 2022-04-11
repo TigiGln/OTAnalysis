@@ -6,10 +6,12 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit
 
+
 class OpticalEffect:
     """
     Construction plan of an optical effect correction on a curved object
     """
+
     def __init__(self, curve):
         self.curve = curve
         self.segment_press = self.curve.dict_segments['Press']
@@ -17,74 +19,114 @@ class OpticalEffect:
         self.initialization_data()
 
     def initialization_data(self):
-        self.force_data_press = self.segment_press.corrected_data[self.curve.features['main_axis']['axe'] + 'Signal1']
+        """
+        TODO
+        """
+        self.force_data_press = self.segment_press.corrected_data[
+            self.curve.features['main_axis']['axe'] + 'Signal1']
         self.force_data_press_copy = self.force_data_press.copy()
-        self.force_data_pull = self.segment_pull.corrected_data[self.curve.features['main_axis']['axe'] + 'Signal1']
+        self.force_data_pull = self.segment_pull.corrected_data[
+            self.curve.features['main_axis']['axe'] + 'Signal1']
         self.force_data_pull_copy = self.force_data_pull.copy()
-        self.time_data_press = self.segment_press.corrected_data['seriesTime'].copy()
-        self.time_data_pull = self.segment_pull.corrected_data['seriesTime'].copy()
-        self.force_smooth_press = self.curve.smooth(self.force_data_press, self.time_data_press)
+        self.time_data_press = self.segment_press.corrected_data['seriesTime'].copy(
+        )
+        self.time_data_pull = self.segment_pull.corrected_data['seriesTime'].copy(
+        )
+        self.force_smooth_press = self.curve.smooth(
+            self.force_data_press, self.time_data_press)
         self.force_smooth_press_copy = self.force_smooth_press.copy()
 
     def fitting_and_contact_theorical(self, segment, tolerance):
+        """
+        TODO
+        """
         if segment == 'Press':
-            force_data_start = self.force_data_press[0:3000].reset_index(drop=True)
-            force_data_end = self.force_data_press[-200:].reset_index(drop=True)
-            time_data_start = self.time_data_press[0:3000].reset_index(drop=True)
+            force_data_start = self.force_data_press[0:3000].reset_index(
+                drop=True)
+            force_data_end = self.force_data_press[-200:].reset_index(
+                drop=True)
+            time_data_start = self.time_data_press[0:3000].reset_index(
+                drop=True)
             time_data_end = self.time_data_press[-200:].reset_index(drop=True)
-            index_contact = self.curve.retrieve_contact(self.force_data_press, segment, tolerance)
+            index_contact = self.curve.retrieve_contact(
+                self.force_data_press, segment, tolerance)
             length_end = len(self.force_data_press[index_contact[0]:])
             baseline = force_data_start.mean()
             baseline_force_data = np.full(len(self.force_data_press), baseline)
-            f_param = curve_fit(self.curve.test_fit, time_data_end, force_data_end)
-            fitted = self.curve.test_fit(self.time_data_press[-length_end:], f_param[0][0], f_param[0][1])
-            coor_x_contact_point_extrapolated = (f_param[0][1] - baseline)/(-f_param[0][0])
-            coor_y_contact_point_extrapolated = f_param[0][0] * coor_x_contact_point_extrapolated + f_param[0][1]
-            value_contact_point_theorical = self.time_data_press[self.time_data_press >= coor_x_contact_point_extrapolated].reset_index(drop=True)[0]
-            index_contact_point_theorical = np.where(self.time_data_press == value_contact_point_theorical)[0][0]
-            self.curve.features['contact_theorical_press'] = {'index': index_contact_point_theorical, 'value': self.force_data_press[index_contact_point_theorical]}
-            
+            f_param = curve_fit(self.curve.test_fit,
+                                time_data_end, force_data_end)
+            fitted = self.curve.test_fit(
+                self.time_data_press[-length_end:], f_param[0][0], f_param[0][1])
+            coor_x_contact_point_extrapolated = (
+                f_param[0][1] - baseline)/(-f_param[0][0])
+            coor_y_contact_point_extrapolated = f_param[0][0] * \
+                coor_x_contact_point_extrapolated + f_param[0][1]
+            value_contact_point_theorical = self.time_data_press[self.time_data_press >= coor_x_contact_point_extrapolated].reset_index(drop=True)[
+                0]
+            index_contact_point_theorical = np.where(
+                self.time_data_press == value_contact_point_theorical)[0][0]
+            self.curve.features['contact_theorical_press'] = {
+                'index': index_contact_point_theorical, 'value': self.force_data_press[index_contact_point_theorical]}
+
         elif segment == 'Pull':
             start_point = 0
             if self.curve.features['force_min_curve']['value'] > self.curve.features['force_min_press']['value']:
                 start_point = self.curve.features['force_min_curve']['index']
-            length_end = len(self.force_data_pull[start_point:self.curve.features['force_max_curve']['index']])
-            force_data_end = self.force_data_pull[-3000:].reset_index(drop=True)
-            force_data_start = self.force_data_pull[start_point:500].reset_index(drop=True)
+            length_end = len(
+                self.force_data_pull[start_point:self.curve.features['force_max_curve']['index']])
+            force_data_end = self.force_data_pull[-3000:].reset_index(
+                drop=True)
+            force_data_start = self.force_data_pull[start_point:500].reset_index(
+                drop=True)
             time_data_end = self.time_data_pull[-3000:].reset_index(drop=True)
-            time_data_start = self.time_data_pull[start_point:500].reset_index(drop=True)
+            time_data_start = self.time_data_pull[start_point:500].reset_index(
+                drop=True)
             baseline = force_data_end.mean()
             baseline_force_data = np.full(len(self.force_data_pull), baseline)
-            f_param = curve_fit(self.curve.test_fit, time_data_start, force_data_start)
-            fitted = self.curve.test_fit(self.time_data_pull[start_point:length_end], f_param[0][0], f_param[0][1])
-            coor_x_contact_point_extrapolated = (f_param[0][1] - baseline)/(-f_param[0][0])
-            coor_y_contact_point_extrapolated = f_param[0][0] * coor_x_contact_point_extrapolated + f_param[0][1]
-            value_contact_point_theorical = self.time_data_pull[self.time_data_pull <= coor_x_contact_point_extrapolated].reset_index(drop=True)
-            value_contact_point_theorical = value_contact_point_theorical[len(value_contact_point_theorical)-1]
-            index_contact_point_theorical = np.where(self.time_data_pull == value_contact_point_theorical)[0][0]
-            self.curve.features['contact_theorical_pull'] = {'index': index_contact_point_theorical, 'value': self.force_data_pull[index_contact_point_theorical]}
+            f_param = curve_fit(self.curve.test_fit,
+                                time_data_start, force_data_start)
+            fitted = self.curve.test_fit(
+                self.time_data_pull[start_point:length_end], f_param[0][0], f_param[0][1])
+            coor_x_contact_point_extrapolated = (
+                f_param[0][1] - baseline)/(-f_param[0][0])
+            coor_y_contact_point_extrapolated = f_param[0][0] * \
+                coor_x_contact_point_extrapolated + f_param[0][1]
+            value_contact_point_theorical = self.time_data_pull[self.time_data_pull <=
+                                                                coor_x_contact_point_extrapolated].reset_index(drop=True)
+            value_contact_point_theorical = value_contact_point_theorical[len(
+                value_contact_point_theorical)-1]
+            index_contact_point_theorical = np.where(
+                self.time_data_pull == value_contact_point_theorical)[0][0]
+            self.curve.features['contact_theorical_pull'] = {
+                'index': index_contact_point_theorical, 'value': self.force_data_pull[index_contact_point_theorical]}
         return coor_x_contact_point_extrapolated, coor_y_contact_point_extrapolated, baseline_force_data, fitted, length_end
 
     def manual_correction(self, fig, tolerance):
+        """
+        TODO
+        """
         print('manual_correction')
         force_data_press_copy = self.force_data_press_copy.copy()
         force_data_pull_copy = self.force_data_pull_copy.copy()
         std = float(self.curve.features['std_press'])
         if len(self.curve.dict_segments) == 2:
             coor_x_contact_point_extrapolated_press, coor_y_contact_point_extrapolated_press, baseline_force_data_press,\
-            fitted_press, length_stop_press = self.fitting_and_contact_theorical('Press', tolerance)
+                fitted_press, length_stop_press = self.fitting_and_contact_theorical(
+                    'Press', tolerance)
 
             coor_x_contact_point_extrapolated_pull, coor_y_contact_point_extrapolated_pull, baseline_force_data_pull,\
-            fitted_pull, length_stop_pull = self.fitting_and_contact_theorical('Pull', tolerance)
-            
-            
-            
+                fitted_pull, length_stop_pull = self.fitting_and_contact_theorical(
+                    'Pull', tolerance)
+
             ax1 = fig.add_subplot(221)
-            ax1.plot(self.time_data_press, force_data_press_copy, picker=True, pickradius=1)
+            ax1.plot(self.time_data_press, force_data_press_copy,
+                     picker=True, pickradius=1)
             ax1.plot(self.time_data_press, baseline_force_data_press)
             ax1.plot(self.time_data_press[-length_stop_press:], fitted_press)
-            ax1.plot(coor_x_contact_point_extrapolated_press, coor_y_contact_point_extrapolated_press, marker='D', color='yellow', label='contact point extrapolated')
-            ax1.plot(self.time_data_press[self.curve.features['contact_theorical_press']['index']], force_data_press_copy[self.curve.features['contact_theorical_press']['index']], marker='o', color='brown', label='contact_theorical')
+            ax1.plot(coor_x_contact_point_extrapolated_press, coor_y_contact_point_extrapolated_press,
+                     marker='D', color='yellow', label='contact point extrapolated')
+            ax1.plot(self.time_data_press[self.curve.features['contact_theorical_press']['index']], force_data_press_copy[
+                     self.curve.features['contact_theorical_press']['index']], marker='o', color='brown', label='contact_theorical')
             ax1.set_ylabel('force (pN')
             ax1.set_xlabel('time (s)')
 
@@ -92,25 +134,27 @@ class OpticalEffect:
             ax2.plot(self.time_data_pull, force_data_pull_copy)
             ax2.plot(self.time_data_pull, baseline_force_data_pull)
             ax2.plot(self.time_data_pull[:length_stop_pull], fitted_pull)
-            ax2.plot(coor_x_contact_point_extrapolated_pull, coor_y_contact_point_extrapolated_pull, marker='D', color='yellow', label='contact point extrapolated')
-            ax2.plot(self.time_data_pull[self.curve.features['contact_theorical_pull']['index']], force_data_pull_copy[self.curve.features['contact_theorical_pull']['index']], marker='o', color='brown', label='contact_theorical')
+            ax2.plot(coor_x_contact_point_extrapolated_pull, coor_y_contact_point_extrapolated_pull,
+                     marker='D', color='yellow', label='contact point extrapolated')
+            ax2.plot(self.time_data_pull[self.curve.features['contact_theorical_pull']['index']],
+                     force_data_pull_copy[self.curve.features['contact_theorical_pull']['index']], marker='o', color='brown', label='contact_theorical')
             ax2.set_ylabel('force (pN')
             ax2.set_xlabel('time (s)')
-
-
-            figManager = plt.get_current_fig_manager()
-            figManager.window.showMaximized()
-            plt.draw()
 
             return fig
 
     def automatic_correction(self, tolerance):
+        """
+        TODO
+        """
         print('automatic correction')
         if len(self.curve.dict_segments) == 2:
             coor_x_contact_point_extrapolated_press, coor_y_contact_point_extrapolated_press, baseline_force_data_press,\
-            fitted_press, length_stop_press = self.fitting_and_contact_theorical('Press', tolerance)
+                fitted_press, length_stop_press = self.fitting_and_contact_theorical(
+                    'Press', tolerance)
             coor_x_contact_point_extrapolated_pull, coor_y_contact_point_extrapolated_pull, baseline_force_data_pull,\
-            fitted_pull, length_stop_pull = self.fitting_and_contact_theorical('Pull', tolerance)
+                fitted_pull, length_stop_pull = self.fitting_and_contact_theorical(
+                    'Pull', tolerance)
             index_contact_point__theo_press = self.curve.features['contact_theorical_press']['index']
             index_contact_point_theo_pull = self.curve.features['contact_theorical_pull']['index']
 
@@ -118,12 +162,12 @@ class OpticalEffect:
             time_data_press_part = self.time_data_press.loc[:index_contact_point__theo_press]
             force_smooth_press = pd.Series(self.force_smooth_press)
             force_smooth_part = force_smooth_press.loc[:index_contact_point__theo_press]
-            
 
             force_data_pull_part = self.force_data_pull.loc[index_contact_point_theo_pull:]
             time_data_pull_part = self.time_data_pull.loc[index_contact_point_theo_pull:]
 
-            self.force_data_press.update(self.force_data_press-force_smooth_part)
+            self.force_data_press.update(
+                self.force_data_press-force_smooth_part)
             list_index = list(force_data_pull_part.index)
             list_value = list(force_smooth_part)
             list_value = [num for num in reversed(list_value)]
@@ -132,15 +176,20 @@ class OpticalEffect:
             else:
                 list_value = list_value[:len(list_index)]
             data_subtract = pd.DataFrame(list_value, index=list_index)
-            self.force_data_pull.update(self.force_data_pull - data_subtract[0]) 
+            self.force_data_pull.update(
+                self.force_data_pull - data_subtract[0])
 
     def correction_optical_effect(self, list_ind_correction, fig):
+        """
+        TODO
+        """
         force_data_pull_copy = self.force_data_pull_copy.copy()
         #index_contact_point_press = self.curve.features['contact_point']['index']
         index_contact_point_press = self.curve.features['contact_theorical_press']['index']
         index_contact_point_pull = self.curve.features['contact_theorical_pull']['index']
         force_smooth = pd.Series(self.force_smooth_press_copy)
-        data_range_press = force_smooth.loc[list_ind_correction[0]:list_ind_correction[1]]
+        data_range_press = force_smooth.loc[list_ind_correction[0]
+            :list_ind_correction[1]]
         delta_i2_press = 0
         delta_i2_pull = 0
         add_force_data_pull = 0
@@ -165,14 +214,16 @@ class OpticalEffect:
         list_value = []
         if add_force_data_pull != 0:
             list_value = list(data_range_press)
+            # print(len(list_index))
+            # print(len(list_value))
             list_value = list_value[:len(list_index)]
         else:
             list_value = list(data_range_press)
         list_value = [num for num in reversed(list_value)]
         data_subtract = pd.DataFrame(list_value, index=list_index)
         dict_param = {'list_ind_correction': list_ind_correction, 'index_contact_point_press': index_contact_point_press,
-                    'index_contact_point_pull': index_contact_point_pull, 'list_index': list_index, 'data_range_press': data_range_press,
-                    'data_subtract': data_subtract}
+                      'index_contact_point_pull': index_contact_point_pull, 'list_index': list_index, 'data_range_press': data_range_press,
+                      'data_subtract': data_subtract}
 
         self.plot_correction_manual(fig, dict_param)
 
@@ -185,25 +236,33 @@ class OpticalEffect:
         index_contact_point__exp_press = self.curve.features['contact_point']['index']
         index_contact_point_exp_pull = self.curve.features['point_release']['index']
         force_smooth = pd.Series(self.force_smooth_press_copy)
-        y_lim = (self.curve.features['force_min_curve']['value']-2 , self.curve.features['force_max_curve']['value'] + 2)
+        y_lim = (self.curve.features['force_min_curve']['value']-2,
+                 self.curve.features['force_max_curve']['value'] + 2)
         ax1 = fig.axes[0]
         for element in ax1.lines:
-            if element.get_marker() == 'D' and element.get_label() != 'contact point extrapolated' :
+            if element.get_marker() == 'D' and element.get_label() != 'contact point extrapolated':
                 element.set_marker("")
         ax1.set_title('segment Press')
         ax1.set_ylim(y_lim)
-        ax1.plot(self.time_data_press, force_smooth, color="#80cdc1" ,label='smooth')
+        ax1.plot(self.time_data_press, force_smooth,
+                 color="#80cdc1", label='smooth')
         #ax1.plot(self.time_data_press[index_contact_point__exp_press], self.force_data_press_copy[index_contact_point__exp_press], marker='D', color='cyan')
-        ax1.plot(self.time_data_press[dict_param['index_contact_point_press']], force_data_press_copy[dict_param['index_contact_point_press']], marker='D', color='brown', label='contact point')
-        ax1.plot(self.time_data_press[dict_param['list_ind_correction'][0]], force_data_press_copy[dict_param['list_ind_correction'][0]], marker='o', color='#08CC0A',label="first point intreval")
-        ax1.plot(self.time_data_press[dict_param['list_ind_correction'][1]], force_data_press_copy[dict_param['list_ind_correction'][1]], marker='o', color='red',label="last point intreval")
+        ax1.plot(self.time_data_press[dict_param['index_contact_point_press']],
+                 force_data_press_copy[dict_param['index_contact_point_press']], marker='D', color='brown', label='contact point')
+        ax1.plot(self.time_data_press[dict_param['list_ind_correction'][0]],
+                 force_data_press_copy[dict_param['list_ind_correction'][0]], marker='o', color='#08CC0A', label="first point intreval")
+        ax1.plot(self.time_data_press[dict_param['list_ind_correction'][1]],
+                 force_data_press_copy[dict_param['list_ind_correction'][1]], marker='o', color='red', label="last point intreval")
         ax1.legend(loc='lower left')
 
         ax2 = fig.axes[1]
-        ax2.plot(self.time_data_pull[dict_param['index_contact_point_pull']], force_data_pull_copy[dict_param['index_contact_point_pull']], marker='D', color='brown', label='contact point')
+        ax2.plot(self.time_data_pull[dict_param['index_contact_point_pull']],
+                 force_data_pull_copy[dict_param['index_contact_point_pull']], marker='D', color='brown', label='contact point')
         #ax2.plot(self.time_data_pull[index_contact_point_exp_pull], self.force_data_pull_copy[index_contact_point_exp_pull], marker='D', color='cyan')
-        ax2.plot(self.time_data_pull[dict_param['list_index'][0]], force_data_pull_copy[dict_param['list_index'][0]], marker='o', color='red', label="first point intreval")
-        ax2.plot(self.time_data_pull[dict_param['list_index'][-1]], force_data_pull_copy[dict_param['list_index'][-1]], marker='o', color='#08CC0A', label='last point intreval')
+        ax2.plot(self.time_data_pull[dict_param['list_index'][0]], force_data_pull_copy[dict_param['list_index']
+                 [0]], marker='o', color='red', label="first point intreval")
+        ax2.plot(self.time_data_pull[dict_param['list_index'][-1]], force_data_pull_copy[dict_param['list_index']
+                 [-1]], marker='o', color='#08CC0A', label='last point intreval')
         ax2.set_ylabel('force (pN')
         ax2.set_xlabel('time (s)')
         ax2.set_ylim(y_lim)
@@ -221,31 +280,53 @@ class OpticalEffect:
         ax4.set_ylabel('force (pN)')
         ax4.set_xlabel('time (s)')
         ax4.set_ylim(y_lim)
-        force_data_press_copy.update(force_data_press_copy- dict_param['data_range_press'])
+        force_data_press_copy.update(
+            force_data_press_copy - dict_param['data_range_press'])
         if self.curve.features['force_min_curve']['value'] < self.curve.features['force_min_press']['value'] and dict_param['data_subtract'][0].index[0] == 0:
-            list_range= list(range(self.curve.features['force_min_curve']['index']))
-            dict_param['data_subtract'] = dict_param['data_subtract'][0].drop(list_range)
-            force_data_pull_copy.update(force_data_pull_copy- dict_param['data_subtract'])
+            list_range = list(
+                range(self.curve.features['force_min_curve']['index']))
+            dict_param['data_subtract'] = dict_param['data_subtract'][0].drop(
+                list_range)
         else:
-            force_data_pull_copy.update(force_data_pull_copy- dict_param['data_subtract'][0])
-        
+            dict_param['data_subtract'] = dict_param['data_subtract'][0]
+        force_data_pull_copy.update(
+            force_data_pull_copy - dict_param['data_subtract'])
+
+        self.ydata_press = force_data_press_copy
+        self.ydata_pull = force_data_pull_copy
         ax3.plot(self.time_data_press, force_data_press_copy)
         #ax3.plot(self.time_data_press[index_contact_point__exp_press], force_data_press_copy[index_contact_point__exp_press], marker='D', color='cyan')
-        ax3.plot(self.time_data_press[dict_param['index_contact_point_press']], force_data_press_copy[dict_param['index_contact_point_press']], marker='D', color='brown', label='contact point')
-        ax3.plot(self.time_data_press[dict_param['list_ind_correction'][0]], force_data_press_copy[dict_param['list_ind_correction'][0]], marker='o', color='#08CC0A',label="first point intreval")
-        ax3.plot(self.time_data_press[dict_param['list_ind_correction'][1]], force_data_press_copy[dict_param['list_ind_correction'][1]], marker='o', color='red',label="last point intreval")
+        ax3.plot(self.time_data_press[dict_param['index_contact_point_press']],
+                 force_data_press_copy[dict_param['index_contact_point_press']], marker='D', color='brown', label='contact point')
+        ax3.plot(self.time_data_press[dict_param['list_ind_correction'][0]],
+                 force_data_press_copy[dict_param['list_ind_correction'][0]], marker='o', color='#08CC0A', label="first point intreval")
+        ax3.plot(self.time_data_press[dict_param['list_ind_correction'][1]],
+                 force_data_press_copy[dict_param['list_ind_correction'][1]], marker='o', color='red', label="last point intreval")
         ax3.legend(loc='lower left')
 
         ax4.plot(self.time_data_pull, force_data_pull_copy)
         #ax4.plot(self.time_data_pull[index_contact_point_exp_pull], force_data_pull_copy[index_contact_point_exp_pull], marker='D', color='cyan')
-        ax4.plot(self.time_data_pull[dict_param['index_contact_point_pull']], force_data_pull_copy[dict_param['index_contact_point_pull']], marker='D', color='brown', label='contact point')
-        ax4.plot(self.time_data_pull[dict_param['list_index'][0]], force_data_pull_copy[dict_param['list_index'][0]], marker='o', color='red', label="first point intreval")
-        ax4.plot(self.time_data_pull[dict_param['list_index'][-1]], force_data_pull_copy[dict_param['list_index'][-1]], marker='o', color='#08CC0A', label='last point intreval')
+        ax4.plot(self.time_data_pull[dict_param['index_contact_point_pull']],
+                 force_data_pull_copy[dict_param['index_contact_point_pull']], marker='D', color='brown', label='contact point')
+        ax4.plot(self.time_data_pull[dict_param['list_index'][0]], force_data_pull_copy[dict_param['list_index']
+                 [0]], marker='o', color='red', label="first point intreval")
+        ax4.plot(self.time_data_pull[dict_param['list_index'][-1]], force_data_pull_copy[dict_param['list_index']
+                 [-1]], marker='o', color='#08CC0A', label='last point intreval')
         ax4.legend(loc='lower right')
-        
+
         fig.subplots_adjust(wspace=0.3, hspace=0.5)
         fig.tight_layout()
-            
-        
-        
-        
+
+    def accept_correction(self):
+        """
+        TODO
+        """
+        # print('accept')
+        # print(self.ydata_press)
+        # print(self.ydata_pull)
+        print(self.segment_press.corrected_data)
+        self.segment_press.corrected_data[self.curve.features['main_axis']
+                                          ['axe'] + 'Signal1'] = self.ydata_press
+        self.segment_pull.corrected_data[self.curve.features['main_axis']
+                                         ['axe'] + 'Signal1'] = self.ydata_pull
+        print(self.segment_press.corrected_data)

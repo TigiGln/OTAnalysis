@@ -20,11 +20,11 @@ import argparse
 from math import ceil, floor
 
 
-
 class Controller:
     """
     Instantiates "controller" objects for processing optical curves
     """
+
     def __init__(self, view=None, path_files=None):
         """
         initialization of the basic attributes of the control
@@ -42,8 +42,9 @@ class Controller:
         self.output = pd.DataFrame()
         if path_files is not None:
             self.set_list_files(path_files)
-            self.set_list_curve()
-        
+            methods = {'threshold_align': 30, 'pulling_length': 50, 'model': 'linear', 'eta': 0.5, 'bead_radius': 1, 'factor_noise': 5,
+                       'jump_force': 5, 'jump_points': 200, 'jump_distance': 200, 'drug': 'NaN', 'condition': 'NaN', 'optical': None}
+            self.set_list_curve(methods)
 
     ##############################################################################################
 
@@ -59,7 +60,8 @@ class Controller:
 
     ##############################################################################################
 
-    def set_list_curve(self, threshold_align=30, pulling_length=50, model='linear', eta=0.5, bead_ray=1, tolerance=5, jump_force=5, jump_points=200, jump_distance=200, drug='', condition='aCD3', optical_correction=None):
+    # def set_list_curve(self, threshold_align=30, pulling_length=50, model='linear', eta=0.5, bead_ray=1, tolerance=5, jump_force=5, jump_points=200, jump_distance=200, drug='', condition='aCD3', optical_correction=None):
+    def set_list_curve(self, methods):
         """
         creation of the curve list according to the file extension and its conformity
         """
@@ -69,47 +71,51 @@ class Controller:
             # print(self.files[index_file])
             new_curve = None
             type_file = self.files[index_file].split('.')[-1]
-            name_file = self.files[index_file].split(sep)[-1]#.split('.')[0:-1]
+            name_file = self.files[index_file].split(
+                sep)[-1]  # .split('.')[0:-1]
             #name_file = '.'.join(name_file)
             regex = re.match("^b[1-9]c[1-9][a-z]{0,2}-", name_file)
             name_file = name_file.split('-')
-            name_file = str(name_file[0][0:4])+ '-' + '-'.join(name_file[1:])
+            name_file = str(name_file[0][0:4]) + '-' + '-'.join(name_file[1:])
             nb = str(index_file+1) + "/" + str(len(self.files))
             if name_file not in self.dict_curve:
                 check_incomplete = False
                 if type_file == 'txt' and regex:
-                    new_curve, check_incomplete = Controller.open_file(self.files[index_file], threshold_align, pulling_length)
+                    new_curve, check_incomplete = Controller.open_file(
+                        self.files[index_file], methods['threshold_align'], methods['pulling_length'])
                 elif type_file == 'jpk-nt-force':
-                    new_curve, check_incomplete = Controller.create_object_curve(self.files[index_file], threshold_align, pulling_length)
+                    new_curve, check_incomplete = Controller.create_object_curve(
+                        self.files[index_file], methods['threshold_align'], methods['pulling_length'])
                 else:
-                    print('\n===============================================================================')
+                    print(
+                        '\n===============================================================================')
                     print(self.files[index_file].split(sep)[-1])
-                    print('===============================================================================')
+                    print(
+                        '===============================================================================')
                     print('non-conforming extension.')
                 if check_incomplete:
-                    self.list_file_imcomplete.add(self.files[index_file].split(sep)[-1])
+                    self.list_file_imcomplete.add(
+                        self.files[index_file].split(sep)[-1])
                 if new_curve is not None:
-                     
+
                     if new_curve.check_incomplete:
                         if type_file == 'jpk-nt-force':
                             type_file = type_file.split('-')[0]
-                        Controller.file_incomplete_rejected(type_file, self.files[index_file])
-                        self.list_file_imcomplete.add(self.files[index_file].split(sep)[-1])
+                        Controller.file_incomplete_rejected(
+                            type_file, self.files[index_file])
+                        self.list_file_imcomplete.add(
+                            self.files[index_file].split(sep)[-1])
                     else:
+                        optical_state = "NaN"
                         self.dict_curve[new_curve.file] = new_curve
-                        new_curve.compare_baseline_start_end(tolerance)
-                        if optical_correction == "Correction":
-                            new_curve.correction_optical_effect_object.automatic_correction(tolerance)
-                        new_curve.curve_approach_analyze(model, eta, bead_ray, tolerance)
-                        new_curve.curve_return_analyze(jump_force, jump_points, jump_distance, tolerance)
-                        
-                        new_curve.features['drug'] = drug
-                        new_curve.features['condition'] = condition
-                        new_curve.features['tolerance'] = tolerance
+                        new_curve.analyzed_curve(
+                            methods, methods['optical'])
             else:
-                print('\n===============================================================================')
+                print(
+                    '\n===============================================================================')
                 print(self.files[index_file].split(sep)[-1])
-                print('===============================================================================')
+                print(
+                    '===============================================================================')
                 print('files already processed')
             if self.view is not None:
                 self.view.info_processing(nb, len(self.files))
@@ -119,7 +125,7 @@ class Controller:
     def create_list_for_graphs(self):
         """
         creation of the list separating the curves in list of 2 for the display of the graphs sequentially
-        
+
         :return:
             list_curves_for_graphs: list
                 list of list with the curve to analysis for display graph
@@ -127,7 +133,8 @@ class Controller:
         list_curves_for_graphs = []
         nb_graph = 2
         for i in range(0, len(self.dict_curve), nb_graph):
-            list_curves_for_graphs.append(list(self.dict_curve.values())[i:i+nb_graph])
+            list_curves_for_graphs.append(
+                list(self.dict_curve.values())[i:i+nb_graph])
         return list_curves_for_graphs
 
     ##############################################################################################
@@ -140,7 +147,7 @@ class Controller:
                 index of the curve list
             abscissa_curve: str
                 name of the data for the abscissa of the curve
-        
+
         :return:
             fig: Object
                 figure to be displayed on the interface canvas
@@ -154,21 +161,24 @@ class Controller:
             curve = list_curves_for_graphs[n]
             fig = Figure()
             graph_position = 1
-            max_handle = [[],[]]
+            max_handle = [[], []]
             if abscissa_curve == 'time':
                 graph_position = self.plot_time(curve, fig, graph_position)
             else:
                 for segment in curve.dict_segments.values():
                     if segment.header_segment['segment-settings.style'] == "motion":
                         if segment.name == 'Press':
-                            time_wait = 'Waiting Time: ' + curve.parameters_header['header_global']['settings.segment.1.duration'] + ' s'
+                            time_wait = 'Waiting Time: ' + \
+                                curve.parameters_header['header_global']['settings.segment.1.duration'] + ' s'
                             title = segment.name + ' segment, ' + time_wait
                         elif segment.name == 'Pull':
                             #calcul_threshold = curve.features['tolerance'] * curve.graphics['threshold_pull'][0]/curve.features['tolerance']
                             title = f"{segment.name} segment"
-                        position = int(str(nb_graph)+ '2' + str(graph_position))
+                        position = int(str(nb_graph) + '2' +
+                                       str(graph_position))
                         ax = fig.add_subplot(position, title=title)
-                        graph_position = self.plot_distance(curve, segment, ax, graph_position)
+                        graph_position = self.plot_distance(
+                            curve, segment, ax, graph_position)
                         if segment.name == 'Press':
                             ax.legend(loc="lower left")
                         elif segment.name == 'Pull':
@@ -191,7 +201,7 @@ class Controller:
                 axis of the figure where to put the graph
             graph_position: int
                 position of the graph on the figure
-        
+
         :return:
             graph_position: int
                 back to the following chart positi
@@ -201,35 +211,45 @@ class Controller:
         distance_data = segment.corrected_data['distance']
         time_data = segment.corrected_data['seriesTime']
         fitted_data = curve.graphics['fitted_' + segment.name]
-        ax.plot(distance_data, force_data, color= "#c2a5cf")
-        ax.plot(distance_data, fitted_data, color= "#5aae61", label = curve.features['model'] + " fit")
+        ax.plot(distance_data, force_data, color="#c2a5cf")
+        ax.plot(distance_data, fitted_data, color="#5aae61",
+                label=curve.features['model'] + " fit")
         #y_smooth = curve.graphics['y_smooth_' + segment.name]
         y_smooth = curve.smooth(force_data, time_data, 151, 2)
-        ax.plot(distance_data, y_smooth, color= "#80cdc1")
+        ax.plot(distance_data, y_smooth, color="#80cdc1")
         index_x_0 = 0
         if segment.name == 'Press':
             threshold_press = curve.graphics['threshold_press']
             threshold_press_neg = np.negative(threshold_press)
-            calcul_threshold = curve.features['tolerance'] * curve.graphics['threshold_press'][0]/curve.features['tolerance']
+            calcul_threshold = curve.features['tolerance'] * \
+                curve.graphics['threshold_press'][0] / \
+                curve.features['tolerance']
             legend_threshold = f"{curve.features['tolerance']} x STD = +/- {calcul_threshold:.2f} pN"
-            ax.plot(distance_data, threshold_press, color='blue', label=legend_threshold, ls='-.', alpha=0.5)
-            ax.plot(distance_data, threshold_press_neg, color='blue', alpha=0.5, ls='-.')
+            ax.plot(distance_data, threshold_press, color='blue',
+                    label=legend_threshold, ls='-.', alpha=0.5)
+            ax.plot(distance_data, threshold_press_neg,
+                    color='blue', alpha=0.5, ls='-.')
             if self.view.methods['optical'] == "Correction":
                 index_x_0 = curve.features['contact_theorical_press']['index']
             else:
                 index_x_0 = curve.features['contact_point']['index']
             index_max = curve.features["force_min_press"]['index']
             max_curve = curve.features["force_min_curve"]['value']
-            ax.plot(distance_data[index_max], force_data[index_max], color= '#1b7837', marker= 'o', label = 'max')
-            ax.plot(distance_data[index_max], max_curve, color = 'yellow', marker='o', label='max_curve')
+            ax.plot(distance_data[index_max], force_data[index_max],
+                    color='#1b7837', marker='o', label='max')
+            ax.plot(distance_data[index_max], max_curve,
+                    color='yellow', marker='o', label='max_curve')
             ax.set_ylabel("Force (pN)")
         elif segment.name == 'Pull':
-            calcul_threshold = curve.features['tolerance'] * curve.graphics['threshold_pull'][0]/curve.features['tolerance']
+            calcul_threshold = curve.features['tolerance'] * \
+                curve.graphics['threshold_pull'][0]/curve.features['tolerance']
             legend_threshold = f"{curve.features['tolerance']} x STD = +/- {calcul_threshold:.2f} pN"
             threshold_pull = curve.graphics['threshold_pull']
             threshold_pull_neg = np.negative(threshold_pull)
-            ax.plot(distance_data, threshold_pull, color='blue', label=legend_threshold, ls='-.', alpha=0.5)
-            ax.plot(distance_data, threshold_pull_neg, color='blue', alpha=0.5, ls='-.')
+            ax.plot(distance_data, threshold_pull, color='blue',
+                    label=legend_threshold, ls='-.', alpha=0.5)
+            ax.plot(distance_data, threshold_pull_neg,
+                    color='blue', alpha=0.5, ls='-.')
             if self.view.methods['optical'] == "Correction":
                 index_x_0 = curve.features['contact_theorical_pull']['index']
             else:
@@ -240,25 +260,34 @@ class Controller:
                     index_milieu_derive = curve.graphics['milieu_pente']
                     index_max_derive = curve.graphics['index_max_derive']
                     index_min_derive = curve.graphics['min_derive']
-                    ax.plot(distance_data[index_milieu_derive], force_data[index_milieu_derive], marker='D', color='cyan')
-                    ax.plot(distance_data[index_max_derive], force_data[index_max_derive], marker='D', color='red')
-                    ax.plot(distance_data[index_min_derive], force_data[index_min_derive], marker='D', color='black')
-            if  curve.features['point_return_endline']['index'] != "NaN":
+                    ax.plot(distance_data[index_milieu_derive],
+                            force_data[index_milieu_derive], marker='D', color='cyan')
+                    ax.plot(distance_data[index_max_derive],
+                            force_data[index_max_derive], marker='D', color='red')
+                    ax.plot(distance_data[index_min_derive],
+                            force_data[index_min_derive], marker='D', color='black')
+            if curve.features['point_return_endline']['index'] != "NaN":
                 index_return = curve.features['point_return_endline']['index']
                 index_transition = curve.features['point_transition']['index']
-                ax.plot(distance_data[index_return], force_data[index_return], color= '#50441b', marker= 'o', label= 'return')
-                ax.plot(distance_data[index_transition], force_data[index_transition], color= '#1E90FF', marker= 'o', label= 'transition')
-            if 'type' in curve.features :
+                ax.plot(distance_data[index_return], force_data[index_return],
+                        color='#50441b', marker='o', label='return')
+                ax.plot(distance_data[index_transition], force_data[index_transition],
+                        color='#1E90FF', marker='o', label='transition')
+            if 'type' in curve.features:
                 if curve.features['type'] != 'NAD':
-                    ax.plot(distance_data[index_max], force_data[index_max], color= '#1b7837', marker= 'o', label = 'max')
+                    ax.plot(distance_data[index_max], force_data[index_max],
+                            color='#1b7837', marker='o', label='max')
             else:
                 if curve.features['automatic_type'] != 'NAD':
-                    ax.plot(distance_data[index_max], force_data[index_max], color= '#1b7837', marker= 'o', label = 'max')
-        ax.plot(distance_data[index_x_0], force_data[index_x_0], color= '#762a83', marker= 'o', label = 'contact/release')
-        ax.set_ylim(curve.features['force_min_curve']['value']-2 , curve.features['force_max_curve']['value'] + 2)
+                    ax.plot(distance_data[index_max], force_data[index_max],
+                            color='#1b7837', marker='o', label='max')
+        ax.plot(distance_data[index_x_0], force_data[index_x_0],
+                color='#762a83', marker='o', label='contact/release')
+        ax.set_ylim(curve.features['force_min_curve']['value']-2,
+                    curve.features['force_max_curve']['value'] + 2)
         ax.set_xlabel("Corrected distance (nm)")
         graph_position += 1
-            
+
         return graph_position
     ###########################################################################################################################################
 
@@ -273,7 +302,7 @@ class Controller:
                 figure where to insert the graphics
             graph_position: int
                 position of the graph on the figure
-        
+
         :return:
             graph_position: int
                 back to the following chart position
@@ -285,14 +314,17 @@ class Controller:
         time_data_pull = segment_pull.corrected_data['seriesTime']
         threshold_align = curve.graphics['threshold_press'][0]
         threshold_line_pos = np.full(len(data_total), threshold_align)
-        threshold_line_neg = np.negative(np.full(len(data_total['seriesTime']), threshold_align))
+        threshold_line_neg = np.negative(
+            np.full(len(data_total['seriesTime']), threshold_align))
         ax1 = fig.add_subplot(111, title="Main axis: " + main_axis)
-        data_total.plot(kind="line", x='seriesTime', y=main_axis + 'Signal1', \
-            xlabel='time (s)', ylabel='Force (pN)', ax=ax1, color='green', alpha=0.5, legend=None)
+        data_total.plot(kind="line", x='seriesTime', y=main_axis + 'Signal1',
+                        xlabel='time (s)', ylabel='Force (pN)', ax=ax1, color='green', alpha=0.5, legend=None)
         ax1.plot(data_total['seriesTime'], np.zeros(len(data_total[main_axis + 'Signal1'])),
-                    color='green', alpha=0.75)
-        ax1.plot(data_total['seriesTime'], threshold_line_pos, color='blue', label='threshold', ls='-.', alpha=0.5)
-        ax1.plot(data_total['seriesTime'], threshold_line_neg, color='blue', ls='-.', alpha=0.5)
+                 color='green', alpha=0.75)
+        ax1.plot(data_total['seriesTime'], threshold_line_pos,
+                 color='blue', label='threshold', ls='-.', alpha=0.5)
+        ax1.plot(data_total['seriesTime'], threshold_line_neg,
+                 color='blue', ls='-.', alpha=0.5)
         index_contact = curve.features['contact_point']['index']
         index_min_press = curve.features['force_min_press']['index']
         index_release = curve.features['point_release']['index']
@@ -300,14 +332,21 @@ class Controller:
         if curve.features['point_transition']['index'] != 'NaN' and curve.features['point_return_endline']['index'] != 'NaN':
             index_trasition = curve.features['point_transition']['index']
             index_return_endline = curve.features['point_return_endline']['index']
-            ax1.plot(time_data_pull[index_trasition], force_data_pull[index_trasition], marker='o', color='#1E90FF', label='transition point')
-            ax1.plot(time_data_pull[index_return_endline], force_data_pull[index_return_endline], marker='o', color='#50441b', label='return endline')
-        ax1.plot(data_total['time'][index_contact], data_total[main_axis + 'Signal1'][index_contact], marker='o', color='#762a83', label='contact point')
-        ax1.plot(data_total['time'][index_min_press], data_total[main_axis + 'Signal1'][index_min_press], marker='o', color='#8b5847', label= 'min press')
-        ax1.plot(curve.features['time_min_curve']['value'], curve.features['force_min_curve']['value'], marker='o', label='min curve', color='red')
-        ax1.plot(time_data_pull[index_release], force_data_pull[index_release], marker='o', color='#762a83', label='release point')
-        ax1.plot(time_data_pull[index_max], force_data_pull[index_max], marker='o', color='#1b7837', label='max curve')
-        ax1.legend(loc="lower left", ncol = 2)
+            ax1.plot(time_data_pull[index_trasition], force_data_pull[index_trasition],
+                     marker='o', color='#1E90FF', label='transition point')
+            ax1.plot(time_data_pull[index_return_endline], force_data_pull[index_return_endline],
+                     marker='o', color='#50441b', label='return endline')
+        ax1.plot(data_total['time'][index_contact], data_total[main_axis + 'Signal1']
+                 [index_contact], marker='o', color='#762a83', label='contact point')
+        ax1.plot(data_total['time'][index_min_press], data_total[main_axis + 'Signal1']
+                 [index_min_press], marker='o', color='#8b5847', label='min press')
+        ax1.plot(curve.features['time_min_curve']['value'], curve.features['force_min_curve']
+                 ['value'], marker='o', label='min curve', color='red')
+        ax1.plot(time_data_pull[index_release], force_data_pull[index_release],
+                 marker='o', color='#762a83', label='release point')
+        ax1.plot(time_data_pull[index_max], force_data_pull[index_max],
+                 marker='o', color='#1b7837', label='max curve')
+        ax1.legend(loc="lower left", ncol=2)
         return graph_position
 
     ###########################################################################################################################################
@@ -319,63 +358,68 @@ class Controller:
             curve = list_curves_for_graphs[n]
             main_axis = curve.features['main_axis']['axe']
             data_total = curve.retrieve_data_curve('data_corrected')
+            # print(data_total[main_axis + 'Signal1'])
             threshold_align = curve.graphics['threshold alignement']
             threshold_line_pos = np.full(len(data_total), threshold_align)
-            threshold_line_neg = np.negative(np.full(len(data_total['seriesTime']), threshold_align))
-            
+            threshold_line_neg = np.negative(
+                np.full(len(data_total['seriesTime']), threshold_align))
+
             gs = gridspec.GridSpec(7, 10)
-            ax1 = fig.add_subplot(gs[0:2, 0:4], title="Main axis: " + main_axis)
+            ax1 = fig.add_subplot(
+                gs[0:2, 0:4], title="Main axis: " + main_axis)
             # data_total.plot(kind="line", x='seriesTime', y=main_axis + 'Signal1', \
             #     xlabel='time (s)', ylabel='Force (pN)', ax=ax1, color='green', alpha=0.5, legend=None)
-            ax1.plot(data_total['seriesTime'], data_total[main_axis + 'Signal1'], color='green', alpha=0.5)
+            ax1.plot(data_total['seriesTime'], data_total[main_axis +
+                     'Signal1'], color='green', alpha=0.5)
             ax1.plot(data_total['seriesTime'], np.zeros(len(data_total[main_axis + 'Signal1'])),
-                        color='black', alpha=0.75)
-            ax1.plot(curve.features['time_min_curve']['value'], curve.features['force_min_curve']['value'], marker='o', label='force_min')
+                     color='black', alpha=0.75)
+            # ax1.plot(curve.features['time_min_curve']['value'],
+            #          curve.features['force_min_curve']['value'], marker='o', label='force_min')
             scale = 0
             if abs(ax1.get_ylim()[0]) < ax1.get_ylim()[1]:
                 scale = abs(ax1.get_ylim()[1])
             else:
-                scale = abs(ax1.get_ylim()[0]) 
+                scale = abs(ax1.get_ylim()[0])
             ax1.set_xlabel('time (s)')
             ax1.set_ylabel('Force (pN)')
-            ax1.set_ylim(-scale - 3 , scale + 3)
-            ax1.legend(loc='upper left')
+            ax1.set_ylim(-scale - 3, scale + 3)
+            # ax1.legend(loc='upper left')
             if main_axis == 'x':
                 ax2 = fig.add_subplot(gs[0:2, 5:7], title="Axis: y")
                 ax2.plot(data_total['seriesTime'], data_total['ySignal1'],
-                    color='grey', alpha=0.5)
+                         color='grey', alpha=0.5)
                 ax2.set_xlabel('time (s)')
                 ax2.plot(data_total['seriesTime'], np.zeros(len(data_total['ySignal1'])),
-                        color='black', alpha=0.75)
-                ax2.plot(data_total['seriesTime'], threshold_line_pos, 
-                        color='blue', ls='-.', alpha=0.5)
-                ax2.plot(data_total['seriesTime'], threshold_line_neg, 
-                        color='blue', ls='-.', alpha=0.5)
+                         color='black', alpha=0.75)
+                ax2.plot(data_total['seriesTime'], threshold_line_pos,
+                         color='blue', ls='-.', alpha=0.5)
+                ax2.plot(data_total['seriesTime'], threshold_line_neg,
+                         color='blue', ls='-.', alpha=0.5)
                 ax2.set_ylim(ax1.get_ylim())
             elif main_axis == 'y':
                 ax2 = fig.add_subplot(gs[0:2, 5:7], title="Axis: x")
                 ax2.plot(data_total['seriesTime'], data_total['xSignal1'],
-                    color='grey', alpha=0.5)
+                         color='grey', alpha=0.5)
                 ax2.set_xlabel('time (s)')
                 ax2.plot(data_total['seriesTime'], np.zeros(len(data_total['xSignal1'])),
-                        color='black', alpha=0.75)
-                ax2.plot(data_total['seriesTime'], threshold_line_pos, 
-                        color='blue', ls='-.', alpha=0.5)
-                ax2.plot(data_total['seriesTime'], threshold_line_neg, 
-                        color='blue', ls='-.', alpha=0.5)
+                         color='black', alpha=0.75)
+                ax2.plot(data_total['seriesTime'], threshold_line_pos,
+                         color='blue', ls='-.', alpha=0.5)
+                ax2.plot(data_total['seriesTime'], threshold_line_neg,
+                         color='blue', ls='-.', alpha=0.5)
                 ax2.set_ylim(ax1.get_ylim())
             ax3 = fig.add_subplot(gs[0:2, 8:10], title="Axis: z")
             ax3.plot(data_total['seriesTime'], data_total['zSignal1'],
-                color='grey', alpha=0.5)
+                     color='grey', alpha=0.5)
             ax3.set_xlabel('time (s)')
             ax3.plot(data_total['seriesTime'], np.zeros(len(data_total['zSignal1'])),
-                    color='black', alpha=0.75)
-            ax3.plot(data_total['seriesTime'], threshold_line_pos, 
-                        color='blue', ls='-.', alpha=0.5)
-            ax3.plot(data_total['seriesTime'], threshold_line_neg, 
-                        color='blue', ls='-.', alpha=0.5)
+                     color='black', alpha=0.75)
+            ax3.plot(data_total['seriesTime'], threshold_line_pos,
+                     color='blue', ls='-.', alpha=0.5)
+            ax3.plot(data_total['seriesTime'], threshold_line_neg,
+                     color='blue', ls='-.', alpha=0.5)
             ax3.set_ylim(ax1.get_ylim())
-        #version avec tous les segments
+        # version avec tous les segments
             length = len(curve.dict_segments.values())
             position_start_graph = 0
             num_segment = 0
@@ -383,28 +427,36 @@ class Controller:
                 if not segment.name.startswith('Wait'):
                     position_end_graph = 0
                     if num_segment == 0:
-                        position_end_graph = ceil(position_start_graph + 10/length -1)
+                        position_end_graph = ceil(
+                            position_start_graph + 10/length - 1)
                     else:
                         position_end_graph = 10
-                    ax4 = fig.add_subplot(gs[4:7, position_start_graph:position_end_graph])
+                    ax4 = fig.add_subplot(
+                        gs[4:7, position_start_graph:position_end_graph])
                     position_start_graph = position_end_graph + 1
-                    ax4.plot(segment.corrected_data['distance'], segment.corrected_data[main_axis + 'Signal1'], color="#c2a5cf")
-                    ax4.plot(segment.corrected_data['distance'], np.zeros(len(segment.corrected_data[main_axis + 'Signal1'])), color='black', alpha=0.75)
+                    print(segment.corrected_data[main_axis + 'Signal1'])
+                    ax4.plot(
+                        segment.corrected_data['distance'], segment.corrected_data[main_axis + 'Signal1'], color="#c2a5cf")
+                    ax4.plot(segment.corrected_data['distance'], np.zeros(
+                        len(segment.corrected_data[main_axis + 'Signal1'])), color='black', alpha=0.75)
                     ax4.set_xlabel('Corrected distance (nm)')
                 else:
-                    position_end_graph = floor(position_start_graph + 10/length - 1)
-                    ax4 = fig.add_subplot(gs[4:7, position_start_graph:position_end_graph])
-                    ax4.plot(segment.corrected_data['seriesTime'], segment.corrected_data[main_axis + 'Signal1'], color="#34b6cf")
+                    position_end_graph = floor(
+                        position_start_graph + 10/length - 1)
+                    ax4 = fig.add_subplot(
+                        gs[4:7, position_start_graph:position_end_graph])
+                    ax4.plot(
+                        segment.corrected_data['seriesTime'], segment.corrected_data[main_axis + 'Signal1'], color="#34b6cf")
                     position_start_graph = position_end_graph + 1
                     ax4.set_xlabel('time (s)')
                 if segment.name == 'Press':
                     ax4.set_ylabel('Force (pN)')
                 ax4.set_title(segment.name + ' Segment')
-                ax4.set_ylim(curve.features['force_min_curve']['value'] - 1, curve.features['force_max_pull']['value'] + 2)
+                ax4.set_ylim(curve.features['force_min_curve']['value'] -
+                             1, curve.features['force_max_pull']['value'] + 2)
                 num_segment += 1
         return fig, curve
 
-    
     ###########################################################################################################################################
 
     def save_plot_step(self, fig, curve, abscissa_curve, directory_graphs):
@@ -434,12 +486,11 @@ class Controller:
         if abscissa_curve == 'distance':
             name_img = 'fig_' + name_curve + '_' + str(today) + '_distance.png'
         else:
-            name_img = 'fig_' + name_curve + '_' + str(today) + '_time.png' 
-        fig.savefig(path_graphs.__str__() + sep + name_img, bbox_inches='tight')
+            name_img = 'fig_' + name_curve + '_' + str(today) + '_time.png'
+        fig.savefig(path_graphs.__str__() + sep +
+                    name_img, bbox_inches='tight')
 
         return name_img
-    
-
 
     ##############################################################################################
 
@@ -460,7 +511,8 @@ class Controller:
                 curve.add_feature(add_key, add_value)
             if add_key not in curve.features:
                 if add_key == 'type':
-                    curve.add_feature(add_key, curve.features['automatic_type'])
+                    curve.add_feature(
+                        add_key, curve.features['automatic_type'])
                 elif add_key == 'valid_fit_press' or add_key == 'valid_fit_pull':
                     curve.add_feature(add_key, 'False')
                 elif add_key == 'AL':
@@ -498,8 +550,8 @@ class Controller:
         else:
             self.files = [path_repository_study.__str__()]
 
-
     ##############################################################################################
+
     @staticmethod
     def parsing_generic(file):
         """
@@ -585,8 +637,9 @@ class Controller:
         if header_global[settings_segment + '.style'] == "motion":
             name_segment = list_name_motion[num_segment]
         else:
-            name_segment =  list_name_motion[1] + str(num_segment)
-        dataframe = pd.DataFrame(data_segment, columns=table_parameters["columns"].split(" "))
+            name_segment = list_name_motion[1] + str(num_segment)
+        dataframe = pd.DataFrame(
+            data_segment, columns=table_parameters["columns"].split(" "))
         dataframe = dataframe.apply(to_numeric)
         segment = Segment(info_segment, dataframe, name_segment)
         return segment
@@ -640,17 +693,19 @@ class Controller:
                 with the initiated one otherwise false
         """
         check_incomplete = False
-        expected_nb_segments = int(jpk_object.headers['header_global']['settings.segments.size'])
-        nb_segments_completed = int(jpk_object.headers['header_global']['force-segments.count'])
+        expected_nb_segments = int(
+            jpk_object.headers['header_global']['settings.segments.size'])
+        nb_segments_completed = int(
+            jpk_object.headers['header_global']['force-segments.count'])
         nb_segments_pause_null = 0
         if expected_nb_segments != nb_segments_completed:
             for index_segment in range(0, expected_nb_segments-1, 1):
-                style = jpk_object.headers['header_global']['settings.segment.' \
-                        + str(index_segment) + '.style']
+                style = jpk_object.headers['header_global']['settings.segment.'
+                                                            + str(index_segment) + '.style']
                 if style == 'pause':
-                    duration = float(jpk_object.headers['header_global']['settings.segment.' \
-                                + str(index_segment) + '.duration'])
-                    if  duration == 0.0:
+                    duration = float(jpk_object.headers['header_global']['settings.segment.'
+                                                                         + str(index_segment) + '.duration'])
+                    if duration == 0.0:
                         nb_segments_pause_null += 1
             if nb_segments_completed != (expected_nb_segments - nb_segments_pause_null):
                 check_incomplete = True
@@ -682,36 +737,40 @@ class Controller:
         nb_segments = 0
         dict_segments = {}
         title = file.split(sep)[-1].replace(".txt", "")
-        file_curve = file.__str__().split(sep)[-1]#.replace('.txt', "")
+        file_curve = file.__str__().split(sep)[-1]  # .replace('.txt', "")
         check_incomplete = False
         with open(file, 'r') as file_study:
             lines = file_study.read()
             file_study.seek(0)
             header['header_global'] = Controller.parsing_generic(file_study)
-            nb_segments = int(header['header_global']["settings.segments.size"])
+            nb_segments = int(header['header_global']
+                              ["settings.segments.size"])
             header['calibrations'] = Controller.parsing_generic(file_study)
-            check_incomplete = Controller.check_file_incomplete(lines, header['header_global'], \
-                                                            nb_segments)
+            check_incomplete = Controller.check_file_incomplete(lines, header['header_global'],
+                                                                nb_segments)
             if check_incomplete:
                 Controller.file_incomplete_rejected("txt", file)
             else:
                 num_segment = 0
                 while num_segment < nb_segments:
-                    segment = Controller.management_data(file_study, nb_segments,\
+                    segment = Controller.management_data(file_study, nb_segments,
                                                          num_segment, header['header_global'])
                     if num_segment < nb_segments-1:
-                        settings_segment = 'settings.segment.' + str(num_segment + 1)
+                        settings_segment = 'settings.segment.' + \
+                            str(num_segment + 1)
                         if header['header_global'][settings_segment + '.style'] != "motion":
-                            if float(header['header_global'][settings_segment + \
-                                                            ".duration"]) == 0.0:
+                            if float(header['header_global'][settings_segment +
+                                                             ".duration"]) == 0.0:
                                 num_segment += 1
                     num_segment += 1
                     dict_segments[segment.name] = segment
-                new_curve = Curve(file_curve, title, header, dict_segments, pulling_length)
-                dict_align = Controller.alignment_curve(file, new_curve, threshold_align)
+                new_curve = Curve(file_curve, title, header,
+                                  dict_segments, pulling_length)
+                dict_align = Controller.alignment_curve(
+                    file, new_curve, threshold_align)
                 new_curve.features['automatic_AL'] = dict_align
                 new_curve.features['AL'] = dict_align['AL']
-                
+
         return new_curve, check_incomplete
 
     ################################################################################################
@@ -726,7 +785,7 @@ class Controller:
                 path to the jpk-nt-force folder to extract and transform into a Curve python object
             threshold_align: int
                 percentage of maximum force for misalignment
-        
+
         :return:
             new_curve: Object
                 returns our curve object ready for analysis and classification
@@ -735,13 +794,14 @@ class Controller:
         """
         new_curve = None
         new_jpk = JPKFile(file)
-        file_curve = file.__str__().split(sep)[-1]#.replace('.jpk-nt-force', '')
+        # .replace('.jpk-nt-force', '')
+        file_curve = file.__str__().split(sep)[-1]
         check_incomplete = False
         check_incomplete = Controller.file_troncated(new_jpk)
         if check_incomplete:
             Controller.file_incomplete_rejected("jpk", file)
         else:
-            columns= []
+            columns = []
             dict_segments = {}
             for key in new_jpk.segments[0].data.keys():
                 columns.append(key)
@@ -756,31 +816,37 @@ class Controller:
                     if columns[index_column] == 't':
                         data_time = segment.get_array([columns[index_column]])
                         dataframe['time'] = data_time
-                        dataframe['seriesTime'] = dataframe['time'].add(time_end_segment \
+                        dataframe['seriesTime'] = dataframe['time'].add(time_end_segment
                                                                         + time_step)
                         if segment.index == 0:
                             time_step = dataframe['time'][1]
-                        time_end_segment = dataframe['seriesTime'][len(dataframe['seriesTime'])-1]
+                        time_end_segment = dataframe['seriesTime'][len(
+                            dataframe['seriesTime'])-1]
                     elif columns[index_column] == 'distance':
-                        data_distance = segment.get_array([columns[index_column]])
+                        data_distance = segment.get_array(
+                            [columns[index_column]])
                         dataframe['distance'] = data_distance
                     else:
-                        data_by_column = segment.get_array([columns[index_column]])
-                        dataframe[columns[index_column]] = data_by_column[:,0]
-                if float(new_jpk.headers["header_global"]["settings.segment." \
-                                        + str(num_segment) + ".duration"]) == 0.0:
+                        data_by_column = segment.get_array(
+                            [columns[index_column]])
+                        dataframe[columns[index_column]] = data_by_column[:, 0]
+                if float(new_jpk.headers["header_global"]["settings.segment."
+                                                          + str(num_segment) + ".duration"]) == 0.0:
                     num_segment += 1
                 if segment.header['segment-settings.style'] == "motion":
                     name_segment = list_name_segment[num_segment]
                 else:
-                    name_segment =  list_name_segment[num_segment] + str(num_segment)
+                    name_segment = list_name_segment[num_segment] + \
+                        str(num_segment)
                 num_segment += 1
                 dataframe = dataframe.apply(to_numeric)
                 new_segment = Segment(segment.header, dataframe, name_segment)
                 dict_segments[new_segment.name] = new_segment
             title = new_jpk.headers['title']
-            new_curve = Curve(file_curve, title, new_jpk.headers, dict_segments, pulling_length)
-            dict_align = Controller.alignment_curve(file, new_curve, threshold_align)
+            new_curve = Curve(file_curve, title, new_jpk.headers,
+                              dict_segments, pulling_length)
+            dict_align = Controller.alignment_curve(
+                file, new_curve, threshold_align)
             new_curve.features['automatic_AL'] = dict_align
             new_curve.features['AL'] = dict_align['AL']
         print(new_curve)
@@ -801,9 +867,11 @@ class Controller:
         """
         path_dir_incomplete = ""
         if extension == "jpk":
-            path_dir_incomplete = Path('..' + sep + 'File_rejected' + sep + 'Incomplete' + sep + 'JPK')
+            path_dir_incomplete = Path(
+                '..' + sep + 'File_rejected' + sep + 'Incomplete' + sep + 'JPK')
         else:
-            path_dir_incomplete = Path('..' + sep + 'File_rejected' + sep + 'Incomplete' + sep + 'TXT')
+            path_dir_incomplete = Path(
+                '..' + sep + 'File_rejected' + sep + 'Incomplete' + sep + 'TXT')
         path_dir_incomplete.mkdir(parents=True, exist_ok=True)
         file_curve = file.__str__().split(sep)[-1]
         copy(file, str(path_dir_incomplete))
@@ -812,7 +880,6 @@ class Controller:
         print(file_curve)
         print("========================================================================")
         print("File incomplete")
-
 
     ############################################################################################
 
@@ -840,9 +907,11 @@ class Controller:
             path_dir_alignment = ""
             name_file = file.split(sep)[-1]
             if name_file.split('.')[-1] == "txt":
-                path_dir_alignment = Path('..' + sep + 'File_rejected' + sep + 'Alignment' + sep + 'TXT')
+                path_dir_alignment = Path(
+                    '..' + sep + 'File_rejected' + sep + 'Alignment' + sep + 'TXT')
             elif name_file.split('.')[-1] == "jpk-nt-force":
-                path_dir_alignment = Path('..' + sep + 'File_rejected' + sep + 'Alignment' + sep + 'JPK')
+                path_dir_alignment = Path(
+                    '..' + sep + 'File_rejected' + sep + 'Alignment' + sep + 'JPK')
             path_dir_alignment.mkdir(parents=True, exist_ok=True)
             copy(file, str(path_dir_alignment))
         return dict_align
@@ -859,14 +928,13 @@ class Controller:
         """
         #list_curves_for_graphs = self.create_list_for_graphs()
         list_curves_for_graphs = list(self.dict_curve.values())
-        for index_list in range(0, len(list_curves_for_graphs), 1 ):
+        for index_list in range(0, len(list_curves_for_graphs), 1):
             fig, curve = self.show_plot(index_list)
             self.save_plot_step(fig, curve, 'distance', directory_graphs)
             fig, curve = self.show_plot(index_list, 'time')
             self.save_plot_step(fig, curve, 'time', directory_graphs)
             nb = str(index_list+1) + "/" + str(len(list_curves_for_graphs))
             self.view.info_processing(nb, len(list_curves_for_graphs))
-         
 
     ##############################################################################################
 
@@ -881,15 +949,19 @@ class Controller:
         """
         print("\noutput_save")
         today = str(date.today())
-        time_today = str(datetime.now().time().replace(microsecond=0)).replace(':', '-')
+        time_today = str(datetime.now().time().replace(
+            microsecond=0)).replace(':', '-')
         if len(self.dict_curve) > 0:
             dict_infos_curves = {}
             for curve in self.dict_curve.values():
                 curve.creation_output_curve()
                 dict_infos_curves[curve.file] = curve.output
-            self.output = self.output.from_dict(dict_infos_curves,  orient='index')
-            self.output['main_axis'] = self.output['main_axis_sign'] + self.output['main_axis_axe']
-            self.output.drop(['main_axis_sign', 'main_axis_axe'], axis=1, inplace=True)
+            self.output = self.output.from_dict(
+                dict_infos_curves,  orient='index')
+            self.output['main_axis'] = self.output['main_axis_sign'] + \
+                self.output['main_axis_axe']
+            self.output.drop(
+                ['main_axis_sign', 'main_axis_axe'], axis=1, inplace=True)
             if 'type' not in self.output:
                 self.output['type'] = self.output['automatic_type']
             if 'valid_fit_press' not in self.output:
@@ -904,14 +976,14 @@ class Controller:
             elif self.output['model'][0] == 'sphere':
                 name_parameters = 'young (Pa)'
                 error_parameters = 'error young (Pa)'
-            liste_labels = ['treat_supervised', 'automatic_type', 'type', 'automatic_AL', 'AL', 'automatic_AL_axe',\
-                            'model', 'Date', 'Hour', 'condition', 'drug', 'tolerance', 'bead', 'cell',\
-                            'main_axis', 'stiffness (N/m)', 'theorical_contact_force (N)', 'theorical_distance_Press (m)',\
-                            'theorical_speed_Press (m/s)', 'theorical_freq_Press (Hz)', 'theorical_distance_Pull (m)',\
-                            'theorical_speed_Pull (m/s)', 'theorical_freq_Pull (Hz)','baseline_press', 'std_press',\
-                            name_parameters, error_parameters, 'contact_point_index', 'contact_point_value',\
-                            'force_min_press_index', 'force_min_press_value', 'point_release_index',\
-                            'point_release_value', 'force_max_pull_index', 'force_max_pull_value',\
+            liste_labels = ['treat_supervised', 'automatic_type', 'type', 'automatic_AL', 'AL', 'automatic_AL_axe',
+                            'optical_state', 'model', 'Date', 'Hour', 'condition', 'drug', 'tolerance', 'bead', 'cell',
+                            'main_axis', 'stiffness (N/m)', 'theorical_contact_force (N)', 'theorical_distance_Press (m)',
+                            'theorical_speed_Press (m/s)', 'theorical_freq_Press (Hz)', 'theorical_distance_Pull (m)',
+                            'theorical_speed_Pull (m/s)', 'theorical_freq_Pull (Hz)', 'baseline_press', 'std_press',
+                            name_parameters, error_parameters, 'contact_point_index', 'contact_point_value',
+                            'force_min_press_index', 'force_min_press_value', 'point_release_index',
+                            'point_release_value', 'force_max_pull_index', 'force_max_pull_value',
                             'point_return_endline_index', 'point_return_endline_value']
             if len(liste_labels) != len(self.output.columns):
                 for label in self.output.columns:
@@ -919,20 +991,23 @@ class Controller:
                         if label == 'type':
                             liste_labels.insert(1, label)
                         elif label.startswith('time_segment_pause'):
-                            self.output[label] = self.output[label].replace(np.nan, 0)
+                            self.output[label] = self.output[label].replace(
+                                np.nan, 0)
                             if label.endswith('Wait1 (s)'):
-                                liste_labels.insert(liste_labels.index('theorical_freq_Press (Hz)') + 1, label)
+                                liste_labels.insert(liste_labels.index(
+                                    'theorical_freq_Press (Hz)') + 1, label)
                             else:
-                                liste_labels.insert(liste_labels.index('theorical_freq_Pull (Hz)') + 1, label)   
+                                liste_labels.insert(liste_labels.index(
+                                    'theorical_freq_Pull (Hz)') + 1, label)
                         else:
                             liste_labels.append(label)
             self.output = self.output[liste_labels]
-            
-            self.output.rename(columns={'baseline_press': 'baseline_press (pN)', 'std_press': 'std_press (pN)', 
+
+            self.output.rename(columns={'baseline_press': 'baseline_press (pN)', 'std_press': 'std_press (pN)',
                                         'contact_point_value': 'contact_point_value  (pN)', 'force_min_press_value': 'force_min_press_value (pN)',
                                         'point_release_value': 'point_release_value (pN)', 'force_max_pull_value': 'force_max_pull_value (pN)',
                                         'point_return_endline_value': 'point_return_endline_value (pN)'}, inplace=True)
-            
+
             for incomplete in self.list_file_imcomplete:
                 self.output.loc[incomplete, 'automatic_type'] = 'INC'
                 self.output.loc[incomplete, 'type'] = 'INC'
@@ -944,10 +1019,12 @@ class Controller:
                 path_directory.mkdir(parents=True, exist_ok=True)
                 path_directory = path_directory.__str__()
             name_file = path_directory + sep + 'output_' + today + '_' + time_today + '.csv'
-            self.output.to_csv(name_file, sep='\t', encoding='utf-8', na_rep="NaN")
+            self.output.to_csv(name_file, sep='\t',
+                               encoding='utf-8', na_rep="NaN")
             return Path(name_file)
 
     ##############################################################################################
+
 
 def parse_args():
     """
@@ -955,9 +1032,12 @@ def parse_args():
 
     """
     parser = argparse.ArgumentParser(description="Creation curve objects")
-    parser.add_argument("-p", "--path", type=str, help="Name of the folder containing the curves", required=True)
-    parser.add_argument("-o", "--output", help="Name of the folder where to save the results", required=True)
-    parser.add_argument("-m", "--method", type=argparse.FileType('r') ,help="path to a method file (.tsv)")
+    parser.add_argument("-p", "--path", type=str,
+                        help="Name of the folder containing the curves", required=True)
+    parser.add_argument(
+        "-o", "--output", help="Name of the folder where to save the results", required=True)
+    parser.add_argument("-m", "--method", type=argparse.FileType('r'),
+                        help="path to a method file (.tsv)")
     return parser.parse_args()
 
 
