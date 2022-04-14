@@ -12,5 +12,5 @@ class GraphView(QWidget):
         TODO
         """
         super(GraphView, self).__init__(parent)
-        self.main_layout_optical = QGridLayout()
-        self.setLayout(self.main_layout_optical)
+        self.main_layout = QGridLayout()
+        self.setLayout(self.main_layout)

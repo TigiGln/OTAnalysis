@@ -43,7 +43,7 @@ class Controller:
         if path_files is not None:
             self.set_list_files(path_files)
             methods = {'threshold_align': 30, 'pulling_length': 50, 'model': 'linear', 'eta': 0.5, 'bead_radius': 1, 'factor_noise': 5,
-                       'jump_force': 5, 'jump_points': 200, 'jump_distance': 200, 'drug': 'NaN', 'condition': 'NaN', 'optical': None}
+                       'jump_force': 5, 'jump_point': 200, 'jump_distance': 200, 'drug': 'NaN', 'condition': 'NaN', 'optical': None}
             self.set_list_curve(methods)
 
     ##############################################################################################
@@ -109,7 +109,8 @@ class Controller:
                         optical_state = "NaN"
                         self.dict_curve[new_curve.file] = new_curve
                         new_curve.analyzed_curve(
-                            methods, methods['optical'])
+                            methods, False)
+                        new_curve.features['type'] = new_curve.features['automatic_type']
             else:
                 print(
                     '\n===============================================================================')
@@ -434,7 +435,6 @@ class Controller:
                     ax4 = fig.add_subplot(
                         gs[4:7, position_start_graph:position_end_graph])
                     position_start_graph = position_end_graph + 1
-                    print(segment.corrected_data[main_axis + 'Signal1'])
                     ax4.plot(
                         segment.corrected_data['distance'], segment.corrected_data[main_axis + 'Signal1'], color="#c2a5cf")
                     ax4.plot(segment.corrected_data['distance'], np.zeros(
@@ -849,7 +849,6 @@ class Controller:
                 file, new_curve, threshold_align)
             new_curve.features['automatic_AL'] = dict_align
             new_curve.features['AL'] = dict_align['AL']
-        print(new_curve)
         return new_curve, check_incomplete
 
     ############################################################################################
@@ -935,6 +934,143 @@ class Controller:
             self.save_plot_step(fig, curve, 'time', directory_graphs)
             nb = str(index_list+1) + "/" + str(len(list_curves_for_graphs))
             self.view.info_processing(nb, len(list_curves_for_graphs))
+    
+    ##############################################################################################
+
+    def piechart(self, fig):
+        """
+        creation of pie charts for the analysis balance window
+
+        :parameters:
+            fig: main figure blank to be completed
+
+        :return:
+            fig: main figure completed by the different diagrams
+        """
+        #pie chart incomplete curves
+        ax_incomplete = fig.add_subplot(231)
+        nb_curves = len(self.dict_curve)
+        nb_files = len(self.files)
+        dict_type_auto = {'NAD': 0, 'AD': 0, 'FTU': 0, 'ITU': 0, 'RE': 0}
+        dict_type_supervised = {'NAD': 0, 'AD': 0, 'FTU': 0, 'ITU': 0, 'RE': 0}
+        nb_incomplete = len(self.list_file_imcomplete)
+        percent_treat =nb_curves/nb_files * 100
+        percent_incomplete = nb_incomplete/nb_files * 100
+        percent_no_conforming_files = (nb_files-(nb_incomplete + nb_curves))/nb_files * 100
+
+        dict_incomplete = {'INC':f"{percent_incomplete:.2f}", 'Treat':f"{percent_treat:.2f}", 'NC':f"{percent_no_conforming_files:.2f}"}
+        values = [percent_incomplete, percent_treat, percent_no_conforming_files]
+        values_incomplete = [value for value in values if value != 0]
+        explode_incomplete = ()
+        if len(values_incomplete) == 3:
+            explode_incomplete = (0.1, 0, 0.1)
+        elif len(values_incomplete) == 2:
+            explode_incomplete = (0.1, 0)
+        else:
+            explode_incomplete = None
+        ax_incomplete.pie(values_incomplete, explode=explode_incomplete ,autopct=lambda pct:Controller.make_autopct(pct, dict_incomplete), shadow=True)
+        title = 'Incomplete \nTotal files: ' + str(nb_files) + '\nTotal_files_curve: ' + str(nb_incomplete + nb_curves)
+        ax_incomplete.set_title(title)
+        ax_alignment_auto = fig.add_subplot(232)
+        ax_alignment_supervised = fig.add_subplot(233)
+        ax_classification_before = fig.add_subplot(234) 
+        ax_classification_after = fig.add_subplot(236)
+        nb_alignment_auto = 0
+        nb_alignment_supervised = 0
+        dict_correction = {'No_correction':0, 'Auto_correction':0, 'Manual_correction':0}
+        for curve in self.dict_curve.values():
+            if curve.features['automatic_AL']['AL'] == 'No':
+                nb_alignment_auto += 1
+            else:
+              if curve.features['automatic_type'] in dict_type_auto:
+                    dict_type_auto[curve.features['automatic_type']] += 1  
+            if curve.features['AL'] == 'No':
+                nb_alignment_supervised += 1
+            else:
+                if 'type' in curve.features:
+                    if curve.features['type'] in dict_type_supervised:
+                            dict_type_supervised[curve.features['type']] += 1
+            dict_correction[curve.features['optical_state']] += 1
+        nb_conforming_curves_auto = nb_curves - nb_alignment_auto
+        percent_alignment_auto = nb_alignment_auto/nb_curves * 100
+        percent_confoming_auto = nb_conforming_curves_auto/nb_curves * 100
+        dict_align_auto = {'AL':f"{percent_alignment_auto:.2f}", 'CONF':f"{percent_confoming_auto:.2f}"}
+
+        percent_alignment_supervised = nb_alignment_supervised/nb_curves * 100
+        nb_conforming_curves_supervised = nb_curves - nb_alignment_supervised
+        percent_confoming_supervised = nb_conforming_curves_supervised/nb_curves * 100
+        dict_align_supervised = {'AL':f"{percent_alignment_supervised:.2f}", 'CONF':f"{percent_confoming_supervised:.2f}"}
+
+        explode_align = (0.1, 0)
+        
+        values_align_auto = [percent_alignment_auto, percent_confoming_auto]
+        values_align_supervised = [percent_alignment_supervised, percent_confoming_supervised]
+        
+        ax_alignment_auto.pie(values_align_auto, explode=explode_align, autopct=lambda pct:Controller.make_autopct(pct, dict_align_auto), shadow=True, startangle=45)
+        ax_alignment_auto.set_title('Automatic Alignment\nTreated curves: ' + str(nb_curves))
+        ax_alignment_supervised.pie(values_align_supervised, explode=explode_align, autopct=lambda pct:Controller.make_autopct(pct, dict_align_supervised), shadow=True, startangle=45)
+        ax_alignment_supervised.set_title('Supervised Alignment\nTreated curves: ' + str(nb_curves))
+
+        percent_NAD_auto = dict_type_auto['NAD']/nb_conforming_curves_auto *100
+        print(percent_NAD_auto)
+        percent_AD_auto = dict_type_auto['AD']/nb_conforming_curves_auto *100
+        percent_FTU_auto = dict_type_auto['FTU']/nb_conforming_curves_auto *100
+        percent_ITU_auto = dict_type_auto['ITU']/nb_conforming_curves_auto *100
+        percent_RE_auto = dict_type_auto['RE']/nb_conforming_curves_auto*100
+        dict_classification_auto = {'NAD':f"{percent_NAD_auto:.2f}", 'AD':f"{percent_AD_auto:.2f}", 'FTU':f"{percent_FTU_auto:.2f}", 'ITU':f"{percent_ITU_auto:.2f}", 'RE':f"{percent_RE_auto:.2f}"}
+        values = [percent_FTU_auto, percent_NAD_auto, percent_RE_auto, percent_AD_auto, percent_ITU_auto]
+        values_auto = [value for value in values if value != 0]
+        ax_classification_before.pie(values_auto, autopct=lambda pct:Controller.make_autopct(pct, dict_classification_auto), shadow=True, startangle=45)
+        ax_classification_before.set_title('Classification before\nConforming curves: ' + str(nb_conforming_curves_auto))
+
+
+        ax_correction = fig.add_subplot(235)
+        percent_no_correction = dict_correction['No_correction']/nb_curves * 100
+        percent_auto_correction = dict_correction['Auto_correction']/nb_curves * 100
+        percent_manual_correction = dict_correction['Manual_correction']/nb_curves * 100
+        dict_correction_percent = {'No_correction':f"{percent_no_correction:.2f}", 'Auto_correction':f"{percent_auto_correction:.2f}", 'Manual_correction':f"{percent_manual_correction:.2f}"}
+        values= [percent_no_correction, percent_auto_correction, percent_manual_correction]
+        values_correction = [value for value in values if value != 0]
+        ax_correction.pie(values_correction, autopct=lambda pct:Controller.make_autopct(pct, dict_correction_percent), shadow=True, startangle=45)
+        ax_correction.set_title('State Corrections\nTreated curves: ' + str(nb_curves))
+
+        percent_NAD_supervised = dict_type_supervised['NAD']/nb_conforming_curves_supervised *100
+        percent_AD_supervised = dict_type_supervised['AD']/nb_conforming_curves_supervised *100
+        percent_FTU_supervised = dict_type_supervised['FTU']/nb_conforming_curves_supervised *100
+        percent_ITU_supervised = dict_type_supervised['ITU']/nb_conforming_curves_supervised *100
+        percent_RE_supervised = dict_type_supervised['RE']/nb_conforming_curves_supervised*100
+        dict_classification_supervised = {'NAD':f"{percent_NAD_supervised:.2f}", 'AD':f"{percent_AD_supervised:.2f}", 'FTU':f"{percent_FTU_supervised:.2f}", 'ITU':f"{percent_ITU_supervised:.2f}", 'RE':f"{percent_RE_supervised:.2f}"}
+        values = [percent_FTU_supervised, percent_NAD_supervised, percent_RE_supervised, percent_AD_supervised, percent_ITU_supervised]
+        values_supervised = [value for value in values if value != 0]
+        ax_classification_after.pie(values_supervised, autopct=lambda pct:Controller.make_autopct(pct, dict_classification_supervised), shadow=True, startangle=45)
+        ax_classification_after.set_title('Classification after\nConforming curves: ' + str(nb_conforming_curves_auto))
+
+        return fig
+    ##################################################################################################################################
+
+    @staticmethod
+    def make_autopct(pct, dico):
+        """
+        management of the labels of the corners of the diagram
+
+        :parameters:
+            dico:dictionary of values and labels of the diagram
+
+        :return:
+            pct: percentage
+            val: label
+        """
+        print(pct)
+        pct = f"{pct:.2f}"
+        #pct = np.round(pct, 2)
+        print(pct)
+        list_keys = list(dico.keys())
+        list_values = list(dico.values())
+        print(list_values)
+        num_key = list_values.index(pct)
+        val = list_keys[num_key]
+        del dico[val]
+        return f"{pct}%\n({val})"
 
     ##############################################################################################
 
@@ -962,8 +1098,6 @@ class Controller:
                 self.output['main_axis_axe']
             self.output.drop(
                 ['main_axis_sign', 'main_axis_axe'], axis=1, inplace=True)
-            if 'type' not in self.output:
-                self.output['type'] = self.output['automatic_type']
             if 'valid_fit_press' not in self.output:
                 self.output['valid_fit_press'] = True
             if 'valid_fit_pull' not in self.output:

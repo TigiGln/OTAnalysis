@@ -43,11 +43,11 @@ class OpticalEffect:
         if segment == 'Press':
             force_data_start = self.force_data_press[0:3000].reset_index(
                 drop=True)
-            force_data_end = self.force_data_press[-200:].reset_index(
+            force_data_end = self.force_data_press[-600:].reset_index(
                 drop=True)
             time_data_start = self.time_data_press[0:3000].reset_index(
                 drop=True)
-            time_data_end = self.time_data_press[-200:].reset_index(drop=True)
+            time_data_end = self.time_data_press[-600:].reset_index(drop=True)
             index_contact = self.curve.retrieve_contact(
                 self.force_data_press, segment, tolerance)
             length_end = len(self.force_data_press[index_contact[0]:])
@@ -138,7 +138,7 @@ class OpticalEffect:
                      marker='D', color='yellow', label='contact point extrapolated')
             ax2.plot(self.time_data_pull[self.curve.features['contact_theorical_pull']['index']],
                      force_data_pull_copy[self.curve.features['contact_theorical_pull']['index']], marker='o', color='brown', label='contact_theorical')
-            ax2.set_ylabel('force (pN')
+            ax2.set_ylabel('force (pN)')
             ax2.set_xlabel('time (s)')
 
             return fig
@@ -263,7 +263,7 @@ class OpticalEffect:
                  [0]], marker='o', color='red', label="first point intreval")
         ax2.plot(self.time_data_pull[dict_param['list_index'][-1]], force_data_pull_copy[dict_param['list_index']
                  [-1]], marker='o', color='#08CC0A', label='last point intreval')
-        ax2.set_ylabel('force (pN')
+        ax2.set_ylabel('force (pN)')
         ax2.set_xlabel('time (s)')
         ax2.set_ylim(y_lim)
         ax2.set_title('segment Pull')
@@ -271,7 +271,7 @@ class OpticalEffect:
 
         ax3 = fig.add_subplot(223)
         ax3.plot(self.time_data_press, force_data_press_copy)
-        ax3.set_ylabel('force (pN')
+        ax3.set_ylabel('force (pN)')
         ax3.set_xlabel('time (s)')
         ax3.set_ylim(y_lim)
 
@@ -321,12 +321,7 @@ class OpticalEffect:
         """
         TODO
         """
-        # print('accept')
-        # print(self.ydata_press)
-        # print(self.ydata_pull)
-        print(self.segment_press.corrected_data)
         self.segment_press.corrected_data[self.curve.features['main_axis']
                                           ['axe'] + 'Signal1'] = self.ydata_press
         self.segment_pull.corrected_data[self.curve.features['main_axis']
                                          ['axe'] + 'Signal1'] = self.ydata_pull
-        print(self.segment_press.corrected_data)

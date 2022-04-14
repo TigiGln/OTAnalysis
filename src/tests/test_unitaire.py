@@ -1,8 +1,15 @@
 """
-TODO
+change a line in the misc.py file
+from imp import reload by from importlib import reload
+
+to eliminate this warning:
+"DeprecationWarning: the imp module is deprecated in favour of importlib;"
+
+file path:
+~/anaconda3/lib/python3.9/site-packages/past/builtins/misc.py
 """
 
-from otanalysis.controller import Controller
+from src.controller.controller import Controller
 import pandas as pd
 
 class TestController:
@@ -11,7 +18,7 @@ class TestController:
     """
     @classmethod
     def setup_class(cls):
-        directory_test = 'software_test/data_test/verif'
+        directory_test = 'tests/data_test/verif'
         cls.controller = Controller(None, directory_test)
 
 
@@ -32,7 +39,7 @@ class TestController:
     def test_incomplete_file(self):
         #self.controller.files = []
         print(self.controller.files)
-        file_incomplete = 'software_test/data_test/verif/b5c5-2021.06.07-15.10.03.254.jpk-nt-force'
+        file_incomplete = 'tests/data_test/verif/b5c5-2021.06.07-15.10.03.254.jpk-nt-force'
         new_curve, check_incomplete_file = Controller.create_object_curve(file_incomplete, 30, 50)
         assert new_curve == None and check_incomplete_file == True
 

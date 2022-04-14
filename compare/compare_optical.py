@@ -31,6 +31,7 @@ class CompareOptical:
     def compare_df(self):
         df_compare = self.df1.compare(self.df2)
         print(df_compare)
+        return df_compare
 
     def plot_characteristics_measure(self, columns):
         df1 = self.df1[columns]
@@ -54,7 +55,7 @@ class CompareOptical:
                     int(str(nb_line_graph) + '4' + str(pos_graph)))
             for index, row in df1.iterrows():
                 ax.scatter(df1.loc[index][col],
-                           df2.loc[index][col], label=index)
+                           df2.loc[index][col], color='grey', alpha=0.5, label=index)
                 x0 = np.linspace(df1[col].min(), df1[col].max(), 100)
                 ax.plot(x0, x0, color='k', alpha=0.25)
                 ax.set_title(col)
@@ -63,29 +64,35 @@ class CompareOptical:
             handle = ax.get_legend_handles_labels()
             pos_graph += 1
         plt.subplots_adjust(wspace=0.5, hspace=0.8)
-        if len(columns) >= 6:
-            fig.legend(handles=handle[0], labels=handle[1],
-                       ncol=3, loc='lower center')
-        else:
-            fig.legend(handles=handle[0], labels=handle[1],
-                       loc='lower right')
+        # if len(columns) >= 6:
+        #     fig.legend(handles=handle[0], labels=handle[1],
+        #                ncol=3, loc='lower center')
+        # else:
+        #     fig.legend(handles=handle[0], labels=handle[1],
+        #                loc='lower right')
         mng = plt.get_current_fig_manager()
         mng.window.showMaximized()
         plt.show()
 
 
 if __name__ == "__main__":
+    PATH = 'result_test/'
+    FILE_NO_CORRECTION = 'output_2022-04-11_14-55-40.csv'
     df_no_correction = pd.read_csv(
-        'result_test/output_2022-04-11_14-55-40.csv', sep='\t')
+        PATH + FILE_NO_CORRECTION, sep='\t')
+    FILE_WITH_CORRECTION = 'output_2022-04-11_14-56-13.csv'
     df_with_correction = pd.read_csv(
-        'result_test/output_2022-04-11_14-56-13.csv', sep='\t')
+       PATH + FILE_WITH_CORRECTION , sep='\t')
+    FILE_WITH_MANUAL_CORRECTION = 'output_2022-04-11_17-49-36.csv'
     df_with_correction_manual = pd.read_csv(
-        'result_test/output_2022-04-11_17-49-36.csv', sep='\t')
+        PATH + FILE_WITH_MANUAL_CORRECTION, sep='\t')
     compare = CompareOptical(df_no_correction, df_with_correction,
                              'Output No correction', 'output with correction')
     # compare = CompareOptical(df_with_correction_manual, df_with_correction,
     #                          'Output manual correction ', 'output with correction')
-    compare.compare_df()
+    df_compare = compare.compare_df()
+    name_file = 'compare/compare_' + FILE_NO_CORRECTION + '_' + FILE_WITH_CORRECTION
+    df_compare.to_csv(name_file, sep='\t', encoding='utf-8', na_rep="NaN")
 
     columns1 = ['baseline_press (pN)', 'std_press (pN)', 'slope (pN/nm)',
                 'error (pN/nm)', 'Pente (pN/nm)']
