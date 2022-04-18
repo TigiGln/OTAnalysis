@@ -24,13 +24,14 @@ class Curve:
         Initialization attributes of the object and launch the functions
         """
         self.file = file
-        bead = title.split("-")[0][1:2]
-        cell = title.split("-")[0][3:4]
+        bead = title.split("-")[0][0:2]
+        cell = title.split("-")[0][2:4]
+        couple = title.split("-")[0][:4]
         self.parameters_header = header
         self.dict_segments = dict_segments  # Liste d'objets segments
         self.features = {}
         self.graphics = {}
-        self.output = {'bead': bead, 'cell': cell}
+        self.output = {'bead': bead, 'cell': cell, 'couple': couple}
         self.output['treat_supervised'] = False
         self.message = ""
 
@@ -480,7 +481,7 @@ class Curve:
 
         :parameters:
             tolerance: noise threshold in number of times the standard deviation
-        
+
         :return:
             f_parameters: fit parameters describing the model
             fitted: force data corresponding to the model 

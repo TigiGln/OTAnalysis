@@ -575,6 +575,7 @@ class View(QMainWindow, QWidget):
         self.count_select_plot += 1
         self.setFocus()
     ###################################################################################################
+
     def show_graphic(self):
         self.clear()
         self.setMouseTracking(True)
@@ -588,7 +589,7 @@ class View(QMainWindow, QWidget):
             self.navigation_button()
             self.button_supervised = QPushButton()
             self.button_supervised.setStyleSheet(
-                    "QPushButton { height: 2em; background-color: green;}")
+                "QPushButton { height: 2em; background-color: green;}")
             if self.check_supervised:
                 self.supervision_panel()
             else:
@@ -596,7 +597,6 @@ class View(QMainWindow, QWidget):
                 self.button_supervised.clicked.connect(
                     lambda: self.option_supervised(True))
                 self.main_layout.addWidget(self.button_supervised, 9, 0, 1, 6)
-            
 
     ###################################################################################################
 
@@ -624,7 +624,8 @@ class View(QMainWindow, QWidget):
                         if self.check_supervised:
                             button_bilan = QPushButton('Bilan')
                             button_bilan.clicked.connect(self.show_bilan)
-                            self.main_layout.addWidget(button_bilan, 8, 6, 1, 2)
+                            self.main_layout.addWidget(
+                                button_bilan, 8, 6, 1, 2)
             else:
                 # first page show_plot if nb page > 1
                 button_next.setText('Next')
@@ -961,10 +962,12 @@ class View(QMainWindow, QWidget):
                     fig = self.current_curve.correction_optical_effect_object.manual_correction(
                         fig, self.methods['factor_noise'])
                     fig.canvas.mpl_connect('pick_event', self.data_select)
-                    fig.canvas.mpl_connect('close_event', self.close_window_optical)
+                    fig.canvas.mpl_connect(
+                        'close_event', self.close_window_optical)
                     self.graph_view = GraphView()
                     canvas = FigureCanvasQTAgg(fig)
-                    toolbar_optical = NavigationToolbar2QT(canvas, self.graph_view)
+                    toolbar_optical = NavigationToolbar2QT(
+                        canvas, self.graph_view)
                     button_accept_correction = QPushButton('Accept correction')
                     self.graph_view.main_layout.addWidget(
                         toolbar_optical, 0, 0, 1, 1)
@@ -1043,13 +1046,21 @@ class View(QMainWindow, QWidget):
         today = str(date.today())
         self.graph_bilan = GraphView()
         hbox_bilan = QHBoxLayout()
-        frame =QFrame()
+        frame = QFrame()
         label_day = QLabel('Date: ' + today)
-        label_condition = QLabel('Condition: ' + str(self.methods['condition']))
+        label_condition = QLabel(
+            'Condition: ' + str(self.methods['condition']))
         label_drug = QLabel('Drug: ' + str(self.methods['drug']))
+        nb_beads, nb_cells, nb_couples = self.controller.count_cell_bead()
+        label_nb_bead = QLabel('Nb beads: ' + str(nb_beads) + '\nNb cells: ' +
+                               str(nb_cells) + '\nNb couples: ' + str(nb_couples))
+        label_type_files = QLabel('Nb txt files: ' + str(
+            self.controller.dict_type_files['txt']) + '\nNb jpk files: ' + str(self.controller.dict_type_files['jpk']))
         hbox_bilan.addWidget(label_day)
         hbox_bilan.addWidget(label_condition)
         hbox_bilan.addWidget(label_drug)
+        hbox_bilan.addWidget(label_nb_bead)
+        hbox_bilan.addWidget(label_type_files)
         frame.setLayout(hbox_bilan)
         frame.setFrameStyle(QFrame.Box | QFrame.Sunken)
         frame.setLineWidth(3)
@@ -1059,10 +1070,8 @@ class View(QMainWindow, QWidget):
         canvas = FigureCanvasQTAgg(fig)
         self.graph_bilan.main_layout.addWidget(frame, 0, 0, 1, 3)
         self.graph_bilan.main_layout.addWidget(canvas, 1, 0, 6, 3)
-        
+
         self.graph_bilan.showMaximized()
-
-
 
     ###########################################################################################
 
