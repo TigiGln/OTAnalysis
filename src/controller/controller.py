@@ -86,7 +86,7 @@ class Controller:
                         new_curve, check_incomplete = Controller.open_file(
                             self.files[index_file], methods['threshold_align'], methods['pulling_length'])
                         self.dict_type_files['txt'] += 1
-                    elif type_file == 'jpk-nt-force':
+                    elif type_file == 'jpk-nt-force' and regex:
                         new_curve, check_incomplete = Controller.create_object_curve(
                             self.files[index_file], methods['threshold_align'], methods['pulling_length'])
                         self.dict_type_files['jpk'] += 1
@@ -96,8 +96,13 @@ class Controller:
                         print(self.files[index_file].split(sep)[-1])
                         print(
                             '===============================================================================')
-                        print('non-conforming extension.')
+                        print('non-conforming file.')
                 except:
+                    print(
+                        '\n===============================================================================')
+                    print(self.files[index_file].split(sep)[-1])
+                    print(
+                        '===============================================================================')
                     print("The curve is not conform")
 
                 if check_incomplete:
@@ -242,9 +247,9 @@ class Controller:
             index_max = curve.features["force_min_press"]['index']
             max_curve = curve.features["force_min_curve"]['value']
             ax.plot(distance_data[index_max], force_data[index_max],
-                    color='#1b7837', marker='o', label='max')
+                    color='#1b7837', marker='o', label='min press')
             ax.plot(distance_data[index_max], max_curve,
-                    color='yellow', marker='o', label='max_curve')
+                    color='yellow', marker='o', label='min curve')
             ax.set_ylabel("Force (pN)")
         elif segment.name == 'Pull':
             calcul_threshold = curve.features['tolerance'] * \
@@ -260,18 +265,18 @@ class Controller:
                 index_x_0 = curve.features['contact_theorical_pull']['index']
             else:
                 index_x_0 = curve.features['point_release']['index']
-            index_max = curve.features['force_max_pull']['index']
-            if curve.features['automatic_type'] != 'NAD' and curve.features['automatic_type'] != 'RE':
-                if 'milieu_pente' in curve.graphics:
-                    index_milieu_derive = curve.graphics['milieu_pente']
-                    index_max_derive = curve.graphics['index_max_derive']
-                    index_min_derive = curve.graphics['min_derive']
-                    ax.plot(distance_data[index_milieu_derive],
-                            force_data[index_milieu_derive], marker='D', color='cyan')
-                    ax.plot(distance_data[index_max_derive],
-                            force_data[index_max_derive], marker='D', color='red')
-                    ax.plot(distance_data[index_min_derive],
-                            force_data[index_min_derive], marker='D', color='black')
+            index_max = curve.features['force_max_curve']['index']
+            # if curve.features['automatic_type'] != 'NAD' and curve.features['automatic_type'] != 'RE':
+                # if 'milieu_pente' in curve.graphics:
+                #     index_milieu_derive = curve.graphics['milieu_pente']
+                #     index_max_derive = curve.graphics['index_max_derive']
+                #     index_min_derive = curve.graphics['min_derive']
+                #     ax.plot(distance_data[index_milieu_derive],
+                #             force_data[index_milieu_derive], marker='D', color='cyan')
+                #     ax.plot(distance_data[index_max_derive],
+                #             force_data[index_max_derive], marker='D', color='red')
+                #     ax.plot(distance_data[index_min_derive],
+                #             force_data[index_min_derive], marker='D', color='black')
             if curve.features['point_return_endline']['index'] != "NaN":
                 index_return = curve.features['point_return_endline']['index']
                 index_transition = curve.features['point_transition']['index']
@@ -288,7 +293,8 @@ class Controller:
                     ax.plot(distance_data[index_max], force_data[index_max],
                             color='#1b7837', marker='o', label='max')
         ax.plot(distance_data[index_x_0], force_data[index_x_0],
-                color='#762a83', marker='o', label='contact/release')
+                color='#762a83', marker='o', label='contact')
+        
         ax.set_ylim(curve.features['force_min_curve']['value']-2,
                     curve.features['force_max_curve']['value'] + 2)
         ax.set_xlabel("Corrected distance (nm)")
@@ -334,12 +340,13 @@ class Controller:
         index_contact = curve.features['contact_point']['index']
         index_min_press = curve.features['force_min_press']['index']
         index_release = curve.features['point_release']['index']
-        index_max = curve.features['force_max_pull']['index']
-        if curve.features['point_transition']['index'] != 'NaN' and curve.features['point_return_endline']['index'] != 'NaN':
+        index_max = data_total[main_axis + 'Signal1'].argmax()
+        if curve.features['point_transition']['index'] != 'NaN':
             index_trasition = curve.features['point_transition']['index']
-            index_return_endline = curve.features['point_return_endline']['index']
             ax1.plot(time_data_pull[index_trasition], force_data_pull[index_trasition],
                      marker='o', color='#1E90FF', label='transition point')
+        if curve.features['point_return_endline']['index'] != 'NaN':
+            index_return_endline = curve.features['point_return_endline']['index']
             ax1.plot(time_data_pull[index_return_endline], force_data_pull[index_return_endline],
                      marker='o', color='#50441b', label='return endline')
         ax1.plot(data_total['time'][index_contact], data_total[main_axis + 'Signal1']
@@ -350,13 +357,16 @@ class Controller:
                  ['value'], marker='o', label='min curve', color='red')
         ax1.plot(time_data_pull[index_release], force_data_pull[index_release],
                  marker='o', color='#762a83', label='release point')
-        ax1.plot(time_data_pull[index_max], force_data_pull[index_max],
+        ax1.plot(data_total['seriesTime'][index_max], data_total[main_axis + 'Signal1'][index_max],
                  marker='o', color='#1b7837', label='max curve')
         ax1.legend(loc="lower left", ncol=2)
         return graph_position
 
     ###########################################################################################################################################
     def global_plot(self, n):
+        """
+        TODO
+        """
         #nb_graph = 1
         list_curves_for_graphs = list(self.dict_curve.values())
         fig = Figure()
@@ -425,7 +435,6 @@ class Controller:
             ax3.plot(data_total['seriesTime'], threshold_line_neg,
                      color='blue', ls='-.', alpha=0.5)
             ax3.set_ylim(ax1.get_ylim())
-        # version avec tous les segments
             length = len(curve.dict_segments.values())
             position_start_graph = 0
             num_segment = 0
@@ -457,8 +466,8 @@ class Controller:
                 if segment.name == 'Press':
                     ax4.set_ylabel('Force (pN)')
                 ax4.set_title(segment.name + ' Segment')
-                ax4.set_ylim(curve.features['force_min_curve']['value'] -
-                             1, curve.features['force_max_pull']['value'] + 2)
+                ax4.set_ylim(curve.features['force_min_curve']['value'] -1,
+                             curve.features['force_max_curve']['value'] + 2)
                 num_segment += 1
         return fig, curve
 
@@ -815,7 +824,6 @@ class Controller:
             list_name_segment = ["Press", "Wait", "Pull"]
             num_segment = 0
             for segment in new_jpk.segments:
-                print(len(new_jpk.segments))
                 name_segment = ""
                 dataframe = pd.DataFrame()
                 for index_column in range(0, len(columns), 1):
@@ -840,15 +848,15 @@ class Controller:
                                                           + str(num_segment) + ".duration"]) == 0.0:
                     num_segment += 1
                 if segment.header['segment-settings.style'] == "motion":
-                    if num_segment == 0 or num_segment == 2:
-                        print(list_name_segment)
-                        print(num_segment)
+                    if num_segment == 0 or num_segment==1 or num_segment == 2:
                         name_segment = list_name_segment[num_segment]
                     else:
-                        name_segment = "Next_segment_" + str(num_segment)
+                        name_segment = "Motion_" + str(num_segment)
                 else:
-                    name_segment = list_name_segment[num_segment] + \
-                        str(num_segment)
+                    if num_segment == 0 or num_segment == 1:
+                        name_segment = list_name_segment[num_segment]
+                    else:
+                        name_segment = "Wait_" + str(num_segment)
                 num_segment += 1
                 dataframe = dataframe.apply(to_numeric)
                 new_segment = Segment(segment.header, dataframe, name_segment)
@@ -990,7 +998,7 @@ class Controller:
         ax_incomplete.set_title(title)
         ax_alignment_auto = fig.add_subplot(232)
         ax_alignment_supervised = fig.add_subplot(233)
-        ax_classification_before = fig.add_subplot(234)
+        ax_classification_before = fig.add_subplot(235)
         ax_classification_after = fig.add_subplot(236)
         nb_alignment_auto = 0
         nb_alignment_supervised = 0
@@ -999,8 +1007,9 @@ class Controller:
         for curve in self.dict_curve.values():
             if curve.features['automatic_AL']['AL'] == 'No':
                 nb_alignment_auto += 1
-            else:
+            elif curve.features['automatic_AL']['AL'] == 'Yes':
                 if curve.features['automatic_type'] in dict_type_auto:
+                    print(curve.features['automatic_type'])
                     dict_type_auto[curve.features['automatic_type']] += 1
             if curve.features['AL'] == 'No':
                 nb_alignment_supervised += 1
@@ -1009,23 +1018,24 @@ class Controller:
                     if curve.features['type'] in dict_type_supervised:
                         dict_type_supervised[curve.features['type']] += 1
             dict_correction[curve.features['optical_state']] += 1
+        print(dict_type_auto)
         nb_conforming_curves_auto = nb_curves - nb_alignment_auto
         percent_alignment_auto = nb_alignment_auto/nb_curves * 100
-        percent_confoming_auto = nb_conforming_curves_auto/nb_curves * 100
+        percent_conforming_auto = nb_conforming_curves_auto/nb_curves * 100
         dict_align_auto = {'AL': f"{percent_alignment_auto:.2f}",
-                           'CONF': f"{percent_confoming_auto:.2f}"}
+                           'CONF': f"{percent_conforming_auto:.2f}"}
 
         percent_alignment_supervised = nb_alignment_supervised/nb_curves * 100
         nb_conforming_curves_supervised = nb_curves - nb_alignment_supervised
-        percent_confoming_supervised = nb_conforming_curves_supervised/nb_curves * 100
+        percent_conforming_supervised = nb_conforming_curves_supervised/nb_curves * 100
         dict_align_supervised = {
-            'AL': f"{percent_alignment_supervised:.2f}", 'CONF': f"{percent_confoming_supervised:.2f}"}
+            'AL': f"{percent_alignment_supervised:.2f}", 'CONF': f"{percent_conforming_supervised:.2f}"}
 
         explode_align = (0.1, 0)
 
-        values_align_auto = [percent_alignment_auto, percent_confoming_auto]
+        values_align_auto = [percent_alignment_auto, percent_conforming_auto]
         values_align_supervised = [
-            percent_alignment_supervised, percent_confoming_supervised]
+            percent_alignment_supervised, percent_conforming_supervised]
 
         ax_alignment_auto.pie(values_align_auto, explode=explode_align, autopct=lambda pct: Controller.make_autopct(
             pct, dict_align_auto), shadow=True, startangle=45)
@@ -1035,35 +1045,34 @@ class Controller:
             pct, dict_align_supervised), shadow=True, startangle=45)
         ax_alignment_supervised.set_title(
             'Supervised Alignment\nTreated curves: ' + str(nb_curves))
-
-        percent_NAD_auto = (
-            dict_type_auto['NAD']/nb_conforming_curves_auto * 100)
-        percent_AD_auto = (
-            dict_type_auto['AD']/nb_conforming_curves_auto * 100)
-        percent_FTU_auto = (
-            dict_type_auto['FTU']/nb_conforming_curves_auto * 100)
-        percent_ITU_auto = (
-            dict_type_auto['ITU']/nb_conforming_curves_auto * 100)
-        percent_RE_auto = (dict_type_auto['RE']/nb_conforming_curves_auto*100)
+        if nb_conforming_curves_auto != 0:
+            percent_NAD_auto = (
+                dict_type_auto['NAD']/nb_conforming_curves_auto * 100)
+            percent_AD_auto = (
+                dict_type_auto['AD']/nb_conforming_curves_auto * 100)
+            percent_FTU_auto = (
+                dict_type_auto['FTU']/nb_conforming_curves_auto * 100)
+            percent_ITU_auto = (
+                dict_type_auto['ITU']/nb_conforming_curves_auto * 100)
+            percent_RE_auto = (dict_type_auto['RE']/nb_conforming_curves_auto*100)
         dict_classification_auto = {'NAD': f"{percent_NAD_auto:.2f}", 'AD': f"{percent_AD_auto:.2f}",
                                     'FTU': f"{percent_FTU_auto:.2f}", 'ITU': f"{percent_ITU_auto:.2f}", 'RE': f"{percent_RE_auto:.2f}"}
-        values = [percent_FTU_auto, percent_NAD_auto,
-                  percent_RE_auto, percent_AD_auto, percent_ITU_auto]
-        values_auto = [value for value in values if value != 0]
+        values = [f"{percent_FTU_auto:.2f}", f"{percent_NAD_auto:.2f}", f"{percent_RE_auto:.2f}", f"{percent_AD_auto:.2f}", f"{percent_ITU_auto:.2f}"]
+        values_auto = [value for value in values if value != '0.00']
         ax_classification_before.pie(values_auto, autopct=lambda pct: Controller.make_autopct(
             pct, dict_classification_auto), shadow=True, startangle=45)
         ax_classification_before.set_title(
             'Classification before\nConforming curves: ' + str(nb_conforming_curves_auto))
 
-        ax_correction = fig.add_subplot(235)
+        ax_correction = fig.add_subplot(234)
         percent_no_correction = (
             dict_correction['No_correction']/nb_curves * 100)
         percent_auto_correction = (
             dict_correction['Auto_correction']/nb_curves * 100)
         percent_manual_correction = (
             dict_correction['Manual_correction']/nb_curves * 100)
-        dict_correction_percent = {'No_correction': f"{percent_no_correction:.2f}",
-                                   'Auto_correction': f"{percent_auto_correction:.2f}", 'Manual_correction': f"{percent_manual_correction:.2f}"}
+        dict_correction_percent = {'None': f"{percent_no_correction:.2f}",
+                                   'Auto': f"{percent_auto_correction:.2f}", 'Manual': f"{percent_manual_correction:.2f}"}
         values = [percent_no_correction,
                   percent_auto_correction, percent_manual_correction]
         values_correction = [value for value in values if value != 0]
@@ -1072,25 +1081,26 @@ class Controller:
         ax_correction.set_title(
             'State Correction\nTreated curves: ' + str(nb_curves))
 
-        percent_NAD_supervised = (
-            dict_type_supervised['NAD']/nb_conforming_curves_supervised * 100)
-        percent_AD_supervised = (
-            dict_type_supervised['AD']/nb_conforming_curves_supervised * 100)
-        percent_FTU_supervised = (
-            dict_type_supervised['FTU']/nb_conforming_curves_supervised * 100)
-        percent_ITU_supervised = (
-            dict_type_supervised['ITU']/nb_conforming_curves_supervised * 100)
-        percent_RE_supervised = (
-            dict_type_supervised['RE']/nb_conforming_curves_supervised*100)
+        if nb_conforming_curves_supervised != 0:
+            percent_NAD_supervised = (
+                dict_type_supervised['NAD']/nb_conforming_curves_supervised * 100)
+            percent_AD_supervised = (
+                dict_type_supervised['AD']/nb_conforming_curves_supervised * 100)
+            percent_FTU_supervised = (
+                dict_type_supervised['FTU']/nb_conforming_curves_supervised * 100)
+            percent_ITU_supervised = (
+                dict_type_supervised['ITU']/nb_conforming_curves_supervised * 100)
+            percent_RE_supervised = (
+                dict_type_supervised['RE']/nb_conforming_curves_supervised*100)
         dict_classification_supervised = {'NAD': f"{percent_NAD_supervised:.2f}", 'AD': f"{percent_AD_supervised:.2f}",
                                           'FTU': f"{percent_FTU_supervised:.2f}", 'ITU': f"{percent_ITU_supervised:.2f}", 'RE': f"{percent_RE_supervised:.2f}"}
-        values = [percent_FTU_supervised, percent_NAD_supervised,
-                  percent_RE_supervised, percent_AD_supervised, percent_ITU_supervised]
-        values_supervised = [value for value in values if value != 0]
+        values = [f"{percent_FTU_supervised:.2f}", f"{percent_NAD_supervised:.2f}",
+                  f"{percent_RE_supervised:.2f}", f"{percent_AD_supervised:.2f}", f"{percent_ITU_supervised:.2f}"]
+        values_supervised = [value for value in values if value != "0.00"]
         ax_classification_after.pie(values_supervised, autopct=lambda pct: Controller.make_autopct(
             pct, dict_classification_supervised), shadow=True, startangle=45)
         ax_classification_after.set_title(
-            'Classification after\nConforming curves: ' + str(nb_conforming_curves_auto))
+            'Classification after\nConforming curves: ' + str(nb_conforming_curves_supervised))
 
         return fig
     ##################################################################################################################################
@@ -1107,17 +1117,25 @@ class Controller:
             pct: percentage
             val: label
         """
-        pct = f"{pct:.2f}"
-        #pct = np.round(pct, 2)
-        list_keys = list(dico.keys())
-        list_values = list(dico.values())
-        num_key = list_values.index(pct)
-        val = list_keys[num_key]
-        del dico[val]
-        return f"{pct}%\n({val})"
+        try:
+            pct = f"{pct:.2f}"
+            list_keys = list(dico.keys())
+            list_values = list(dico.values())
+            num_key = list_values.index(pct)
+            val = list_keys[num_key]
+            del dico[val]
+            if float(pct) < 10:
+                return f"{pct}%({val})"
+            else:
+                return f"{pct}%\n({val})"
+        except:
+            print('value problem')
     #########################################################################################################
 
     def count_cell_bead(self):
+        """
+        TODO
+        """
         dict_beads = {}
         dict_cells = {}
         dict_couple = {}

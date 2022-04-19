@@ -139,9 +139,12 @@ class Curve:
         type_curve = self.compare_baseline_start_end(methods['factor_noise'])
         if not manual_correction:
             if methods['optical'] == "Correction":
-                self.correction_optical_effect_object.automatic_correction(
-                    methods['factor_noise'])
-                optical_state = "Auto_correction"
+                try:
+                    self.correction_optical_effect_object.automatic_correction(
+                        methods['factor_noise'])
+                    optical_state = "Auto_correction"
+                except:
+                    print('index error No correction')
         self.curve_approach_analyze(
             methods['model'].lower(), methods['eta'], methods['bead_radius'], methods['factor_noise'])
         type_curve = self.curve_return_analyze(
@@ -154,6 +157,8 @@ class Curve:
             self.features['type'] = type_curve
         else:
             self.features['automatic_type'] = type_curve
+        print(self.features['automatic_type'])
+        #print(self.features['type'])
 
     ################################################################################################
 
@@ -513,31 +518,6 @@ class Curve:
         fitted = self.fit_model_approach(
             distance_data, f_parameters[0][0], f_parameters[0][1], f_parameters[0][2])
         self.graphics['fitted_Press'] = fitted
-        #y_smooth_approach = Curve.smooth(force_data)
-
-        # self.graphics['y_smooth_Press'] = y_smooth_approach
-
-        # gmodel = Model(self.fit_model_approach)
-        # print(contact_point)
-        # print(k)
-        # print(baseline)
-        # print(force_data.shape)
-        # print(distance_data.shape)
-        # params = gmodel.make_params()
-        # params.add('contact_point', value=0, min=-2, max=2)
-        # #params.add('k', value=k)
-        # params.add('baseline', value=baseline)
-        # params.add('k', value=-1e-4, max=-0.001)
-
-        # result = gmodel.fit(force_data, params, data_corrected_stiffness=distance_data)
-        # print(result.values)
-        # fitted = self.fit_model_approach(distance_data, result.values['contact_point'], result.values['k'] , result.values['baseline'])
-        # self.graphics['fitted_Press'] = fitted
-        # f_parameters = np.array(list(result.values.values()))
-        # print(result.covar)
-        # f_covariance = np.array(result.covar)
-        # f_params= (f_parameters, f_covariance)
-        # print(f_params)
 
         return f_parameters, fitted
 
@@ -562,12 +542,13 @@ class Curve:
             std = data_analyze[len(data_analyze)-300:].std()
             line_pos_threshold = np.full(len(data_analyze), std*tolerance)
         for index in range(len(data_analyze)-1, -1, -1):
-            if baseline - std < data_analyze[index] < baseline + std:
+            if baseline - std < data_analyze[index] < abs(baseline) + abs(std):
                 list_index_contact.append(index)
         if segment == "Press":
             index_contact = list_index_contact[0]
         else:
             index_contact = list_index_contact[-1]
+        print(index_contact)
         return index_contact, line_pos_threshold
 
     ###################################################################################################
@@ -582,48 +563,47 @@ class Curve:
         error_young = None
         #error_contact = None
         slope = None
-        if 'model' in self.features:
-            f_parameters, fitted = self.fit_curve_approach(tolerance)
-            if np.isfinite(np.sum(f_parameters[1])):
-                error = np.sqrt(np.diag(f_parameters[1]))
-            if self.features['model'] == 'linear':
-                slope = f_parameters[0][1]
-                self.features['slope (pN/nm)'] = format(slope, '.2E')
-                if isinstance(error, np.ndarray):
-                    error_young = error[1]
-                    self.features['error (pN/nm)'] = format(error_young, '.2E')
-                else:
-                    self.features['error (pN/nm)'] = error_young
-                self.message += "Slope (pN/nm) = " + \
-                    str(slope) + " +/-" + str(error_young)
-                print("Slope (pN/nm) = " + str(slope) +
-                      " +/-" + str(error_young))
-            elif self.features['model'] == 'sphere':
-                young = Curve.determine_young_modulus(
-                    f_parameters[0][1], eta, bead_ray)
-                error_young = Curve.determine_young_modulus(
-                    error[1], eta, bead_ray)
-                if young.any() < 0.0:
-                    young = None
-                    error_young = None
-                self.features['young (Pa)'] = young
-                self.features['error young (Pa)'] = error_young
-                self.message += "Young modulus (Pa) = " + \
-                    str(young) + " +/-" + str(error_young)
-                print("Young modulus (Pa) = " +
-                      str(young) + " +/- " + str(error_young))
+        f_parameters, fitted = self.fit_curve_approach(tolerance)
+        if np.isfinite(np.sum(f_parameters[1])):
+            error = np.sqrt(np.diag(f_parameters[1]))
+        if self.features['model'] == 'linear':
+            slope = f_parameters[0][1]
+            self.features['slope (pN/nm)'] = format(slope, '.2E')
+            if isinstance(error, np.ndarray):
+                error_young = error[1]
+                self.features['error (pN/nm)'] = format(error_young, '.2E')
             else:
-                self.message += "Model error"
-                self.message += "Trace not processed"
-                print("Model error")
-                print("Trace not processed")
+                self.features['error (pN/nm)'] = error_young
+            self.message += "Slope (pN/nm) = " + \
+                str(slope) + " +/-" + str(error_young)
+            print("Slope (pN/nm) = " + str(slope) +
+                    " +/-" + str(error_young))
+        elif self.features['model'] == 'sphere':
+            young = Curve.determine_young_modulus(
+                f_parameters[0][1], eta, bead_ray)
+            error_young = Curve.determine_young_modulus(
+                error[1], eta, bead_ray)
+            if young.any() < 0.0:
+                young = None
+                error_young = None
+            self.features['young (Pa)'] = young
+            self.features['error young (Pa)'] = error_young
+            self.message += "Young modulus (Pa) = " + \
+                str(young) + " +/-" + str(error_young)
+            print("Young modulus (Pa) = " +
+                    str(young) + " +/- " + str(error_young))
+        else:
+            self.message += "Model error"
+            self.message += "Trace not processed"
+            print("Model error")
+            print("Trace not processed")
 
-            length_segment = float(
-                self.dict_segments['Press'].header_segment['segment-settings.length'])
-            time_segment = float(
-                self.dict_segments['Press'].header_segment['segment-settings.duration'])
-            vitesse = round(length_segment/time_segment, 1)
-            self.dict_segments['Press'].features['vitesse'] = vitesse
+        length_segment = float(
+            self.dict_segments['Press'].header_segment['segment-settings.length'])
+        time_segment = float(
+            self.dict_segments['Press'].header_segment['segment-settings.duration'])
+        vitesse = round(length_segment/time_segment, 1)
+        self.dict_segments['Press'].features['vitesse'] = vitesse
 
     ###################################################################################################
 
@@ -654,69 +634,6 @@ class Curve:
         #line_pos_threshold = np.full(len(force_data),std_final_points*tolerance)
         endline = mean_final_points - std_final_points  # y0
         y_smooth = self.smooth(force_data, time_data, 151, 2)
-        ######################################################################
-        # n=8
-        # derive = self.derivation(y_smooth, time_data, n)
-        # #derive = np.diff(y_smooth)/np.diff(time_data)
-        # derive =  np.append(derive, derive[-n//2:])
-        # derive = np.insert(derive, [0], derive[0:int(n/2)], axis=0)
-        # #derive =  np.append(derive, derive[-1])
-        # derive_smooth = Curve.smooth(derive, distance_data, 101, 2)
-        # m=4
-        # derive_seconde =  self.derivation(derive_smooth, time_data, m)
-        # derive_seconde =  np.append(derive_seconde, derive_seconde[-m//2:])
-        # derive_seconde = np.insert(derive_seconde, [0], derive_seconde[0:int(m/2)], axis=0)
-        # #derive_seconde =np.diff(derive_smooth)/np.diff(time_data)
-        # #derive_seconde =  np.append(derive_seconde, derive_seconde[-1])
-        # derive_sec_smooth = Curve.smooth(derive_seconde, distance_data, 101, 2)
-        # derive_sec_smooth_neg = np.negative(derive_seconde)
-        # max_derive_seconde = derive_sec_smooth.max()
-        # max_derive_seconde_neg = derive_sec_smooth_neg.max()
-        # peaks, _ = find_peaks(derive_sec_smooth, height=10000, prominence=1)
-        # #peaks = peaks[peaks > 1000] - n
-        # peaks2, _2 = find_peaks(derive_sec_smooth_neg, height=10000, prominence=1)
-        # peaks2 = peaks2[peaks2 > 1000] - n
-
-        # # idx = []
-        # # for index_data in range(0, len(derive_smooth), 1):
-        # #     if -1.5 < derive_smooth[index_data] < 1.5:
-        # #         idx.append(index_data)
-        # #print('index: ', idx)
-
-        # #index_force_max_derive = np.where(derive_smooth == derive_smooth.max())[0][0]
-        # # index_min = np.where(derive_sec_smooth == derive_sec_smooth.min())[0][0]
-        # # #index_force_max = idx[0]+18
-        # # index_max = np.where(derive_sec_smooth == derive_sec_smooth[:index_min-10].max())[0][0]
-        # # index_min_2 = np.where(derive_sec_smooth == derive_sec_smooth[:index_max].min())[0][0]
-
-        # # # index_force_max_derive2 = np.where(derive_sec_smooth == derive_sec_smooth.max())[0][0]
-        # # #index_force_max_derive = index_force_max_derive
-        # if len(peaks2) > 0:
-        #     self.graphics['index_max_derive'] = peaks2[-1]
-
-        # if len(peaks) > 0:
-        #     self.graphics['index_max_derive2'] = peaks[-1]
-        # #plt.plot(time_data, derive_smooth)
-        # #plt.plot(time_data, derive_sec_smooth)
-        # y_smoothing = y_smooth*1000
-
-        # #plt.hlines(0,0,len(time_data)*(time_data[1]-time_data[0]))
-        # # # plt.plot(distance_data[index_force_max_derive], derive_smooth[index_force_max_derive], marker='D', color='cyan')
-        # # # index_max_2 = np.where(derive_smooth == derive_smooth[index_force_max_derive+10:].max())[0][0]
-        # # # self.graphics['index_max_derive2'] = index_max_2
-        # # plt.plot(time_data[index_min], y_smoothing[index_min], marker='D', color='red')
-        # # plt.plot(time_data[index_min_2], y_smoothing[index_min_2], marker='D', color='green')
-        # # plt.plot(time_data[index_force_max-1], derive_smooth[index_force_max-1], marker='D', color='purple')
-        # # plt.plot(time_data[index_force_max], derive_smooth[index_force_max], marker='D', color='cyan')
-        # plt.plot(time_data, y_smoothing)
-        # plt.plot(time_data[peaks], y_smoothing[peaks], "D")
-        # #plt.plot(time_data[peaks], derive_sec_smooth[peaks], "x")
-        # plt.plot(time_data[peaks2], y_smoothing[peaks2], "o")
-        # plt.savefig('graph_test/graph_' + self.file + '.png')
-        #plt.plot(time_data[index_force_max], y_smoothing[index_force_max], marker='D', color='blue')
-        #plt.plot(time_data[index_force_max_derive2], derive_sec_smooth[index_force_max_derive2], marker='D', color='red')
-        # plt.show()
-        ##########################################################################
         index_release, line_pos_threshold = Curve.retrieve_contact(
             force_data, "Pull", tolerance)
         self.graphics['threshold_pull'] = line_pos_threshold
@@ -753,21 +670,19 @@ class Curve:
         self.features['point_transition'] = {
             'index': 'NaN', 'value (pN)': 'NaN'}
         if type_curve == None:
-            force_max = force_data[index_release:index_release+1500].max()
-            index_force_max = np.where(force_data == force_max)[0][0]
-            if force_max <= seuil_jump_force:
+            index_force_max = y_smooth[index_release:index_release+1500].argmax()
+            if y_smooth[index_force_max] <= seuil_jump_force:
                 type_curve = 'NAD'
             else:
                 if index_return_end_line is not None:
                     self.features['point_return_endline'] = {
-                        'index': index_return_end_line, 'value': force_data[index_return_end_line]}
-                    index_transition = index_return_end_line - \
-                        int(segment.header_segment['segment-settings.num-points'])//1000
+                        'index': index_return_end_line, 'value': y_smooth[index_return_end_line]}
+                    index_transition = index_return_end_line - 10
+                        # int(segment.header_segment['segment-settings.num-points'])//1000
                     self.features['point_transition'] = {
-                        'index': index_transition, 'value (pN)': force_data[index_transition]}
-                    force_max = force_data[index_release:index_return_end_line].max(
+                        'index': index_transition, 'value (pN)': y_smooth[index_transition]}
+                    index_force_max = force_data[index_release:index_return_end_line].argmax(
                     )
-                    index_force_max = np.where(force_data == force_max)[0][0]
                     jump_force_start_pull = force_data[index_force_max] - \
                         force_data[index_release]
                     jump_distance_start_pull = distance_data[index_force_max] - \
@@ -786,10 +701,9 @@ class Curve:
                     else:
                         type_curve = 'FTU'
         else:
-            force_max = force_data.max()
-            index_force_max = np.where(force_data == force_max)[0][0]
+            index_force_max = force_data.argmax()
         self.features['force_max_pull'] = {
-            'index': index_force_max, 'value': force_max}
+            'index': index_force_max, 'value': force_data[index_force_max]}
 
         return type_curve
 

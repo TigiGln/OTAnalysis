@@ -41,8 +41,8 @@ class View(QMainWindow, QWidget):
         self.msgBox = QMessageBox()
         self.keyPressed.connect(self.on_key)
         self.nb_save_graph = 0
-        self.setWindowIcon(QIcon('pictures' + sep + 'icon.png'))
-        self.info.setWindowIcon(QIcon('pictures' + sep + 'icon.png'))
+        self.setWindowIcon(QIcon('../pictures' + sep + 'icon.png'))
+        self.info.setWindowIcon(QIcon('../pictures' + sep + 'icon.png'))
         self.setWindowTitle("View")
         self.size_window()
 
@@ -441,12 +441,12 @@ class View(QMainWindow, QWidget):
         self.methods['condition'] = condition
         self.controller.set_list_curve(self.methods)
         if len(self.controller.dict_curve) != 0:
-            if not self.check_methods:
-                self.button_load.deleteLater()
             self.choices_option()
         else:
             self.create_button_select_data()
         self.button_launch_analyze.deleteLater()
+        if not self.check_methods:
+            self.button_load.deleteLater()
     ####################################################################################################
 
     def choices_option(self):
@@ -601,18 +601,17 @@ class View(QMainWindow, QWidget):
     ###################################################################################################
 
     def navigation_button(self):
-        button_next = QPushButton()
+        button_next = QPushButton('Next')
         button_next.setFocusPolicy(Qt.StrongFocus)
         button_next.clicked.connect(self.next_plot)
         button_previous = QPushButton('Previous')
         button_previous.clicked.connect(self.previous_plot)
-        button_save = QPushButton('Previous')
+        
         if self.length_list_curve > 1:
             if self.n > 0:
                 # switch to the second page previous button always present
                 if self.n <= (self.length_list_curve-1):
                     # all pages between 2 pages and second last
-                    button_next.setText('Next')
                     if self.check_supervised:
                         self.main_layout.addWidget(button_previous, 1, 6, 1, 1)
                         self.main_layout.addWidget(button_next, 1, 7, 1, 1)
@@ -628,18 +627,18 @@ class View(QMainWindow, QWidget):
                                 button_bilan, 8, 6, 1, 2)
             else:
                 # first page show_plot if nb page > 1
-                button_next.setText('Next')
                 if self.check_supervised:
                     self.main_layout.addWidget(button_next, 1, 6, 1, 2)
                 else:
                     self.main_layout.addWidget(button_next, 8, 0, 1, 6)
         else:
             # page show plot if single page
-            button_save.setText("Save")
-            button_save.clicked.connect(self.save)
+            button_next.setDisabled(True)
             if not self.check_supervised:
-                self.main_layout.addWidget(button_save, 8, 0, 1, 6)
-            button_save.setStyleSheet("QPushButton { background-color: red; }")
+                self.main_layout.addWidget(button_next, 8, 0, 1, 6)
+            else:
+                self.main_layout.addWidget(button_next, 1, 6, 1, 2) 
+            
 
     ###################################################################################################
 
@@ -951,12 +950,13 @@ class View(QMainWindow, QWidget):
         """
         Creation of the manual optical correction interface
         """
-        self.toggle = self.sender()
-        self.check_toggle = self.toggle.isChecked()
-        self.intreval_optical_effect = []
-        if self.check_toggle:
-            if self.dict_supervised[self.current_curve.file] == self.sender().parent():
-                if len(self.current_curve.dict_segments) == 2:
+        try:
+            self.toggle = self.sender()
+            self.check_toggle = self.toggle.isChecked()
+            self.intreval_optical_effect = []
+            if self.check_toggle:
+                if self.dict_supervised[self.current_curve.file] == self.sender().parent():
+                    # if len(self.current_curve.dict_segments) == 2:
                     fig = Figure()
                     self.dict_fig_open[self.current_curve.file] = fig
                     fig = self.current_curve.correction_optical_effect_object.manual_correction(
@@ -979,9 +979,11 @@ class View(QMainWindow, QWidget):
                         self.accept_manual_correction)
                     button_accept_correction.hide()
                     self.graph_view.showMaximized()
-        else:
-            plt.close()
-        self.setFocus()
+            else:
+                plt.close()
+            self.setFocus()
+        except:
+            print('Index error')
 
     ###########################################################################################
 
@@ -1047,18 +1049,18 @@ class View(QMainWindow, QWidget):
         self.graph_bilan = GraphView()
         hbox_bilan = QHBoxLayout()
         frame = QFrame()
-        label_day = QLabel('Date: ' + today)
-        label_condition = QLabel(
-            'Condition: ' + str(self.methods['condition']))
-        label_drug = QLabel('Drug: ' + str(self.methods['drug']))
+        label_day = QLabel('Date: ' + today +  '\n' + 'Condition: ' + str(self.methods['condition']) + '\n' + 'Drug: ' + str(self.methods['drug']))
+        # label_condition = QLabel(
+        #     'Condition: ' + str(self.methods['condition']))
+        # label_drug = QLabel()
         nb_beads, nb_cells, nb_couples = self.controller.count_cell_bead()
         label_nb_bead = QLabel('Nb beads: ' + str(nb_beads) + '\nNb cells: ' +
                                str(nb_cells) + '\nNb couples: ' + str(nb_couples))
         label_type_files = QLabel('Nb txt files: ' + str(
             self.controller.dict_type_files['txt']) + '\nNb jpk files: ' + str(self.controller.dict_type_files['jpk']))
         hbox_bilan.addWidget(label_day)
-        hbox_bilan.addWidget(label_condition)
-        hbox_bilan.addWidget(label_drug)
+        # hbox_bilan.addWidget(label_condition)
+        # hbox_bilan.addWidget(label_drug)
         hbox_bilan.addWidget(label_nb_bead)
         hbox_bilan.addWidget(label_type_files)
         frame.setLayout(hbox_bilan)
@@ -1068,8 +1070,11 @@ class View(QMainWindow, QWidget):
         fig = Figure()
         fig = self.controller.piechart(fig)
         canvas = FigureCanvasQTAgg(fig)
-        self.graph_bilan.main_layout.addWidget(frame, 0, 0, 1, 3)
-        self.graph_bilan.main_layout.addWidget(canvas, 1, 0, 6, 3)
+        toolbar = NavigationToolbar2QT(self.canvas, self)
+        self.graph_bilan.main_layout.addWidget(toolbar, 0, 0, 1, 1)
+        self.graph_bilan.main_layout.addWidget(frame, 0, 1, 1, 3)
+        
+        self.graph_bilan.main_layout.addWidget(canvas, 1, 0, 6, 4)
 
         self.graph_bilan.showMaximized()
 
