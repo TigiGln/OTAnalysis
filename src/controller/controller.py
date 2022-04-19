@@ -65,6 +65,7 @@ class Controller:
         """
         creation of the curve list according to the file extension and its conformity
         """
+        self.dict_type_files = {'txt': 0, 'jpk': 0}
         self.list_file_imcomplete = set()
         for index_file in range(0, len(self.files), 1):
             # print(index_file)
@@ -80,24 +81,29 @@ class Controller:
             nb = str(index_file+1) + "/" + str(len(self.files))
             if name_file not in self.dict_curve:
                 check_incomplete = False
-                if type_file == 'txt' and regex:
-                    new_curve, check_incomplete = Controller.open_file(
-                        self.files[index_file], methods['threshold_align'], methods['pulling_length'])
-                elif type_file == 'jpk-nt-force':
-                    new_curve, check_incomplete = Controller.create_object_curve(
-                        self.files[index_file], methods['threshold_align'], methods['pulling_length'])
-                else:
-                    print(
-                        '\n===============================================================================')
-                    print(self.files[index_file].split(sep)[-1])
-                    print(
-                        '===============================================================================')
-                    print('non-conforming extension.')
+                try:
+                    if type_file == 'txt' and regex:
+                        new_curve, check_incomplete = Controller.open_file(
+                            self.files[index_file], methods['threshold_align'], methods['pulling_length'])
+                        self.dict_type_files['txt'] += 1
+                    elif type_file == 'jpk-nt-force':
+                        new_curve, check_incomplete = Controller.create_object_curve(
+                            self.files[index_file], methods['threshold_align'], methods['pulling_length'])
+                        self.dict_type_files['jpk'] += 1
+                    else:
+                        print(
+                            '\n===============================================================================')
+                        print(self.files[index_file].split(sep)[-1])
+                        print(
+                            '===============================================================================')
+                        print('non-conforming extension.')
+                except:
+                    print("The curve is not conform")
+
                 if check_incomplete:
                     self.list_file_imcomplete.add(
                         self.files[index_file].split(sep)[-1])
                 if new_curve is not None:
-
                     if new_curve.check_incomplete:
                         if type_file == 'jpk-nt-force':
                             type_file = type_file.split('-')[0]
@@ -106,7 +112,6 @@ class Controller:
                         self.list_file_imcomplete.add(
                             self.files[index_file].split(sep)[-1])
                     else:
-                        optical_state = "NaN"
                         self.dict_curve[new_curve.file] = new_curve
                         new_curve.analyzed_curve(
                             methods, False)
@@ -940,7 +945,7 @@ class Controller:
             self.save_plot_step(fig, curve, 'time', directory_graphs)
             nb = str(index_list+1) + "/" + str(len(list_curves_for_graphs))
             self.view.info_processing(nb, len(list_curves_for_graphs))
-    
+
     ##############################################################################################
 
     def piechart(self, fig):
@@ -953,19 +958,22 @@ class Controller:
         :return:
             fig: main figure completed by the different diagrams
         """
-        #pie chart incomplete curves
+        # pie chart incomplete curves
         ax_incomplete = fig.add_subplot(231)
         nb_curves = len(self.dict_curve)
         nb_files = len(self.files)
         dict_type_auto = {'NAD': 0, 'AD': 0, 'FTU': 0, 'ITU': 0, 'RE': 0}
         dict_type_supervised = {'NAD': 0, 'AD': 0, 'FTU': 0, 'ITU': 0, 'RE': 0}
         nb_incomplete = len(self.list_file_imcomplete)
-        percent_treat =nb_curves/nb_files * 100
+        percent_treat = nb_curves/nb_files * 100
         percent_incomplete = nb_incomplete/nb_files * 100
-        percent_no_conforming_files = (nb_files-(nb_incomplete + nb_curves))/nb_files * 100
+        percent_no_conforming_files = (
+            nb_files-(nb_incomplete + nb_curves))/nb_files * 100
 
-        dict_incomplete = {'INC':f"{percent_incomplete:.2f}", 'Treat':f"{percent_treat:.2f}", 'NC':f"{percent_no_conforming_files:.2f}"}
-        values = [percent_incomplete, percent_treat, percent_no_conforming_files]
+        dict_incomplete = {'INC': f"{percent_incomplete:.2f}",
+                           'Treat': f"{percent_treat:.2f}", 'NC': f"{percent_no_conforming_files:.2f}"}
+        values = [percent_incomplete, percent_treat,
+                  percent_no_conforming_files]
         values_incomplete = [value for value in values if value != 0]
         explode_incomplete = ()
         if len(values_incomplete) == 3:
@@ -974,82 +982,115 @@ class Controller:
             explode_incomplete = (0.1, 0)
         else:
             explode_incomplete = None
-        ax_incomplete.pie(values_incomplete, explode=explode_incomplete ,autopct=lambda pct:Controller.make_autopct(pct, dict_incomplete), shadow=True)
-        title = 'Incomplete \nTotal files: ' + str(nb_files) + '\nTotal_files_curve: ' + str(nb_incomplete + nb_curves)
+        ax_incomplete.pie(values_incomplete, explode=explode_incomplete,
+                          autopct=lambda pct: Controller.make_autopct(pct, dict_incomplete), shadow=True)
+        title = 'Incomplete \nTotal files: ' + \
+            str(nb_files) + '\nTotal_files_curve: ' + \
+            str(nb_incomplete + nb_curves)
         ax_incomplete.set_title(title)
         ax_alignment_auto = fig.add_subplot(232)
         ax_alignment_supervised = fig.add_subplot(233)
-        ax_classification_before = fig.add_subplot(234) 
+        ax_classification_before = fig.add_subplot(234)
         ax_classification_after = fig.add_subplot(236)
         nb_alignment_auto = 0
         nb_alignment_supervised = 0
-        dict_correction = {'No_correction':0, 'Auto_correction':0, 'Manual_correction':0}
+        dict_correction = {'No_correction': 0,
+                           'Auto_correction': 0, 'Manual_correction': 0}
         for curve in self.dict_curve.values():
             if curve.features['automatic_AL']['AL'] == 'No':
                 nb_alignment_auto += 1
             else:
-              if curve.features['automatic_type'] in dict_type_auto:
-                    dict_type_auto[curve.features['automatic_type']] += 1  
+                if curve.features['automatic_type'] in dict_type_auto:
+                    dict_type_auto[curve.features['automatic_type']] += 1
             if curve.features['AL'] == 'No':
                 nb_alignment_supervised += 1
             else:
                 if 'type' in curve.features:
                     if curve.features['type'] in dict_type_supervised:
-                            dict_type_supervised[curve.features['type']] += 1
+                        dict_type_supervised[curve.features['type']] += 1
             dict_correction[curve.features['optical_state']] += 1
         nb_conforming_curves_auto = nb_curves - nb_alignment_auto
         percent_alignment_auto = nb_alignment_auto/nb_curves * 100
         percent_confoming_auto = nb_conforming_curves_auto/nb_curves * 100
-        dict_align_auto = {'AL':f"{percent_alignment_auto:.2f}", 'CONF':f"{percent_confoming_auto:.2f}"}
+        dict_align_auto = {'AL': f"{percent_alignment_auto:.2f}",
+                           'CONF': f"{percent_confoming_auto:.2f}"}
 
         percent_alignment_supervised = nb_alignment_supervised/nb_curves * 100
         nb_conforming_curves_supervised = nb_curves - nb_alignment_supervised
         percent_confoming_supervised = nb_conforming_curves_supervised/nb_curves * 100
-        dict_align_supervised = {'AL':f"{percent_alignment_supervised:.2f}", 'CONF':f"{percent_confoming_supervised:.2f}"}
+        dict_align_supervised = {
+            'AL': f"{percent_alignment_supervised:.2f}", 'CONF': f"{percent_confoming_supervised:.2f}"}
 
         explode_align = (0.1, 0)
-        
+
         values_align_auto = [percent_alignment_auto, percent_confoming_auto]
-        values_align_supervised = [percent_alignment_supervised, percent_confoming_supervised]
-        
-        ax_alignment_auto.pie(values_align_auto, explode=explode_align, autopct=lambda pct:Controller.make_autopct(pct, dict_align_auto), shadow=True, startangle=45)
-        ax_alignment_auto.set_title('Automatic Alignment\nTreated curves: ' + str(nb_curves))
-        ax_alignment_supervised.pie(values_align_supervised, explode=explode_align, autopct=lambda pct:Controller.make_autopct(pct, dict_align_supervised), shadow=True, startangle=45)
-        ax_alignment_supervised.set_title('Supervised Alignment\nTreated curves: ' + str(nb_curves))
+        values_align_supervised = [
+            percent_alignment_supervised, percent_confoming_supervised]
 
-        percent_NAD_auto = dict_type_auto['NAD']/nb_conforming_curves_auto *100
-        print(percent_NAD_auto)
-        percent_AD_auto = dict_type_auto['AD']/nb_conforming_curves_auto *100
-        percent_FTU_auto = dict_type_auto['FTU']/nb_conforming_curves_auto *100
-        percent_ITU_auto = dict_type_auto['ITU']/nb_conforming_curves_auto *100
-        percent_RE_auto = dict_type_auto['RE']/nb_conforming_curves_auto*100
-        dict_classification_auto = {'NAD':f"{percent_NAD_auto:.2f}", 'AD':f"{percent_AD_auto:.2f}", 'FTU':f"{percent_FTU_auto:.2f}", 'ITU':f"{percent_ITU_auto:.2f}", 'RE':f"{percent_RE_auto:.2f}"}
-        values = [percent_FTU_auto, percent_NAD_auto, percent_RE_auto, percent_AD_auto, percent_ITU_auto]
+        ax_alignment_auto.pie(values_align_auto, explode=explode_align, autopct=lambda pct: Controller.make_autopct(
+            pct, dict_align_auto), shadow=True, startangle=45)
+        ax_alignment_auto.set_title(
+            'Automatic Alignment\nTreated curves: ' + str(nb_curves))
+        ax_alignment_supervised.pie(values_align_supervised, explode=explode_align, autopct=lambda pct: Controller.make_autopct(
+            pct, dict_align_supervised), shadow=True, startangle=45)
+        ax_alignment_supervised.set_title(
+            'Supervised Alignment\nTreated curves: ' + str(nb_curves))
+
+        percent_NAD_auto = (
+            dict_type_auto['NAD']/nb_conforming_curves_auto * 100)
+        percent_AD_auto = (
+            dict_type_auto['AD']/nb_conforming_curves_auto * 100)
+        percent_FTU_auto = (
+            dict_type_auto['FTU']/nb_conforming_curves_auto * 100)
+        percent_ITU_auto = (
+            dict_type_auto['ITU']/nb_conforming_curves_auto * 100)
+        percent_RE_auto = (dict_type_auto['RE']/nb_conforming_curves_auto*100)
+        dict_classification_auto = {'NAD': f"{percent_NAD_auto:.2f}", 'AD': f"{percent_AD_auto:.2f}",
+                                    'FTU': f"{percent_FTU_auto:.2f}", 'ITU': f"{percent_ITU_auto:.2f}", 'RE': f"{percent_RE_auto:.2f}"}
+        values = [percent_FTU_auto, percent_NAD_auto,
+                  percent_RE_auto, percent_AD_auto, percent_ITU_auto]
         values_auto = [value for value in values if value != 0]
-        ax_classification_before.pie(values_auto, autopct=lambda pct:Controller.make_autopct(pct, dict_classification_auto), shadow=True, startangle=45)
-        ax_classification_before.set_title('Classification before\nConforming curves: ' + str(nb_conforming_curves_auto))
-
+        ax_classification_before.pie(values_auto, autopct=lambda pct: Controller.make_autopct(
+            pct, dict_classification_auto), shadow=True, startangle=45)
+        ax_classification_before.set_title(
+            'Classification before\nConforming curves: ' + str(nb_conforming_curves_auto))
 
         ax_correction = fig.add_subplot(235)
-        percent_no_correction = dict_correction['No_correction']/nb_curves * 100
-        percent_auto_correction = dict_correction['Auto_correction']/nb_curves * 100
-        percent_manual_correction = dict_correction['Manual_correction']/nb_curves * 100
-        dict_correction_percent = {'No_correction':f"{percent_no_correction:.2f}", 'Auto_correction':f"{percent_auto_correction:.2f}", 'Manual_correction':f"{percent_manual_correction:.2f}"}
-        values= [percent_no_correction, percent_auto_correction, percent_manual_correction]
+        percent_no_correction = (
+            dict_correction['No_correction']/nb_curves * 100)
+        percent_auto_correction = (
+            dict_correction['Auto_correction']/nb_curves * 100)
+        percent_manual_correction = (
+            dict_correction['Manual_correction']/nb_curves * 100)
+        dict_correction_percent = {'No_correction': f"{percent_no_correction:.2f}",
+                                   'Auto_correction': f"{percent_auto_correction:.2f}", 'Manual_correction': f"{percent_manual_correction:.2f}"}
+        values = [percent_no_correction,
+                  percent_auto_correction, percent_manual_correction]
         values_correction = [value for value in values if value != 0]
-        ax_correction.pie(values_correction, autopct=lambda pct:Controller.make_autopct(pct, dict_correction_percent), shadow=True, startangle=45)
-        ax_correction.set_title('State Corrections\nTreated curves: ' + str(nb_curves))
+        ax_correction.pie(values_correction, autopct=lambda pct: Controller.make_autopct(
+            pct, dict_correction_percent), shadow=True, startangle=45)
+        ax_correction.set_title(
+            'State Correction\nTreated curves: ' + str(nb_curves))
 
-        percent_NAD_supervised = dict_type_supervised['NAD']/nb_conforming_curves_supervised *100
-        percent_AD_supervised = dict_type_supervised['AD']/nb_conforming_curves_supervised *100
-        percent_FTU_supervised = dict_type_supervised['FTU']/nb_conforming_curves_supervised *100
-        percent_ITU_supervised = dict_type_supervised['ITU']/nb_conforming_curves_supervised *100
-        percent_RE_supervised = dict_type_supervised['RE']/nb_conforming_curves_supervised*100
-        dict_classification_supervised = {'NAD':f"{percent_NAD_supervised:.2f}", 'AD':f"{percent_AD_supervised:.2f}", 'FTU':f"{percent_FTU_supervised:.2f}", 'ITU':f"{percent_ITU_supervised:.2f}", 'RE':f"{percent_RE_supervised:.2f}"}
-        values = [percent_FTU_supervised, percent_NAD_supervised, percent_RE_supervised, percent_AD_supervised, percent_ITU_supervised]
+        percent_NAD_supervised = (
+            dict_type_supervised['NAD']/nb_conforming_curves_supervised * 100)
+        percent_AD_supervised = (
+            dict_type_supervised['AD']/nb_conforming_curves_supervised * 100)
+        percent_FTU_supervised = (
+            dict_type_supervised['FTU']/nb_conforming_curves_supervised * 100)
+        percent_ITU_supervised = (
+            dict_type_supervised['ITU']/nb_conforming_curves_supervised * 100)
+        percent_RE_supervised = (
+            dict_type_supervised['RE']/nb_conforming_curves_supervised*100)
+        dict_classification_supervised = {'NAD': f"{percent_NAD_supervised:.2f}", 'AD': f"{percent_AD_supervised:.2f}",
+                                          'FTU': f"{percent_FTU_supervised:.2f}", 'ITU': f"{percent_ITU_supervised:.2f}", 'RE': f"{percent_RE_supervised:.2f}"}
+        values = [percent_FTU_supervised, percent_NAD_supervised,
+                  percent_RE_supervised, percent_AD_supervised, percent_ITU_supervised]
         values_supervised = [value for value in values if value != 0]
-        ax_classification_after.pie(values_supervised, autopct=lambda pct:Controller.make_autopct(pct, dict_classification_supervised), shadow=True, startangle=45)
-        ax_classification_after.set_title('Classification after\nConforming curves: ' + str(nb_conforming_curves_auto))
+        ax_classification_after.pie(values_supervised, autopct=lambda pct: Controller.make_autopct(
+            pct, dict_classification_supervised), shadow=True, startangle=45)
+        ax_classification_after.set_title(
+            'Classification after\nConforming curves: ' + str(nb_conforming_curves_auto))
 
         return fig
     ##################################################################################################################################
@@ -1066,17 +1107,37 @@ class Controller:
             pct: percentage
             val: label
         """
-        print(pct)
         pct = f"{pct:.2f}"
         #pct = np.round(pct, 2)
-        print(pct)
         list_keys = list(dico.keys())
         list_values = list(dico.values())
-        print(list_values)
         num_key = list_values.index(pct)
         val = list_keys[num_key]
         del dico[val]
         return f"{pct}%\n({val})"
+    #########################################################################################################
+
+    def count_cell_bead(self):
+        dict_beads = {}
+        dict_cells = {}
+        dict_couple = {}
+        for curve in self.dict_curve.values():
+            if curve.output['bead'] in dict_beads:
+                dict_beads[curve.output['bead']] += 1
+            else:
+                dict_beads[curve.output['bead']] = 1
+            if curve.output['cell'] in dict_cells:
+                dict_cells[curve.output['cell']] += 1
+            else:
+                dict_cells[curve.output['cell']] = 1
+            if curve.output['couple'] in dict_couple:
+                dict_couple[curve.output['couple']] += 1
+            else:
+                dict_couple[curve.output['couple']] = 1
+        nb_beads = len(dict_beads)
+        nb_cells = len(dict_cells)
+        nb_couples = len(dict_couple)
+        return nb_beads, nb_cells, nb_couples
 
     ##############################################################################################
 
