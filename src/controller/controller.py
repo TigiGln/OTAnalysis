@@ -810,6 +810,7 @@ class Controller:
             list_name_segment = ["Press", "Wait", "Pull"]
             num_segment = 0
             for segment in new_jpk.segments:
+                print(len(new_jpk.segments))
                 name_segment = ""
                 dataframe = pd.DataFrame()
                 for index_column in range(0, len(columns), 1):
@@ -834,7 +835,12 @@ class Controller:
                                                           + str(num_segment) + ".duration"]) == 0.0:
                     num_segment += 1
                 if segment.header['segment-settings.style'] == "motion":
-                    name_segment = list_name_segment[num_segment]
+                    if num_segment == 0 or num_segment == 2:
+                        print(list_name_segment)
+                        print(num_segment)
+                        name_segment = list_name_segment[num_segment]
+                    else:
+                        name_segment = "Next_segment_" + str(num_segment)
                 else:
                     name_segment = list_name_segment[num_segment] + \
                         str(num_segment)
