@@ -81,29 +81,29 @@ class Controller:
             nb = str(index_file+1) + "/" + str(len(self.files))
             if name_file not in self.dict_curve:
                 check_incomplete = False
-                try:
-                    if type_file == 'txt' and regex:
-                        new_curve, check_incomplete = Controller.open_file(
-                            self.files[index_file], methods['threshold_align'], methods['pulling_length'])
-                        self.dict_type_files['txt'] += 1
-                    elif type_file == 'jpk-nt-force' and regex:
-                        new_curve, check_incomplete = Controller.create_object_curve(
-                            self.files[index_file], methods['threshold_align'], methods['pulling_length'])
-                        self.dict_type_files['jpk'] += 1
-                    else:
-                        print(
-                            '\n===============================================================================')
-                        print(self.files[index_file].split(sep)[-1])
-                        print(
-                            '===============================================================================')
-                        print('non-conforming file.')
-                except:
+                #try:
+                if type_file == 'txt' and regex:
+                    new_curve, check_incomplete = Controller.open_file(
+                        self.files[index_file], methods['threshold_align'], methods['pulling_length'])
+                    self.dict_type_files['txt'] += 1
+                elif type_file == 'jpk-nt-force' and regex:
+                    new_curve, check_incomplete = Controller.create_object_curve(
+                        self.files[index_file], methods['threshold_align'], methods['pulling_length'])
+                    self.dict_type_files['jpk'] += 1
+                else:
                     print(
                         '\n===============================================================================')
                     print(self.files[index_file].split(sep)[-1])
                     print(
                         '===============================================================================')
-                    print("The curve is not conform")
+                    print('non-conforming file.')
+                # except:
+                #     print(
+                #         '\n===============================================================================')
+                #     print(self.files[index_file].split(sep)[-1])
+                #     print(
+                #         '===============================================================================')
+                #     print("The curve is not conform")
 
                 if check_incomplete:
                     self.list_file_imcomplete.add(

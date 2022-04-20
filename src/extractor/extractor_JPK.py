@@ -184,9 +184,18 @@ class JPKFile:
                             .parameters['force-segment-header']['num-points'])
         segment.data['t'] = (np.arange(0.0, t_end, t_step), {'unit': 's'})
         if segment.parameters['force-segment-header']['settings']['style'] == 'motion':
-            distance_start = float(segment.parameters['channel']['distance']['data']['start'])
-            num_points = int(segment.parameters['channel']['distance']['data']['num-points'])
-            distance_step = float(segment.parameters['channel']['distance']['data']['step'])
+            distance_start = 0
+            distance_step = 0
+            num_points = 0
+            if 'distance' in segment.parameters['channel']:
+                distance_start = float(segment.parameters['channel']['distance']['data']['start'])
+                num_points = int(segment.parameters['channel']['distance']['data']['num-points'])
+                distance_step = float(segment.parameters['channel']['distance']['data']['step'])
+            # else:
+            #     if segment.index == 0:
+            #         distance_start = 0.0
+            #         num_points = int(segment.parameters['force-segment-header']['num-points'])
+            #         distance_step = distance_start/num_points
             distance_end = distance_start + distance_step * num_points
             segment.data['distance'] = (np.linspace(distance_start, distance_end, num_points, dtype=float), {'unit': 'm/s'})
         else:
