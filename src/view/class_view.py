@@ -89,7 +89,7 @@ class View(QMainWindow, QWidget):
         self.check_graph = False
         self.option = False
         self.check_global_local_graph = False
-        self.abscissa_curve = False
+        self.abscissa_curve = True
         self.check_methods = False
         self.check_close_figure = False
         self.check_bilan = False
@@ -268,15 +268,16 @@ class View(QMainWindow, QWidget):
         self.input_nb_points_jump = QSpinBox()
         self.factor = QLabel("Factor overcome noise (xSTD)")
         self.input_factor = QDoubleSpinBox()
-        # self.factor_optical = QLabel("Factor optical effect (xSTD)")
-        # self.input_factor_optical = QDoubleSpinBox()
+        self.label_width_window_smooth = QLabel("Width window of smooth")
+        self.input_width_window_smooth = QSpinBox()
         self.input_jump_force.setValue(5.0)
         self.input_jump_position.setMaximum(5000)
         self.input_jump_position.setValue(200)
         self.input_nb_points_jump.setMaximum(5000)
         self.input_nb_points_jump.setValue(200)
         self.input_factor.setValue(4.0)
-        # self.input_factor_optical.setValue(1.0)
+        self.input_width_window_smooth.setMaximum(1001)
+        self.input_width_window_smooth.setValue(151)
         layout_grid.addWidget(self.jump_force, 0, 0)
         layout_grid.addWidget(self.input_jump_force, 0, 1)
         layout_grid.addWidget(self.jump_position, 1, 0)
@@ -285,8 +286,8 @@ class View(QMainWindow, QWidget):
         layout_grid.addWidget(self.input_nb_points_jump, 2, 1)
         layout_grid.addWidget(self.factor, 3, 0)
         layout_grid.addWidget(self.input_factor, 3, 1)
-        # layout_grid.addWidget(self.factor_optical, 4, 0)
-        # layout_grid.addWidget(self.input_factor_optical, 4, 1)
+        layout_grid.addWidget(self.label_width_window_smooth, 4, 0)
+        layout_grid.addWidget(self.input_width_window_smooth, 4, 1)
         frame.setFrameStyle(QFrame.StyledPanel | QFrame.Raised)
         frame.setLineWidth(3)
         frame.setMidLineWidth(3)
@@ -381,6 +382,7 @@ class View(QMainWindow, QWidget):
             self.input_jump_position.setValue(methods_data['jump_distance'][0])
             self.input_nb_points_jump.setValue(methods_data['jump_point'][0])
             self.input_factor.setValue(methods_data['factor_noise'][0])
+            self.input_width_window_smooth.setValue(methods_data['width_window_smooth'][0])
             self.button_load.deleteLater()
             self.check_methods = True
 
@@ -439,6 +441,7 @@ class View(QMainWindow, QWidget):
         else:
             condition = self.input_condition.text()
         self.methods['condition'] = condition
+        self.methods['width_window_smooth'] = self.input_width_window_smooth.value()
         self.controller.set_list_curve(self.methods)
         if len(self.controller.dict_curve) != 0:
             self.choices_option()
@@ -551,15 +554,19 @@ class View(QMainWindow, QWidget):
                 self.animate_toggle.show()
             if abscissa_data:
                 self.abscissa_curve = True
-                self.fig, self.current_curve = self.controller.show_plot(
+                self.fig, self.current_curve, self.check_distance = self.controller.show_plot(
                     self.n, 'time')
             else:
-                self.abscissa_curve = False
-                self.fig, self.current_curve = self.controller.show_plot(
+                self.fig, self.current_curve, self.check_distance = self.controller.show_plot(
                     self.n, 'distance')
+                print(self.check_distance)
+                if self.check_distance:
+                    self.abscissa_curve = False
+                else:
+                    self.abscissa_curve = True
         else:
             self.check_global_local_graph = False
-            self.abscissa_curve = False
+            self.abscissa_curve = True
             if self.count_select_plot > 0 and self.check_supervised:
                 self.animate_toggle.hide()
                 self.animate_toggle.setChecked(False)
@@ -1108,7 +1115,7 @@ class View(QMainWindow, QWidget):
         output_methods = pd.DataFrame()
         output_methods = output_methods.from_dict(methods, orient='index')
         list_labels_methods = ['condition', 'drug', 'bead_radius', 'model', 'eta', 'pulling_length', 'threshold_align',
-                               'jump_force', 'jump_distance', 'jump_point', 'factor_noise', 'optical']
+                               'jump_force', 'jump_distance', 'jump_point', 'factor_noise', 'width_window_smooth', 'optical']
         output_methods = output_methods[list_labels_methods]
         output_methods.to_csv(directory + sep + 'methods_' + today + '_' +
                               time_today + '.tsv', sep='\t', encoding='utf-8', na_rep="NaN")
