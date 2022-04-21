@@ -33,7 +33,7 @@ class OpticalEffect:
         self.time_data_pull = self.segment_pull.corrected_data['seriesTime'].copy(
         )
         self.force_smooth_press = self.curve.smooth(
-            self.force_data_press, self.time_data_press)
+            self.force_data_press)
         self.force_smooth_press_copy = self.force_smooth_press.copy()
 
     def fitting_and_contact_theorical(self, segment, tolerance):

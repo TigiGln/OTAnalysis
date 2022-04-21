@@ -177,32 +177,23 @@ class JPKFile:
         header_content = header_f.readlines()
         header_content = JPKFile.decode_binary_strings(header_content)
         segment.parameters, segment.header = JPKFile.parse_header_file(header_content, "segment")
-        t_end = float(segment
-                    .parameters['force-segment-header']['duration'])
-        
-        t_step = t_end / float(segment
-                            .parameters['force-segment-header']['num-points'])
-        segment.data['t'] = (np.arange(0.0, t_end, t_step), {'unit': 's'})
-        if segment.parameters['force-segment-header']['settings']['style'] == 'motion':
-            distance_start = 0
-            distance_step = 0
-            num_points = 0
-            if 'distance' in segment.parameters['channel']:
+        num_points = int(segment.parameters['force-segment-header']['num-points'])
+        t_end = float(segment.parameters['force-segment-header']['duration'])
+        t_step = t_end / num_points
+        # segment.data['t'] = (np.arange(0.0, t_end, t_step), {'unit': 's'})
+        segment.data['t'] = (np.linspace(0.0, t_end, num_points, dtype=float), {'unit': 's'})
+        if 'distance' in segment.parameters['channel']:
+            if segment.parameters['force-segment-header']['settings']['style'] == 'motion':
+                distance_start = 0
+                distance_step = 0
                 distance_start = float(segment.parameters['channel']['distance']['data']['start'])
-                num_points = int(segment.parameters['channel']['distance']['data']['num-points'])
                 distance_step = float(segment.parameters['channel']['distance']['data']['step'])
-            # else:
-            #     if segment.index == 0:
-            #         distance_start = 0.0
-            #         num_points = int(segment.parameters['force-segment-header']['num-points'])
-            #         distance_step = distance_start/num_points
-            distance_end = distance_start + distance_step * num_points
-            segment.data['distance'] = (np.linspace(distance_start, distance_end, num_points, dtype=float), {'unit': 'm/s'})
-        else:
-            num_points = int(segment.parameters['force-segment-header']['num-points'])
-            distance_stable = float(segment.parameters['channel']['distance']['data']['value'])
-            list_nulle = np.full((num_points, 1), distance_stable)
-            segment.data['distance'] = (list_nulle, {'unit': 'm/s'})
+                distance_end = distance_start + distance_step * num_points
+                segment.data['distance'] = (np.linspace(distance_start, distance_end, num_points, dtype=float), {'unit': 'm'})
+            else:
+                distance_stable = float(segment.parameters['channel']['distance']['data']['value'])
+                list_nulle = np.full((num_points, 1), distance_stable)
+                segment.data['distance'] = (list_nulle, {'unit': 'm/s'})
             
         if self != None:
             links = []

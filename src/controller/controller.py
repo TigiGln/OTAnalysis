@@ -65,7 +65,7 @@ class Controller:
         """
         creation of the curve list according to the file extension and its conformity
         """
-        self.dict_type_files = {'txt': 0, 'jpk': 0}
+        self.dict_type_files = {'txt': 0, 'jpk': 0, 'NC':0}
         self.list_file_imcomplete = set()
         for index_file in range(0, len(self.files), 1):
             # print(index_file)
@@ -75,13 +75,13 @@ class Controller:
             name_file = self.files[index_file].split(
                 sep)[-1]  # .split('.')[0:-1]
             #name_file = '.'.join(name_file)
-            regex = re.match("^b[1-9]c[1-9][a-z]{0,2}-", name_file)
+            regex = re.match("^b[1-9]+c[1-9]+[a-z]{0,2}-", name_file)
             name_file = name_file.split('-')
             name_file = str(name_file[0][0:4]) + '-' + '-'.join(name_file[1:])
             nb = str(index_file+1) + "/" + str(len(self.files))
             if name_file not in self.dict_curve:
                 check_incomplete = False
-                #try:
+                # try:
                 if type_file == 'txt' and regex:
                     new_curve, check_incomplete = Controller.open_file(
                         self.files[index_file], methods['threshold_align'], methods['pulling_length'])
@@ -96,6 +96,7 @@ class Controller:
                     print(self.files[index_file].split(sep)[-1])
                     print(
                         '===============================================================================')
+                  
                     print('non-conforming file.')
                 # except:
                 #     print(
@@ -104,7 +105,7 @@ class Controller:
                 #     print(
                 #         '===============================================================================')
                 #     print("The curve is not conform")
-
+                #     self.dict_type_files['NC'] +=1
                 if check_incomplete:
                     self.list_file_imcomplete.add(
                         self.files[index_file].split(sep)[-1])
@@ -130,6 +131,7 @@ class Controller:
                 print('files already processed')
             if self.view is not None:
                 self.view.info_processing(nb, len(self.files))
+            print(self.dict_type_files)
 
     ##################################################################################################################
 
@@ -168,6 +170,7 @@ class Controller:
         """
         nb_graph = 1
         list_curves_for_graphs = list(self.dict_curve.values())
+        check_distance = None
         if len(list_curves_for_graphs) > 0:
             curve = list_curves_for_graphs[n]
             fig = Figure()
@@ -177,26 +180,30 @@ class Controller:
                 graph_position = self.plot_time(curve, fig, graph_position)
             else:
                 for segment in curve.dict_segments.values():
-                    if segment.header_segment['segment-settings.style'] == "motion":
-                        if segment.name == 'Press':
-                            time_wait = 'Waiting Time: ' + \
-                                curve.parameters_header['header_global']['settings.segment.1.duration'] + ' s'
-                            title = segment.name + ' segment, ' + time_wait
-                        elif segment.name == 'Pull':
-                            #calcul_threshold = curve.features['tolerance'] * curve.graphics['threshold_pull'][0]/curve.features['tolerance']
-                            title = f"{segment.name} segment"
-                        position = int(str(nb_graph) + '2' +
-                                       str(graph_position))
-                        ax = fig.add_subplot(position, title=title)
-                        graph_position = self.plot_distance(
-                            curve, segment, ax, graph_position)
-                        if segment.name == 'Press':
-                            ax.legend(loc="lower left")
-                        elif segment.name == 'Pull':
-                            ax.legend(loc="lower right")
+                    if 'distance' in segment.corrected_data:
+                        check_distance = True
+                        if segment.header_segment['segment-settings.style'] == "motion":
+                            if segment.name == 'Press':
+                                time_wait = 'Waiting Time: ' + \
+                                    curve.parameters_header['header_global']['settings.segment.1.duration'] + ' s'
+                                title = segment.name + ' segment, ' + time_wait
+                            elif segment.name == 'Pull':
+                                #calcul_threshold = curve.features['tolerance'] * curve.graphics['threshold_pull'][0]/curve.features['tolerance']
+                                title = f"{segment.name} segment"
+                            position = int(str(nb_graph) + '2' +
+                                        str(graph_position))
+                            ax = fig.add_subplot(position, title=title)
+                            graph_position = self.plot_distance(
+                                curve, segment, ax, graph_position)
+                            if segment.name == 'Press':
+                                ax.legend(loc="lower left")
+                            elif segment.name == 'Pull':
+                                ax.legend(loc="lower right")
+                    else:
+                        check_distance = False
         fig.subplots_adjust(wspace=0.3, hspace=0.5)
         fig.tight_layout()
-        return fig, curve
+        return fig, curve, check_distance
 
     ########################################################################################################################################
     def plot_distance(self, curve, segment, ax, graph_position):
@@ -220,13 +227,12 @@ class Controller:
         main_axis = curve.features['main_axis']['axe']
         force_data = segment.corrected_data[main_axis + 'Signal1']
         distance_data = segment.corrected_data['distance']
-        time_data = segment.corrected_data['seriesTime']
         fitted_data = curve.graphics['fitted_' + segment.name]
         ax.plot(distance_data, force_data, color="#c2a5cf")
         ax.plot(distance_data, fitted_data, color="#5aae61",
                 label=curve.features['model'] + " fit")
         #y_smooth = curve.graphics['y_smooth_' + segment.name]
-        y_smooth = curve.smooth(force_data, time_data, 151, 2)
+        y_smooth = curve.smooth(force_data, self.view.methods['width_window_smooth'], 2)
         ax.plot(distance_data, y_smooth, color="#80cdc1")
         index_x_0 = 0
         if segment.name == 'Press':
@@ -277,11 +283,12 @@ class Controller:
                 #             force_data[index_max_derive], marker='D', color='red')
                 #     ax.plot(distance_data[index_min_derive],
                 #             force_data[index_min_derive], marker='D', color='black')
+            print(curve.features['point_return_endline']['index'])
             if curve.features['point_return_endline']['index'] != "NaN":
                 index_return = curve.features['point_return_endline']['index']
-                index_transition = curve.features['point_transition']['index']
-                ax.plot(distance_data[index_return], force_data[index_return],
-                        color='#50441b', marker='o', label='return')
+                index_transition = curve.features['point_transition']['index'] 
+                ax.plot(distance_data[index_return], y_smooth[index_return],             
+                color='#50441b', marker='o', label='return')
                 ax.plot(distance_data[index_transition], force_data[index_transition],
                         color='#1E90FF', marker='o', label='transition')
             if 'type' in curve.features:
@@ -439,36 +446,37 @@ class Controller:
             position_start_graph = 0
             num_segment = 0
             for segment in curve.dict_segments.values():
-                if not segment.name.startswith('Wait'):
-                    position_end_graph = 0
-                    if num_segment == 0:
-                        position_end_graph = ceil(
-                            position_start_graph + 10/length - 1)
+                if 'distance' in segment.corrected_data:
+                    if not segment.name.startswith('Wait'):
+                        position_end_graph = 0
+                        if num_segment == 0:
+                            position_end_graph = ceil(
+                                position_start_graph + 10/length - 1)
+                        else:
+                            position_end_graph = 10
+                        ax4 = fig.add_subplot(
+                            gs[4:7, position_start_graph:position_end_graph])
+                        position_start_graph = position_end_graph + 1
+                        ax4.plot(
+                            segment.corrected_data['distance'], segment.corrected_data[main_axis + 'Signal1'], color="#c2a5cf")
+                        ax4.plot(segment.corrected_data['distance'], np.zeros(
+                            len(segment.corrected_data[main_axis + 'Signal1'])), color='black', alpha=0.75)
+                        ax4.set_xlabel('Corrected distance (nm)')
                     else:
-                        position_end_graph = 10
-                    ax4 = fig.add_subplot(
-                        gs[4:7, position_start_graph:position_end_graph])
-                    position_start_graph = position_end_graph + 1
-                    ax4.plot(
-                        segment.corrected_data['distance'], segment.corrected_data[main_axis + 'Signal1'], color="#c2a5cf")
-                    ax4.plot(segment.corrected_data['distance'], np.zeros(
-                        len(segment.corrected_data[main_axis + 'Signal1'])), color='black', alpha=0.75)
-                    ax4.set_xlabel('Corrected distance (nm)')
-                else:
-                    position_end_graph = floor(
-                        position_start_graph + 10/length - 1)
-                    ax4 = fig.add_subplot(
-                        gs[4:7, position_start_graph:position_end_graph])
-                    ax4.plot(
-                        segment.corrected_data['seriesTime'], segment.corrected_data[main_axis + 'Signal1'], color="#34b6cf")
-                    position_start_graph = position_end_graph + 1
-                    ax4.set_xlabel('time (s)')
-                if segment.name == 'Press':
-                    ax4.set_ylabel('Force (pN)')
-                ax4.set_title(segment.name + ' Segment')
-                ax4.set_ylim(curve.features['force_min_curve']['value'] -1,
-                             curve.features['force_max_curve']['value'] + 2)
-                num_segment += 1
+                        position_end_graph = floor(
+                            position_start_graph + 10/length - 1)
+                        ax4 = fig.add_subplot(
+                            gs[4:7, position_start_graph:position_end_graph])
+                        ax4.plot(
+                            segment.corrected_data['seriesTime'], segment.corrected_data[main_axis + 'Signal1'], color="#34b6cf")
+                        position_start_graph = position_end_graph + 1
+                        ax4.set_xlabel('time (s)')
+                    if segment.name == 'Press':
+                        ax4.set_ylabel('Force (pN)')
+                    ax4.set_title(segment.name + ' Segment')
+                    ax4.set_ylim(curve.features['force_min_curve']['value'] -1,
+                                curve.features['force_max_curve']['value'] + 2)
+                    num_segment += 1
         return fig, curve
 
     ###########################################################################################################################################
@@ -839,7 +847,8 @@ class Controller:
                     elif columns[index_column] == 'distance':
                         data_distance = segment.get_array(
                             [columns[index_column]])
-                        dataframe['distance'] = data_distance
+                        if len(data_distance) != 0:
+                            dataframe['distance'] = data_distance
                     else:
                         data_by_column = segment.get_array(
                             [columns[index_column]])
@@ -850,13 +859,13 @@ class Controller:
                 if segment.header['segment-settings.style'] == "motion":
                     if num_segment == 0 or num_segment==1 or num_segment == 2:
                         name_segment = list_name_segment[num_segment]
-                    else:
-                        name_segment = "Motion_" + str(num_segment)
+                    # else:
+                    #     name_segment = "Motion_" + str(num_segment)
                 else:
                     if num_segment == 0 or num_segment == 1:
                         name_segment = list_name_segment[num_segment]
-                    else:
-                        name_segment = "Wait_" + str(num_segment)
+                    # else:
+                    #     name_segment = "Wait_" + str(num_segment)
                 num_segment += 1
                 dataframe = dataframe.apply(to_numeric)
                 new_segment = Segment(segment.header, dataframe, name_segment)
@@ -985,9 +994,9 @@ class Controller:
         values_incomplete = [value for value in values if value != 0]
         explode_incomplete = ()
         if len(values_incomplete) == 3:
-            explode_incomplete = (0.1, 0, 0.1)
+            explode_incomplete = (0, 0.1, 0)
         elif len(values_incomplete) == 2:
-            explode_incomplete = (0.1, 0)
+            explode_incomplete = (0, 0.1)
         else:
             explode_incomplete = None
         ax_incomplete.pie(values_incomplete, explode=explode_incomplete,
