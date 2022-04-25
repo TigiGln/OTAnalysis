@@ -3,7 +3,7 @@ TODO
 """
 
 
-from tkinter.font import BOLD
+
 from PyQt5.QtWidgets import QCheckBox
 from PyQt5.QtCore import Qt, QRect, QPoint, QEasingCurve, QPropertyAnimation, pyqtProperty
 from PyQt5.QtGui import QPainter, QColor, QFont

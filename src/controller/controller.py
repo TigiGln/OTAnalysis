@@ -65,7 +65,7 @@ class Controller:
         """
         creation of the curve list according to the file extension and its conformity
         """
-        self.dict_type_files = {'txt': 0, 'jpk': 0, 'NC':0}
+        self.dict_type_files = {'txt': 0, 'jpk': 0, 'NC':0, 'PB':0, 'INC':0}
         self.list_file_imcomplete = set()
         for index_file in range(0, len(self.files), 1):
             # print(index_file)
@@ -79,33 +79,29 @@ class Controller:
             name_file = name_file.split('-')
             name_file = str(name_file[0][0:4]) + '-' + '-'.join(name_file[1:])
             nb = str(index_file+1) + "/" + str(len(self.files))
+            print(
+                '\n===============================================================================')
+            print(self.files[index_file].split(sep)[-1])
+            print(
+                '===============================================================================')
             if name_file not in self.dict_curve:
                 check_incomplete = False
-                # try:
-                if type_file == 'txt' and regex:
-                    new_curve, check_incomplete = Controller.open_file(
-                        self.files[index_file], methods['threshold_align'], methods['pulling_length'])
-                    self.dict_type_files['txt'] += 1
-                elif type_file == 'jpk-nt-force' and regex:
-                    new_curve, check_incomplete = Controller.create_object_curve(
-                        self.files[index_file], methods['threshold_align'], methods['pulling_length'])
-                    self.dict_type_files['jpk'] += 1
-                else:
-                    print(
-                        '\n===============================================================================')
-                    print(self.files[index_file].split(sep)[-1])
-                    print(
-                        '===============================================================================')
-                  
-                    print('non-conforming file.')
-                # except:
-                #     print(
-                #         '\n===============================================================================')
-                #     print(self.files[index_file].split(sep)[-1])
-                #     print(
-                #         '===============================================================================')
-                #     print("The curve is not conform")
-                #     self.dict_type_files['NC'] +=1
+                try:
+                    if type_file == 'txt' and regex:
+                        new_curve, check_incomplete = Controller.open_file(
+                            self.files[index_file], methods['threshold_align'], methods['pulling_length'])
+                        self.dict_type_files['txt'] += 1
+                    elif type_file == 'jpk-nt-force' and regex:
+                        new_curve, check_incomplete = Controller.create_object_curve(
+                            self.files[index_file], methods['threshold_align'], methods['pulling_length'])
+                        self.dict_type_files['jpk'] += 1
+                    else:
+                        print('non-conforming file.')
+                        self.dict_type_files['NC'] +=1
+                except:
+                    message = "The file curve is not conform for transformation in curve object"
+                    self.problematic_curve(self.files[index_file], type_file, message)
+                    self.dict_type_files['PB'] +=1
                 if check_incomplete:
                     self.list_file_imcomplete.add(
                         self.files[index_file].split(sep)[-1])
@@ -115,26 +111,39 @@ class Controller:
                             type_file = type_file.split('-')[0]
                         Controller.file_incomplete_rejected(
                             type_file, self.files[index_file])
+                        self.dict_type_files['INC'] +=1
                         self.list_file_imcomplete.add(
                             self.files[index_file].split(sep)[-1])
                     else:
-                        self.dict_curve[new_curve.file] = new_curve
-                        new_curve.analyzed_curve(
-                            methods, False)
-                        new_curve.features['type'] = new_curve.features['automatic_type']
+                        try:
+                            new_curve.analyzed_curve(
+                                methods, False)
+                            self.dict_curve[new_curve.file] = new_curve
+                            new_curve.features['type'] = new_curve.features['automatic_type']
+                        except:
+                            message = "curve object created but problem in analysis due to erroneous data"
+                            self.problematic_curve(self.files[index_file], type_file, message)
+                            self.dict_type_files['PB'] +=1
             else:
-                print(
-                    '\n===============================================================================')
-                print(self.files[index_file].split(sep)[-1])
-                print(
-                    '===============================================================================')
                 print('files already processed')
             if self.view is not None:
                 self.view.info_processing(nb, len(self.files))
             print(self.dict_type_files)
 
     ##################################################################################################################
+    def problematic_curve(self, file, extension, message):
+        path_dir_problem = ""
+        if extension == "jpk":
+            path_dir_problem = Path(
+                '..' + sep + 'problem_file' + sep + 'JPK')
+        else:
+            path_dir_problem = Path(
+                '..' + sep + 'problem_file' + sep + 'TXT')
+        path_dir_problem.mkdir(parents=True, exist_ok=True)
+        file_curve = file.__str__().split(sep)[-1]
+        copy(file, str(path_dir_problem))
 
+    ##################################################################################################################
     def create_list_for_graphs(self):
         """
         creation of the list separating the curves in list of 2 for the display of the graphs sequentially
@@ -151,7 +160,7 @@ class Controller:
         return list_curves_for_graphs
 
     ##############################################################################################
-    def show_plot(self, n, abscissa_curve='distance'):
+    def show_plot(self, n, abscissa_curve='time'):
         """
         creation of graphs by curves 2 per page maximum
 
@@ -170,18 +179,18 @@ class Controller:
         """
         nb_graph = 1
         list_curves_for_graphs = list(self.dict_curve.values())
-        check_distance = None
+        check_distance = False
         if len(list_curves_for_graphs) > 0:
             curve = list_curves_for_graphs[n]
+            if 'distance' in curve.dict_segments['Press'].corrected_data:
+                check_distance = True
             fig = Figure()
             graph_position = 1
-            max_handle = [[], []]
             if abscissa_curve == 'time':
                 graph_position = self.plot_time(curve, fig, graph_position)
             else:
                 for segment in curve.dict_segments.values():
                     if 'distance' in segment.corrected_data:
-                        check_distance = True
                         if segment.header_segment['segment-settings.style'] == "motion":
                             if segment.name == 'Press':
                                 time_wait = 'Waiting Time: ' + \
@@ -199,8 +208,6 @@ class Controller:
                                 ax.legend(loc="lower left")
                             elif segment.name == 'Pull':
                                 ax.legend(loc="lower right")
-                    else:
-                        check_distance = False
         fig.subplots_adjust(wspace=0.3, hspace=0.5)
         fig.tight_layout()
         return fig, curve, check_distance
@@ -375,6 +382,7 @@ class Controller:
         TODO
         """
         #nb_graph = 1
+        check_distance = False
         list_curves_for_graphs = list(self.dict_curve.values())
         fig = Figure()
         if len(list_curves_for_graphs) > 0:
@@ -447,6 +455,7 @@ class Controller:
             num_segment = 0
             for segment in curve.dict_segments.values():
                 if 'distance' in segment.corrected_data:
+                    check_distance = True
                     if not segment.name.startswith('Wait'):
                         position_end_graph = 0
                         if num_segment == 0:
@@ -477,7 +486,7 @@ class Controller:
                     ax4.set_ylim(curve.features['force_min_curve']['value'] -1,
                                 curve.features['force_max_curve']['value'] + 2)
                     num_segment += 1
-        return fig, curve
+        return fig, curve, check_distance
 
     ###########################################################################################################################################
 
@@ -902,10 +911,10 @@ class Controller:
         path_dir_incomplete.mkdir(parents=True, exist_ok=True)
         file_curve = file.__str__().split(sep)[-1]
         copy(file, str(path_dir_incomplete))
-        print("\n")
-        print("========================================================================")
-        print(file_curve)
-        print("========================================================================")
+        # print("\n")
+        # print("========================================================================")
+        # print(file_curve)
+        # print("========================================================================")
         print("File incomplete")
 
     ############################################################################################
@@ -1054,6 +1063,11 @@ class Controller:
             pct, dict_align_supervised), shadow=True, startangle=45)
         ax_alignment_supervised.set_title(
             'Supervised Alignment\nTreated curves: ' + str(nb_curves))
+        percent_NAD_auto=0
+        percent_AD_auto=0
+        percent_FTU_auto=0
+        percent_ITU_auto=0
+        percent_RE_auto=0
         if nb_conforming_curves_auto != 0:
             percent_NAD_auto = (
                 dict_type_auto['NAD']/nb_conforming_curves_auto * 100)
@@ -1089,7 +1103,11 @@ class Controller:
             pct, dict_correction_percent), shadow=True, startangle=45)
         ax_correction.set_title(
             'State Correction\nTreated curves: ' + str(nb_curves))
-
+        percent_NAD_supervised=0
+        percent_AD_supervised=0
+        percent_FTU_supervised=0
+        percent_ITU_supervised=0
+        percent_RE_supervised=0
         if nb_conforming_curves_supervised != 0:
             percent_NAD_supervised = (
                 dict_type_supervised['NAD']/nb_conforming_curves_supervised * 100)

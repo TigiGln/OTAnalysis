@@ -4,12 +4,12 @@ File describing the instance class of the curved objects
 import math
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
+# import matplotlib.pyplot as plt
+# from matplotlib.figure import Figure
 from scipy.optimize import curve_fit
 from scipy.signal import savgol_filter
-from scipy.interpolate import UnivariateSpline
-from lmfit import Model
+# from scipy.interpolate import UnivariateSpline
+# from lmfit import Model
 from model.class_optical_effect import OpticalEffect
 
 
@@ -46,11 +46,11 @@ class Curve:
         self.check_incomplete = self.segment_retraction_troncated(
             pulling_length)
         if not self.check_incomplete:
-            print(
-                "\n========================================================================\n")
-            print(self.file)
-            print(
-                "\n========================================================================\n")
+        #     print(
+        #         "\n========================================================================\n")
+        #     print(self.file)
+        #     print(
+        #         "\n========================================================================\n")
 
             self.calcul_baseline("Press")
             self.calcul_std("Press")
@@ -146,7 +146,7 @@ class Curve:
                 except:
                     print('index error No correction')
         self.curve_approach_analyze(
-            methods['model'].lower(), methods['eta'], methods['bead_radius'], methods['factor_noise'])
+            methods['model'].lower(), methods['eta'], methods['bead_radius'], methods['factor_noise'], methods['width_window_smooth'])
         type_curve = self.curve_return_analyze(
             methods['jump_force'], methods['jump_point'], methods['jump_distance'], methods['factor_noise'], type_curve, methods['width_window_smooth'])
         self.features['drug'] = methods['drug']
@@ -341,7 +341,6 @@ class Curve:
         for segment in self.dict_segments.values():
             dict_align[segment.name] = segment.check_alignment(
                 self.features["main_axis"]['axe'], force_min)
-        print(dict_align)
         dict_align_final = {}
         for key, value in dict_align.items():
             if 'AL' not in dict_align_final:
@@ -483,7 +482,7 @@ class Curve:
         return fit
 
     #############################################################################################
-    def fit_curve_approach(self, tolerance):
+    def fit_curve_approach(self, tolerance, window_smooth):
         """
         creation of the data fit for the curve
 
@@ -498,12 +497,13 @@ class Curve:
         main_axis = self.features["main_axis"]['axe']
         segment = self.dict_segments["Press"]
         force_data = segment.corrected_data[main_axis + 'Signal1']
+        y_smooth = self.smooth(force_data, window_smooth, 2)
         # if 'distance' in segment.corrected_data:
         #     distance_data = np.abs(segment.corrected_data['distance'])
         time_data = segment.corrected_data['seriesTime']
-        #self.graphics['y_smooth_Press'] = (force_data, 151, 2)
-        index_contact, line_pos_threshold = Curve.retrieve_contact(
-            force_data, "Press", tolerance)
+        #self.graphics['y_smooth_Press'] = y_smooth
+        index_contact, line_pos_threshold = self.retrieve_contact(
+            y_smooth, "Press", tolerance)
         self.graphics['threshold_press'] = line_pos_threshold
         baseline = force_data[0:300].mean() + force_data[0:300].std()  # y0
         x_1 = time_data[len(time_data)-index_contact]
@@ -517,18 +517,18 @@ class Curve:
         #initial_guesses_accuracy = [10**(9), 10**3, 1]
         initial_guesses_accuracy = [contact_point, k, baseline]
         f_parameters = curve_fit(
-            self.fit_model_approach, time_data, force_data, initial_guesses_accuracy)
+            self.fit_model_approach, time_data, y_smooth, initial_guesses_accuracy)
         #self.message += str(f_parameters)
         fitted = self.fit_model_approach(
             time_data, f_parameters[0][0], f_parameters[0][1], f_parameters[0][2])
         self.graphics['fitted_Press'] = fitted
 
-        return f_parameters, fitted
+        return f_parameters
 
     ##################################################################################################
 
-    @staticmethod
-    def retrieve_contact(data_analyze, segment, tolerance):
+    # @staticmethod
+    def retrieve_contact(self, data_analyze, segment, tolerance):
         """
         Allows to determine the contact point of the ball with the cell and contact release cell
 
@@ -537,27 +537,25 @@ class Curve:
         list_index_contact = []
         index_contact = 0
         line_pos_threshold = ""
-        if segment == "Press":
-            baseline = data_analyze[0:200].mean()
-            std = data_analyze[0:200].std()
-            line_pos_threshold = np.full(len(data_analyze), std*tolerance)
-        else:
-            baseline = data_analyze[len(data_analyze)-300:].mean()
-            std = data_analyze[len(data_analyze)-300:].std()
-            line_pos_threshold = np.full(len(data_analyze), std*tolerance)
+        segment_press = self.dict_segments['Press']
+        data = segment_press.corrected_data[self.features['main_axis']['axe'] + 'Signal1']
+        baseline = data[0:200].mean()
+        std = data[0:200].std()
+        line_pos_threshold = np.full(len(data_analyze), std*tolerance)
         for index in range(len(data_analyze)-1, -1, -1):
             if baseline - std < data_analyze[index] < abs(baseline) + abs(std):
                 list_index_contact.append(index)
-        if segment == "Press":
-            index_contact = list_index_contact[0]
-        else:
-            index_contact = list_index_contact[-1]
-        print(index_contact)
+        if len(list_index_contact) > 0:
+            if segment == "Press":
+                index_contact = list_index_contact[0]
+            else:
+                index_contact = list_index_contact[-1]
+        
         return index_contact, line_pos_threshold
 
     ###################################################################################################
 
-    def curve_approach_analyze(self, model, eta, bead_ray, tolerance):
+    def curve_approach_analyze(self, model, eta, bead_ray, tolerance, window_smooth):
         """
         TODO
         """
@@ -567,7 +565,7 @@ class Curve:
         error_young = None
         #error_contact = None
         slope = None
-        f_parameters, fitted = self.fit_curve_approach(tolerance)
+        f_parameters = self.fit_curve_approach(tolerance, window_smooth)
         if np.isfinite(np.sum(f_parameters[1])):
             error = np.sqrt(np.diag(f_parameters[1]))
         if self.features['model'] == 'linear':
@@ -631,17 +629,16 @@ class Curve:
         main_axis = self.features["main_axis"]['axe']
         segment = self.dict_segments['Pull']
         force_data = segment.corrected_data[main_axis + 'Signal1']
+        y_smooth = self.smooth(force_data, window_smooth, 2)
         distance_data = None
         if 'distance' in segment.corrected_data:
             distance_data = np.abs(segment.corrected_data['distance'])
         time_data = segment.corrected_data['time']
         mean_final_points = force_data[len(force_data)-1000:].mean()
         std_final_points = force_data[len(force_data)-1000:].std()
-        #line_pos_threshold = np.full(len(force_data),std_final_points*tolerance)
         endline = mean_final_points - std_final_points  # y0
-        y_smooth = self.smooth(force_data, window_smooth, 2)
-        index_release, line_pos_threshold = Curve.retrieve_contact(
-            force_data, "Pull", tolerance)
+        index_release, line_pos_threshold = self.retrieve_contact(
+            y_smooth, "Pull", tolerance)
         self.graphics['threshold_pull'] = line_pos_threshold
         self.features['point_release'] = {
             'index': index_release, 'value': force_data[index_release]}
@@ -663,15 +660,14 @@ class Curve:
         #     y_smooth, mean_final_points, std_final_points, tolerance)
         index_return_end_line = Curve.retrieve_retour_line_end(
             y_smooth, line_pos_threshold)
-        print(index_return_end_line)
         # initial_guess = [10**(9), point_release, 10**3]
         initial_guesses_accuracy = [k, point_release, endline]
-        f_parameters, f_covariance = curve_fit(
+        f_parameters = curve_fit(
             Curve.fit_model_retraction, time_data, force_data, initial_guesses_accuracy)
         self.message += str(f_parameters)
-        self.features['Pente (pN/nm)'] = f_parameters[1]
+        self.features['Pente (pN/nm)'] = f_parameters[0][1]
         fitted = Curve.fit_model_retraction(
-            time_data, f_parameters[0], f_parameters[1], f_parameters[2])
+            time_data, f_parameters[0][0], f_parameters[0][1], f_parameters[0][2])
         self.graphics['fitted_Pull'] = fitted
         self.graphics['y_smooth_Pull'] = y_smooth
         self.features['point_return_endline'] = {
@@ -681,9 +677,7 @@ class Curve:
         print('type: ', type_curve)
         if type_curve == None:
             index_force_max = y_smooth[index_release:index_release+1500].argmax()
-            print('force_max: ', force_data[index_force_max])
-            print('seuil_max: ', seuil_jump_force)
-            if force_data[index_force_max] <= seuil_jump_force:
+            if force_data[self.features['force_max_curve']['index']] <= seuil_jump_force:
                 type_curve = 'NAD'
             else:
                 if index_return_end_line is not None:
@@ -693,8 +687,12 @@ class Curve:
                         # int(segment.header_segment['segment-settings.num-points'])//1000
                     self.features['point_transition'] = {
                         'index': index_transition, 'value (pN)': y_smooth[index_transition]}
-                    force_max = force_data[index_release:index_return_end_line].max()
-                    index_force_max = np.where(force_data == force_max)[0][0]
+                    if index_release < index_return_end_line:
+                        index_force_max = y_smooth[index_release:index_return_end_line].argmax()
+                    elif index_release > index_return_end_line:
+                        index_force_max = y_smooth[index_return_end_line:index_release].argmax()
+                    else:
+                        index_force_max = y_smooth.argmax()
                     jump_force_start_pull = force_data[index_force_max] - \
                         force_data[index_release]
                     jump_nb_points = index_return_end_line - index_force_max
@@ -706,8 +704,8 @@ class Curve:
                     jump_time_start_pull = time_data[index_force_max] - \
                         time_data[index_release]
                     
-                    jump_time_end_pull = time_data[index_release] - \
-                        time_data[index_return_end_line]
+                    jump_time_end_pull = time_data[index_return_end_line] - \
+                        time_data[index_release]
                     self.features['jump_time_start_pull (s)'] = jump_time_start_pull
                     self.features['jump_time_end_pull (s)'] = jump_time_end_pull
                     jump_distance_start_pull = 0
@@ -722,7 +720,9 @@ class Curve:
                         self.features['jump_distance_end_pull (nm)'] = jump_distance_end_pull
                     else:
                         speed = float(segment.header_segment['segment-settings.length'])/float(segment.header_segment['segment-settings.duration'])
-                        jump_distance_end_pull = speed * jump_time_end_pull * 1e9
+                        print('speed: ', speed*1e9)
+                        print(jump_time_end_pull)
+                        jump_distance_end_pull = speed*1e9 * jump_time_end_pull
                     print(jump_distance_end_pull)
                     if jump_nb_points < seuil_nb_point and jump_distance_end_pull < seuil_jump_distance:
                         type_curve = 'AD'
@@ -737,14 +737,13 @@ class Curve:
 
     ####################################################################################################################################
 
-    def derivation(self, force_data, time_data, n):
-        derivation = []
-        for index in range(n//2, len(force_data)-n//2, 1):
-            derivation.append((force_data[index+n//2] - force_data[index-n//2])/(
-                time_data[index+n//2] - time_data[index-n//2]))
-            #derivation.append((distance_data[index+n//2]- distance_data[index-n//2])/(n * (time_data[index+1] - time_data[index])))
-        derivation = np.array(derivation)
-        return derivation
+    # def derivation(self, force_data, time_data, n):
+    #     derivation = []
+    #     for index in range(n//2, len(force_data)-n//2, 1):
+    #         derivation.append((force_data[index+n//2] - force_data[index-n//2])/(
+    #             time_data[index+n//2] - time_data[index-n//2]))
+    #     derivation = np.array(derivation)
+    #     return derivation
 
     #####################################################################################################################################
     def curve_return_analyze(self, seuil_jump_force, seuil_nb_point, seuil_jump_distance, tolerance, type_curve, window_smooth):
@@ -753,7 +752,7 @@ class Curve:
         """
         main_axis = self.features["main_axis"]['axe']
         #segment_go = self.dict_segments["Press"]
-        #optical_effect = Curve.retrieve_contact(segment_go.corrected_data[main_axis + 'Signal1'], 'optical')
+        #optical_effect = self.retrieve_contact(segment_go.corrected_data[main_axis + 'Signal1'], 'optical')
         segment_return = self.dict_segments["Pull"]
         force_data = segment_return.corrected_data[main_axis + 'Signal1']
         # distance_data = np.abs(

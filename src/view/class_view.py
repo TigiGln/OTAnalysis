@@ -93,6 +93,7 @@ class View(QMainWindow, QWidget):
         self.check_methods = False
         self.check_close_figure = False
         self.check_bilan = False
+        self.check_distance = False
         self.count_select_plot = 0
         self.dict_fig_open = {}
         self.clear()
@@ -525,7 +526,6 @@ class View(QMainWindow, QWidget):
         """
         nb_nad = nb_ad = nb_tui = nb_tuf = nb_re = nb_none = 0
         for curve in self.controller.dict_curve.values():
-            type_curve = curve.features['automatic_type']
             if curve.features['automatic_type'] == 'NAD':
                 nb_nad += 1
             elif curve.features['automatic_type'] == 'AD':
@@ -559,7 +559,6 @@ class View(QMainWindow, QWidget):
             else:
                 self.fig, self.current_curve, self.check_distance = self.controller.show_plot(
                     self.n, 'distance')
-                print(self.check_distance)
                 if self.check_distance:
                     self.abscissa_curve = False
                 else:
@@ -569,8 +568,8 @@ class View(QMainWindow, QWidget):
             self.abscissa_curve = True
             if self.count_select_plot > 0 and self.check_supervised:
                 self.animate_toggle.hide()
-                self.animate_toggle.setChecked(False)
-            self.fig, self.current_curve = self.controller.global_plot(self.n)
+                self.animate_toggle.setChecked(self.abscissa_curve)
+            self.fig, self.current_curve, self.check_distance = self.controller.global_plot(self.n)
 
         if self.fig is not None:
             self.canvas = FigureCanvasQTAgg(self.fig)
@@ -799,7 +798,7 @@ class View(QMainWindow, QWidget):
             120, 30, '#777', '#ffffff', '#0cc03c', 'Overview', 'Analyzed')
         self.toggle_display.setChecked(self.check_global_local_graph)
         self.toggle_display.clicked.connect(lambda: self.select_plot(
-            self.toggle_display.isChecked(), self.animate_toggle.isChecked()))
+            self.toggle_display.isChecked(), self.abscissa_curve))
         self.main_layout.addWidget(
             self.toggle_display, 3, 7, 1, 1, alignment=Qt.AlignRight)
     ##################################################################################################
@@ -808,8 +807,12 @@ class View(QMainWindow, QWidget):
         self.animate_toggle = QtToggle(
             110, 30, '#777', '#ffffff', 'orange', 'Distance', 'Time')
         self.animate_toggle.setChecked(self.abscissa_curve)
-        self.animate_toggle.clicked.connect(lambda: self.select_plot(
-            self.toggle_display.isChecked(), self.animate_toggle.isChecked()))
+        print(self.check_distance)
+        if self.check_distance:
+            self.animate_toggle.clicked.connect(lambda: self.select_plot(
+                self.toggle_display.isChecked(), self.animate_toggle.isChecked()))
+        else:
+            self.animate_toggle.setDisabled(True)
         self.grid_supervised.addWidget(
             self.animate_toggle, 0, 1, 1, 1, alignment=Qt.AlignRight)
         if not self.check_global_local_graph:
@@ -1057,9 +1060,6 @@ class View(QMainWindow, QWidget):
         hbox_bilan = QHBoxLayout()
         frame = QFrame()
         label_day = QLabel('Date: ' + today +  '\n' + 'Condition: ' + str(self.methods['condition']) + '\n' + 'Drug: ' + str(self.methods['drug']))
-        # label_condition = QLabel(
-        #     'Condition: ' + str(self.methods['condition']))
-        # label_drug = QLabel()
         nb_beads, nb_cells, nb_couples = self.controller.count_cell_bead()
         label_nb_bead = QLabel('Nb beads: ' + str(nb_beads) + '\nNb cells: ' +
                                str(nb_cells) + '\nNb couples: ' + str(nb_couples))
@@ -1079,9 +1079,11 @@ class View(QMainWindow, QWidget):
         canvas = FigureCanvasQTAgg(fig)
         toolbar = NavigationToolbar2QT(self.canvas, self)
         self.graph_bilan.main_layout.addWidget(toolbar, 0, 0, 1, 1)
-        self.graph_bilan.main_layout.addWidget(frame, 0, 1, 1, 3)
+        self.graph_bilan.main_layout.addWidget(frame, 0, 1, 1, 4)
+        self.toogle_bilan = QtToggle(120, 30, '#777', '#ffffff', '#4997d0', 'Piechart', 'Scatter')
+        self.graph_bilan.main_layout.addWidget(self.toogle_bilan, 0, 5, 1, 1)
         
-        self.graph_bilan.main_layout.addWidget(canvas, 1, 0, 6, 4)
+        self.graph_bilan.main_layout.addWidget(canvas, 1, 0, 6, 6)
 
         self.graph_bilan.showMaximized()
 
