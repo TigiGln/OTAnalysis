@@ -23,6 +23,7 @@ class Curve:
         """
         Initialization attributes of the object and launch the functions
         """
+        ######### Attributes #################
         self.file = file
         bead = title.split("-")[0][0:2]
         cell = title.split("-")[0][2:4]
@@ -39,57 +40,37 @@ class Curve:
 
         self.message += self.file
         self.message += "\n========================================================================\n"
-        # self.delta_t()
+
+        ######### methods ###############
         self.identification_main_axis()
         self.normalization_data()
         self.correction_optical_effect_object = OpticalEffect(self)
         self.check_incomplete = self.segment_retraction_troncated(
             pulling_length)
         if not self.check_incomplete:
-        #     print(
-        #         "\n========================================================================\n")
-        #     print(self.file)
-        #     print(
-        #         "\n========================================================================\n")
-
-            self.calcul_baseline("Press")
-            self.calcul_std("Press")
-
-        # self.detected_max_force()
-        # #self.check_alignment_curve()
-
-        # self.curve_approach_analyze()
-        #self.graphics['graph_approach'] = plt.show()
-        #self.graphics['graph_retraction'] = plt.show()
+            baseline_origin = self.calcul_baseline("Press")
+            self.features['baseline_origin_press (N)'] = format(
+                    baseline_origin * 1e12, '.3E')
+            beseline_corrected =  self.calcul_baseline('Press', True)
+            self.features['baseline_corrected_press (pN)'] = format(
+                    beseline_corrected * 1e12, '.3E')
+            std_origin = self.calcul_std("Press")
+            self.features['std_origin_press (N)'] = format(std_origin, '.3E')
+            std_corrected = self.calcul_std("Press", True)
+            self.features['std_corrected_press (pN)'] = format(std_corrected, '.3E')
 
     ################################################################################################
-
-    def __str__(self):
-        """
-        Determines what is displayed when the object is printed
-
-        :return:
-            self.bead: used ball
-            self.cell: cell number
-        """
-        return self.output['bead'] + " " + self.output['cell']
-
-    ###############################################################################################
-
-    def delta_t(self):
-        """
-        calculation of the delta t on the whole curve
-
-        :return:
-            delta_t: float
-                time variation on the whole curve
-        """
-        delta_t = 0
-        for segment in self.dict_segments.values():
-            delta_t += segment.real_time()
-        return delta_t
-
-    ###############################################################################################
+    """
+    Initialization methods of the curves object:
+    - identification_main_axis
+    - curbe_reversal
+    - normalization_data
+    - segment_retraction_troncated
+    - calcul_baseline
+    - calcul_std
+    - detected_min_force
+    - check_alignment_curve"""
+    ################################################################################################
 
     def identification_main_axis(self):
         """
@@ -127,38 +108,19 @@ class Curve:
             print(main_axis)
 
     ################################################################################################
-    def analyzed_curve(self, methods, manual_correction):
-        """
-        launch of the important steps of the analysis of the characteristic elements for a curve
 
-        :parameters:
-            methods:dictionary with all the parameters provided by the user for the analysis
-            correction: change from the initial correction mode requested
+    def curve_reversal(self):
         """
-        optical_state = "No_correction"
-        type_curve = self.compare_baseline_start_end(methods['factor_noise'])
-        if not manual_correction:
-            if methods['optical'] == "Correction":
-                try:
-                    self.correction_optical_effect_object.automatic_correction(
-                        methods['factor_noise'])
-                    optical_state = "Auto_correction"
-                except:
-                    print('index error No correction')
-        self.curve_approach_analyze(
-            methods['model'].lower(), methods['eta'], methods['bead_radius'], methods['factor_noise'], methods['width_window_smooth'])
-        type_curve = self.curve_return_analyze(
-            methods['jump_force'], methods['jump_point'], methods['jump_distance'], methods['factor_noise'], type_curve, methods['width_window_smooth'])
-        self.features['drug'] = methods['drug']
-        self.features['condition'] = methods['condition']
-        self.features['tolerance'] = methods['factor_noise']
-        self.features['optical_state'] = optical_state
-        if manual_correction:
-            self.features['type'] = type_curve
-        else:
-            self.features['automatic_type'] = type_curve
-        print(self.features['automatic_type'])
-        #print(self.features['type'])
+        According to the main axis transforms all values into their inverse to return the curve
+        """
+        # print("curve_reversal")
+        for segment in self.dict_segments.values():
+            segment.corrected_data['xSignal1'] = - \
+                segment.corrected_data['xSignal1']
+            segment.corrected_data['ySignal1'] = - \
+                segment.corrected_data['ySignal1']
+            segment.corrected_data['zSignal1'] = - \
+                segment.corrected_data['zSignal1']
 
     ################################################################################################
 
@@ -186,46 +148,12 @@ class Curve:
                 data_analyze = segment.data
             if name_segment == "Press":
                 baseline = data_analyze[axe + 'Signal1'][0:range_data].mean()
-                self.features['baseline_press'] = format(
-                    baseline * 1e12, '.3E')
             elif name_segment == "Pull":
                 baseline = data_analyze[axe + 'Signal1'][-range_data:].mean()
         self.message += "\n" + str(baseline)
         return baseline
 
-    ###############################################################################################
-
-    def calcul_std(self, name_segment, corrected_data=False, axe="", range_data=200):
-        """
-        Determination of the standard deviation of the curve by calculating
-        over the first or the last 200 points
-        :parameters:
-            name_segment: str
-                name of the segment on which to search the baseline
-            range_data: int
-                nb point for the calcul
-        :return:
-            std: float
-                value of the standard deviation as a function of the segment
-        """
-        std = 0
-        if axe == "":
-            axe = self.features["main_axis"]['axe']
-        segment = self.dict_segments[name_segment]
-        if segment.header_segment['segment-settings.style'] == "motion":
-            if corrected_data:
-                data_analyze = segment.corrected_data
-            else:
-                data_analyze = segment.data
-            if name_segment == "Press":
-                std = data_analyze[axe + 'Signal1'][0:range_data].std()
-                self.features['std_press'] = format(std, '.3E')
-            elif name_segment == "Pull":
-                std = data_analyze[axe + 'Signal1'][-range_data:].std()
-
-        return std
-
-    ###############################################################################################
+    ################################################################################################
 
     def normalization_data(self):
         """
@@ -264,142 +192,66 @@ class Curve:
                     data_corrected_stiffness - data_corrected_stiffness[0])  # (nm)
         if self.features["main_axis"]["sign"] == "+":
             self.curve_reversal()
-
+    
     ###############################################################################################
 
-    def curve_reversal(self):
+    def segment_retraction_troncated(self, pulling_length):
         """
-        According to the main axis transforms all values into their inverse to return the curve
-        """
-        # print("curve_reversal")
-        for segment in self.dict_segments.values():
-            segment.corrected_data['xSignal1'] = - \
-                segment.corrected_data['xSignal1']
-            segment.corrected_data['ySignal1'] = - \
-                segment.corrected_data['ySignal1']
-            segment.corrected_data['zSignal1'] = - \
-                segment.corrected_data['zSignal1']
-            # if self.features["main_axis"]['axe'] == 'x':
-            #     segment.corrected_data['ySignal1'] = -segment.corrected_data['ySignal1']
-            # else:
-            #     segment.corrected_data['xSignal1'] = -segment.corrected_data['xSignal1']
-            # segment.corrected_data['zSignal1'] = -segment.corrected_data['zSignal1']
+        Checking the length of the last segment
 
+        :parameters:
+            pulling_length: int
+                Percentage of length to accept the curve 
+
+        """
+        # segment = self.dict_segments['Press']
+        # nb_point_segment = segment.header_segment['.num-points']
+        # print(nb_point_segment)
+        segment = self.dict_segments['Pull']
+        nb_point_segment = int(
+            segment.header_segment['segment-settings.num-points'])
+        size_data = len(
+            segment.data[self.features["main_axis"]['axe'] + 'Signal1'])
+        check_segment_troncated = True
+        if nb_point_segment == size_data:
+            check_segment_troncated = False
+        else:
+            if nb_point_segment * int(pulling_length)/100 <= size_data:
+                check_segment_troncated = False
+        return check_segment_troncated
+    
     ###############################################################################################
 
-    def retrieve_data_curve(self, type_data="data_original"):
+    def calcul_std(self, name_segment, corrected_data=False, axe="", range_data=200):
         """
-        Visualization of the curves on the three axes with Matplotlib
-
+        Determination of the standard deviation of the curve by calculating
+        over the first or the last 200 points
         :parameters:
-            type_data: str
-                Determined the dataframe to be used for visualization
-                (original data or corrected data)
-            y: str
-                data on the axe Y for the plot
+            name_segment: str
+                name of the segment on which to search the baseline
+            range_data: int
+                nb point for the calcul
         :return:
-            plot show
+            std: float
+                value of the standard deviation as a function of the segment
         """
-        data_total = pd.DataFrame()
-        for segment in self.dict_segments.values():
-            if type_data == "data_original":
-                data_total = pd.concat(
-                    [data_total, segment.data], ignore_index=True, verify_integrity=True)
+        std = 0
+        if axe == "":
+            axe = self.features["main_axis"]['axe']
+        segment = self.dict_segments[name_segment]
+        if segment.header_segment['segment-settings.style'] == "motion":
+            if corrected_data:
+                data_analyze = segment.corrected_data
             else:
-                data_total = pd.concat(
-                    [data_total, segment.corrected_data], ignore_index=True,  verify_integrity=True)
-        return data_total
+                data_analyze = segment.data
+            if name_segment == "Press":
+                std = data_analyze[axe + 'Signal1'][0:range_data].std()
+            elif name_segment == "Pull":
+                std = data_analyze[axe + 'Signal1'][-range_data:].std()
 
-    ##############################################################################################
+        return std
 
-    def check_alignment_curve(self, threshold_align):
-        """
-        Determination of the curve well aligned on the main axis
-
-        :parameters:
-            force: float
-                application force on the cell (Default: 10e-12)
-        :return:
-            check: bool
-                return True if the curve is not well aligned
-        """
-        # print("check_alignment_curve")
-        force_min = 0
-        force_min_exp = self.detected_min_force()
-        force_min_exp = abs(force_min_exp * (threshold_align/100))
-        segment = self.dict_segments["Press"]
-        force_threshold = threshold_align * \
-            float(
-                segment.header_segment['segment-settings.setpoint.value']) / 100
-        force_threshold = force_threshold * 1e12
-        if force_threshold < force_min_exp:
-            force_min = force_min_exp
-        else:
-            force_min = force_threshold
-        self.graphics['threshold alignement'] = force_min
-        dict_align = {}
-        for segment in self.dict_segments.values():
-            dict_align[segment.name] = segment.check_alignment(
-                self.features["main_axis"]['axe'], force_min)
-        dict_align_final = {}
-        for key, value in dict_align.items():
-            if 'AL' not in dict_align_final:
-                dict_align_final['AL'] = value['AL']
-                dict_align_final['axe'] = value['axe']
-            else:
-                if dict_align_final['AL'] != value['AL']:
-                    if dict_align_final['AL'] == 'Yes':
-                        dict_align_final['AL'] = value['AL']
-                if dict_align_final['axe'] == 'NaN':
-                    dict_align_final['axe'] = value['axe']
-                else:
-                    if isinstance(dict_align_final, list) and len(dict_align_final['axe']) < len(value['axe']):
-                        dict_align_final['axe'] = value['axe']
-        return dict_align_final
-
-    ##############################################################################################
-
-    def compare_baseline_start_end(self, tolerance):
-        """
-        Comparison of the beginning and the end of the curve to know
-        if there is a break of adhesion and return to normal
-
-        :return:
-            :check: bool
-                returns true if start and end similarly
-        """
-        print("compare_baseline")
-        type_curve = ""
-        baseline_start = self.calcul_baseline("Press", True)
-        line_end = self.calcul_baseline("Pull", True)
-        std_start = self.calcul_std("Press", True)
-        # print('baseline_start: ', baseline_start)
-        # print('std_start: ', std_start)
-        # print('line_end: ', line_end)
-        # print(line_end)
-        # print(baseline_start - std_start*tolerance)
-        # print(baseline_start + std_start*tolerance)
-        check = False
-        if (baseline_start - std_start*tolerance) < line_end < (baseline_start + std_start*tolerance):
-            self.message += "\nbaseline_end Ok\n"
-            print("baseline_end Ok")
-            check = True
-            type_curve = None
-            #self.features["automatic_type"] = None
-        elif(baseline_start + std_start*tolerance) < line_end:
-            self.message += "\nBaseline_end NO\n"
-            print("Baseline_end NO")
-            type_curve = "ITU"
-            #self.features["automatic_type"] = "ITU"
-        else:
-            self.message += "\nBaseline_end NO\n"
-            print("Baseline_end NO")
-            type_curve = "RE"
-            #self.features["automatic_type"] = "RE"
-
-        return type_curve
-
-    #############################################################################################
+    ###################################################################################################
 
     def detected_min_force(self, tolerance=10):
         """
@@ -461,7 +313,149 @@ class Curve:
             'index': index_data_max_curve, 'value': force_max_curve}
         return data_min_curve
 
-    #############################################################################################
+    ###################################################################################################
+
+    def check_alignment_curve(self, threshold_align):
+        """
+        Determination of the curve well aligned on the main axis
+
+        :parameters:
+            force: float
+                application force on the cell (Default: 10e-12)
+        :return:
+            check: bool
+                return True if the curve is not well aligned
+        """
+        # print("check_alignment_curve")
+        force_min = 0
+        force_min_exp = self.detected_min_force()
+        force_min_exp = abs(force_min_exp * (threshold_align/100))
+        segment = self.dict_segments["Press"]
+        force_threshold = threshold_align * \
+            float(
+                segment.header_segment['segment-settings.setpoint.value']) / 100
+        force_threshold = force_threshold * 1e12
+        if force_threshold < force_min_exp:
+            force_min = force_min_exp
+        else:
+            force_min = force_threshold
+        self.graphics['threshold alignement'] = force_min
+        dict_align = {}
+        for segment in self.dict_segments.values():
+            dict_align[segment.name] = segment.check_alignment(
+                self.features["main_axis"]['axe'], force_min)
+        dict_align_final = {}
+        for key, value in dict_align.items():
+            if 'AL' not in dict_align_final:
+                dict_align_final['AL'] = value['AL']
+                dict_align_final['axe'] = value['axe']
+            else:
+                if dict_align_final['AL'] != value['AL']:
+                    if dict_align_final['AL'] == 'Yes':
+                        dict_align_final['AL'] = value['AL']
+                if dict_align_final['axe'] == 'NaN':
+                    dict_align_final['axe'] = value['axe']
+                else:
+                    if isinstance(dict_align_final, list) and len(dict_align_final['axe']) < len(value['axe']):
+                        dict_align_final['axe'] = value['axe']
+        return dict_align_final
+
+    ###################################################################################################
+    
+    def compare_baseline_start_end(self, tolerance):
+        """
+        Comparison of the beginning and the end of the curve to know
+        if there is a break of adhesion and return to normal
+
+        :return:
+            :check: bool
+                returns true if start and end similarly
+        """
+        print("compare_baseline")
+        type_curve = ""
+        baseline_start = self.calcul_baseline("Press", True)
+        line_end = self.calcul_baseline("Pull", True)
+        std_start = self.calcul_std("Press", True)
+        # print('baseline_start: ', baseline_start)
+        # print('std_start: ', std_start)
+        # print('line_end: ', line_end)
+        # print(line_end)
+        # print(baseline_start - std_start*tolerance)
+        # print(baseline_start + std_start*tolerance)
+        check = False
+        if (baseline_start - std_start*tolerance) < line_end < (baseline_start + std_start*tolerance):
+            self.message += "\nbaseline_end Ok\n"
+            print("baseline_end Ok")
+            check = True
+            type_curve = None
+            #self.features["automatic_type"] = None
+        elif(baseline_start + std_start*tolerance) < line_end:
+            self.message += "\nBaseline_end NO\n"
+            print("Baseline_end NO")
+            type_curve = "ITU"
+            #self.features["automatic_type"] = "ITU"
+        else:
+            self.message += "\nBaseline_end NO\n"
+            print("Baseline_end NO")
+            type_curve = "RE"
+            #self.features["automatic_type"] = "RE"
+
+        return type_curve
+
+    ###############################################################################################
+                                    # Methods common to all segments               
+    ###############################################################################################
+    def smooth(self, force_data, window_length=51, order_polynome=3):
+        """
+        Allows to reduce the noise on the whole curve
+
+        :parameters:
+            force_data: Series
+                values of y 
+            window_length: int (odd)
+                size of the sliding window
+
+        :return:
+            values of y smoothing
+        """
+        if window_length % 2 == 0:
+            window_length += 1
+        y_smooth = savgol_filter(force_data, window_length, order_polynome)
+
+        return y_smooth
+
+    ###############################################################################################
+
+    def retrieve_contact(self, data_analyze, segment, tolerance):
+        """
+        Allows to determine the contact point of the ball with the cell and contact release cell
+
+        """
+        print('retrieve_contact')
+        list_index_contact = []
+        index_contact = 0
+        line_pos_threshold = ""
+        segment_press = self.dict_segments['Press']
+        data = segment_press.corrected_data[self.features['main_axis']['axe'] + 'Signal1']
+        # baseline = data[0:200].mean()
+        baseline = self.features['baseline_corrected_press (pN)']
+        # std = data[0:200].std()
+        std = self.features['std_corrected_press (pN)']
+        line_pos_threshold = np.full(len(data_analyze), std*tolerance)
+        for index in range(len(data_analyze)-1, -1, -1):
+            if baseline - std < data_analyze[index] < abs(baseline) + abs(std):
+                list_index_contact.append(index)
+        if len(list_index_contact) > 0:
+            if segment == "Press":
+                index_contact = list_index_contact[0]
+            else:
+                index_contact = list_index_contact[-1]
+        
+        return index_contact, line_pos_threshold
+
+    ###############################################################################################
+                                    # Analysis methods segment Approach
+    ###############################################################################################
 
     def fit_model_approach(self, data_corrected_stiffness, contact_point, k, baseline):
         """
@@ -481,7 +475,8 @@ class Curve:
                 (fit[fit > contact_point]-contact_point)**(3/2) + baseline
         return fit
 
-    #############################################################################################
+    ###############################################################################################
+
     def fit_curve_approach(self, tolerance, window_smooth):
         """
         creation of the data fit for the curve
@@ -505,7 +500,8 @@ class Curve:
         index_contact, line_pos_threshold = self.retrieve_contact(
             y_smooth, "Press", tolerance)
         self.graphics['threshold_press'] = line_pos_threshold
-        baseline = force_data[0:300].mean() + force_data[0:300].std()  # y0
+        #baseline = force_data[0:300].mean() + force_data[0:300].std()  # y0
+        baseline = self.features['baseline_corrected_press (pN)']
         x_1 = time_data[len(time_data)-index_contact]
         y_1 = force_data[len(force_data)-index_contact]
         x_2 = time_data[len(time_data)-10]
@@ -524,37 +520,32 @@ class Curve:
         self.graphics['fitted_Press'] = fitted
 
         return f_parameters
-
-    ##################################################################################################
-
-    # @staticmethod
-    def retrieve_contact(self, data_analyze, segment, tolerance):
+    
+    ###############################################################################################
+    @staticmethod
+    def determine_young_modulus(k, eta, bead_ray):
         """
-        Allows to determine the contact point of the ball with the cell and contact release cell
+        Young modulus calculation
 
+        :parameters:
+            k: float
+                directing coefficient of the slope
+            eta: float
+                compressibility constant
+            bead_ray: float
+                size of the ball radius
+
+        :return:
+            young:float
+                young module
         """
-        print('retrieve_contact')
-        list_index_contact = []
-        index_contact = 0
-        line_pos_threshold = ""
-        segment_press = self.dict_segments['Press']
-        data = segment_press.corrected_data[self.features['main_axis']['axe'] + 'Signal1']
-        baseline = data[0:200].mean()
-        std = data[0:200].std()
-        line_pos_threshold = np.full(len(data_analyze), std*tolerance)
-        for index in range(len(data_analyze)-1, -1, -1):
-            if baseline - std < data_analyze[index] < abs(baseline) + abs(std):
-                list_index_contact.append(index)
-        if len(list_index_contact) > 0:
-            if segment == "Press":
-                index_contact = list_index_contact[0]
-            else:
-                index_contact = list_index_contact[-1]
-        
-        return index_contact, line_pos_threshold
+        indentation_depth = 10  # la profondeur d'indentation (m)
+        # eta = ratio de Poisson (adimensionnel)
+        young = np.around(abs(k) * 1e6 * 3/4 * (1 - eta**2) /
+                          np.sqrt(bead_ray * indentation_depth**3), 2)  # radius in nm
+        return young
 
-    ###################################################################################################
-
+    ###############################################################################################
     def curve_approach_analyze(self, model, eta, bead_ray, tolerance, window_smooth):
         """
         TODO
@@ -606,9 +597,34 @@ class Curve:
             self.dict_segments['Press'].header_segment['segment-settings.duration'])
         vitesse = round(length_segment/time_segment, 1)
         self.dict_segments['Press'].features['vitesse'] = vitesse
+    
+    ###############################################################################################
+                                        # Analysis methods segment Return
+    ################################################################################################
 
-    ###################################################################################################
+    @staticmethod
+    def retrieve_retour_line_end(data_analyze, line_pos_threshold):
+        """
+        TODO
+        """
+        # threshold = np.abs(mean_final_points + std_final_points * nb_std)
+        # threshold2 = np.abs(mean_final_points + std_final_points * 8)
+        # print("threshold: ", threshold)
+        # print("threshold2: ", threshold2)
+        list_data_return_endline = []
+        index_return_endline = None
+        data_analyze = np.array(data_analyze)
+        data_analyze_reverse = np.flip(data_analyze)
+        list_data_return_endline = data_analyze_reverse[(
+            data_analyze_reverse > line_pos_threshold[0])]
+        if list_data_return_endline.size != 0:
+            index_return_endline = np.where(
+                data_analyze == list_data_return_endline[0])[0][0] - 1
 
+            #index_return_endline = len(data_analyze) - index_return_endline
+        return index_return_endline
+
+    ################################################################################################
     @staticmethod
     def fit_model_retraction(data, k, point_release, endline):
         """
@@ -620,8 +636,9 @@ class Curve:
         fit[fit >= point_release] = endline
         return fit
 
-    ##################################################################################################
 
+    ################################################################################################
+    
     def fit_curve_retraction(self, seuil_jump_force, seuil_nb_point, seuil_jump_distance, tolerance, type_curve, window_smooth):
         """
         TODO
@@ -735,204 +752,82 @@ class Curve:
 
         return type_curve
 
-    ####################################################################################################################################
-
-    # def derivation(self, force_data, time_data, n):
-    #     derivation = []
-    #     for index in range(n//2, len(force_data)-n//2, 1):
-    #         derivation.append((force_data[index+n//2] - force_data[index-n//2])/(
-    #             time_data[index+n//2] - time_data[index-n//2]))
-    #     derivation = np.array(derivation)
-    #     return derivation
-
-    #####################################################################################################################################
+    ################################################################################################
+    
     def curve_return_analyze(self, seuil_jump_force, seuil_nb_point, seuil_jump_distance, tolerance, type_curve, window_smooth):
         """
         TODO
         """
-        main_axis = self.features["main_axis"]['axe']
-        #segment_go = self.dict_segments["Press"]
-        #optical_effect = self.retrieve_contact(segment_go.corrected_data[main_axis + 'Signal1'], 'optical')
-        segment_return = self.dict_segments["Pull"]
-        force_data = segment_return.corrected_data[main_axis + 'Signal1']
-        # distance_data = np.abs(
-        #     segment_return.corrected_data['distance'] - segment_return.corrected_data['distance'][0])
-        mean = force_data[len(force_data)-len(force_data)//3:].mean()
-        std = force_data[len(force_data)-len(force_data)//3:].std()
         type_curve = self.fit_curve_retraction(
             seuil_jump_force, seuil_nb_point, seuil_jump_distance, tolerance, type_curve, window_smooth)
 
         return type_curve
-    #####################################################################################################################################
 
-    @staticmethod
-    def retrieve_retour_line_end(data_analyze, line_pos_threshold):
+    ################################################################################################
+                                 # Launching methods of analysis of the segments of the curve
+    ################################################################################################
+
+    def analyzed_curve(self, methods, manual_correction):
         """
-        TODO
-        """
-        # threshold = np.abs(mean_final_points + std_final_points * nb_std)
-        # threshold2 = np.abs(mean_final_points + std_final_points * 8)
-        # print("threshold: ", threshold)
-        # print("threshold2: ", threshold2)
-        list_data_return_endline = []
-        index_return_endline = None
-        data_analyze = np.array(data_analyze)
-        data_analyze_reverse = np.flip(data_analyze)
-        list_data_return_endline = data_analyze_reverse[(
-            data_analyze_reverse > line_pos_threshold[0])]
-        if list_data_return_endline.size != 0:
-            index_return_endline = np.where(
-                data_analyze == list_data_return_endline[0])[0][0] - 1
-
-            #index_return_endline = len(data_analyze) - index_return_endline
-        return index_return_endline
-
-    ######################################################################################################################################
-
-    @staticmethod
-    def determine_young_modulus(k, eta, bead_ray):
-        """
-        Young modulus calculation
+        launch of the important steps of the analysis of the characteristic elements for a curve
 
         :parameters:
-            k: float
-                directing coefficient of the slope
-            eta: float
-                compressibility constant
-            bead_ray: float
-                size of the ball radius
-
-        :return:
-            young:float
-                young module
+            methods:dictionary with all the parameters provided by the user for the analysis
+            correction: change from the initial correction mode requested
         """
-        indentation_depth = 10  # la profondeur d'indentation (m)
-        # eta = ratio de Poisson (adimensionnel)
-        young = np.around(abs(k) * 1e6 * 3/4 * (1 - eta**2) /
-                          np.sqrt(bead_ray * indentation_depth**3), 2)  # radius in nm
-        return young
-
-    ######################################################################################################################################
-
-    def segment_retraction_troncated(self, pulling_length):
-        """
-        Checking the length of the last segment
-
-        :parameters:
-            pulling_length: int
-                Percentage of length to accept the curve 
-
-        """
-        # segment = self.dict_segments['Press']
-        # nb_point_segment = segment.header_segment['.num-points']
-        # print(nb_point_segment)
-        segment = self.dict_segments['Pull']
-        nb_point_segment = int(
-            segment.header_segment['segment-settings.num-points'])
-        size_data = len(
-            segment.data[self.features["main_axis"]['axe'] + 'Signal1'])
-        check_segment_troncated = True
-        if nb_point_segment == size_data:
-            check_segment_troncated = False
+        optical_state = "No_correction"
+        type_curve = self.compare_baseline_start_end(methods['factor_noise'])
+        if not manual_correction:
+            if methods['optical'] == "Correction":
+                try:
+                    self.correction_optical_effect_object.automatic_correction(
+                        methods['factor_noise'])
+                    optical_state = "Auto_correction"
+                except:
+                    print('index error No correction')
+        self.curve_approach_analyze(
+            methods['model'].lower(), methods['eta'], methods['bead_radius'], methods['factor_noise'], methods['width_window_smooth'])
+        type_curve = self.curve_return_analyze(
+            methods['jump_force'], methods['jump_point'], methods['jump_distance'], methods['factor_noise'], type_curve, methods['width_window_smooth'])
+        self.features['drug'] = methods['drug']
+        self.features['condition'] = methods['condition']
+        self.features['tolerance'] = methods['factor_noise']
+        self.features['optical_state'] = optical_state
+        if manual_correction:
+            self.features['type'] = type_curve
         else:
-            if nb_point_segment * int(pulling_length)/100 <= size_data:
-                check_segment_troncated = False
-        return check_segment_troncated
+            self.features['automatic_type'] = type_curve
+        print(self.features['automatic_type'])
+        #print(self.features['type'])
 
-    ##################################################################################################################
-    @staticmethod
-    def test_fit(time_data, slope, offset):
-        return slope*time_data + offset
+    ###############################################################################################
+                                 # Methods used in the supervision of the interface
+    ###############################################################################################
 
-    ######################################################################################################################################
-
-    # @staticmethod
-
-    def smooth(self, force_data, window_length=51, order_polynome=3):
+    def retrieve_data_curve(self, type_data="data_original"):
         """
-        Allows to reduce the noise on the whole curve
+        Visualization of the curves on the three axes with Matplotlib
 
         :parameters:
-            force_data: Series
-                values of y 
-            window_length: int (odd)
-                size of the sliding window
-
+            type_data: str
+                Determined the dataframe to be used for visualization
+                (original data or corrected data)
+            y: str
+                data on the axe Y for the plot
         :return:
-            values of y smoothing
+            plot show
         """
+        data_total = pd.DataFrame()
+        for segment in self.dict_segments.values():
+            if type_data == "data_original":
+                data_total = pd.concat(
+                    [data_total, segment.data], ignore_index=True, verify_integrity=True)
+            else:
+                data_total = pd.concat(
+                    [data_total, segment.corrected_data], ignore_index=True,  verify_integrity=True)
+        return data_total
 
-        # print("smooth")
-        # tck, u = splprep([time_data[::50], force_data[::50]])
-        # print('tck: ', tck)
-        # print('u: ', u)
-        # y_smooth = splev(u, tck, der=0)
-        # print(len(y_smooth[1]))
-        # derive = splev(u, tck, der=1)
-        # print('derive: ', len(derive[1]))
-        #derive = spalde(distance_data, tck)
-        # inds = time_data.argsort()
-        # force_data_order = force_data[inds]
-        # index_max_pull = force_data.argmax()
-        # if index_max_pull < len(force_data)-1000:
-        #     # print(time_data[index_max_pull:])
-        #     # print(force_data[index_max_pull:])
-        #     spl = UnivariateSpline(
-        #         time_data[index_max_pull:], force_data[index_max_pull:], s=2049, ext=1)
-        # #spl.set_smoothing_factor(200)
-        # derive = spl.derivative(1)
-        # derive_second = spl.derivative(2)
-        # #fig, ax1 = plt.subplots()
-
-        # # ax1.plot(time_data, force_data)
-        # # ax1.plot(time_data,spl(time_data), 'r-')
-
-        # # ax1.plot(time_data, np.zeros(len(force_data)), color='black')
-        # # ax2 = ax1.twinx()
-        # #ax2.plot(time_data, derive(time_data), color='green')
-        # # ax2.plot(time_data, derive_second(time_data), color='green')
-        # index_derive_max = derive(time_data).argmin()
-        # index_min_derive_second = derive_second(time_data).argmin()
-        # index_max_derive_second = derive_second(time_data).argmax()
-        # index_min_derive_second = index_min_derive_second
-
-        # self.graphics['milieu_pente'] = index_derive_max
-        # self.graphics['index_max_derive'] = index_max_derive_second
-        # self.graphics['min_derive'] = index_min_derive_second
-        #index_derive_max = np.where(derive(time_data) == derive_max)[0]
-        # derive_neg = np.negative(derive_second(time_data))
-        # derive_neg_max = derive_neg.max()
-        # index_derive_neg_max = np.where(derive_neg == derive_neg_max)[0]-18
-        #peaks, _ = find_peaks(derive(time_data), height=100000, prominence=1)
-        # peaks = find_peaks(derive_second(time_data), prominence=20000000)
-        # if len(peaks[0]) == 1:
-        #     print('peaks: ', peaks[0])
-        # else:
-        #     print(peaks[0])
-
-        # peak = find_peaks_cwt(derive_second)
-        # print(peak)
-
-        # ax1.plot(time_data[index_derive_max], force_data[index_derive_max], "D", color='orange')
-        # ax1.plot(time_data[index_min_derive_second], force_data[index_min_derive_second], "D", color='pink')
-        # ax1.plot(time_data[index_max_derive_second], force_data[index_max_derive_second], "D", color='purple')
-
-        #ax1.plot(time_data[index_derive_neg_max[0]], force_data[index_derive_neg_max], "o")
-        # plt.plot(derive[0], derive[1])
-        #plt.plot(time_data, force_data, linewidth=0, marker='x')
-
-        # plt.show()
-
-        # bspline = BSpline()
-        # print(bspline)
-        # print(dir(bspline))
-        if window_length % 2 == 0:
-            window_length += 1
-        y_smooth = savgol_filter(force_data, window_length, order_polynome)
-
-        return y_smooth
-
-    ######################################################################################################################################
+    ###################################################################################################
 
     def add_feature(self, add_key, add_value):
         """
@@ -946,9 +841,14 @@ class Curve:
         """
         self.features[add_key] = add_value
 
-    ######################################################################################################################################
+    ###################################################################################################
+                                            # Method of creating the output 
+    ##################################################################################################
 
     def creation_output_curve(self):
+        """
+        TODO
+        """
         for key_features, value_features in self.features.items():
             if isinstance(value_features, dict):
                 for key_dict, value_dict in value_features.items():
@@ -983,3 +883,35 @@ class Curve:
                     segment.header_segment['segment-settings.duration']), '.1E')
                 self.output['theorical_speed_' +
                             segment.name + ' (m/s)'] = speed
+
+    ##################################################################################################
+                                            # Other methods or test methods
+    ##################################################################################################
+
+    # def derivation(self, force_data, time_data, n):
+    #     derivation = []
+    #     for index in range(n//2, len(force_data)-n//2, 1):
+    #         derivation.append((force_data[index+n//2] - force_data[index-n//2])/(
+    #             time_data[index+n//2] - time_data[index-n//2]))
+    #     derivation = np.array(derivation)
+    #     return derivation
+
+    ##################################################################################################
+    # @staticmethod
+    # def test_fit(time_data, slope, offset):
+    #     return slope*time_data + offset
+
+    ################################################################################################
+
+    def delta_t(self):
+        """
+        calculation of the delta t on the whole curve
+
+        :return:
+            delta_t: float
+                time variation on the whole curve
+        """
+        delta_t = 0
+        for segment in self.dict_segments.values():
+            delta_t += segment.real_time()
+        return delta_t

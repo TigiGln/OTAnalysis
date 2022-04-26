@@ -1226,7 +1226,8 @@ class Controller:
                             'optical_state', 'model', 'Date', 'Hour', 'condition', 'drug', 'tolerance', 'bead', 'cell',
                             'main_axis', 'stiffness (N/m)', 'theorical_contact_force (N)', 'theorical_distance_Press (m)',
                             'theorical_speed_Press (m/s)', 'theorical_freq_Press (Hz)', 'theorical_distance_Pull (m)',
-                            'theorical_speed_Pull (m/s)', 'theorical_freq_Pull (Hz)', 'baseline_press', 'std_press',
+                            'theorical_speed_Pull (m/s)', 'theorical_freq_Pull (Hz)', 'baseline_origin_press (N)',
+                            'baseline_corrected_press (pN)', 'std_origin_press (N)', 'std_corrected_press (pN)',
                             name_parameters, error_parameters, 'contact_point_index', 'contact_point_value',
                             'force_min_press_index', 'force_min_press_value', 'point_release_index',
                             'point_release_value', 'force_max_pull_index', 'force_max_pull_value',
@@ -1249,8 +1250,7 @@ class Controller:
                             liste_labels.append(label)
             self.output = self.output[liste_labels]
 
-            self.output.rename(columns={'baseline_press': 'baseline_press (pN)', 'std_press': 'std_press (pN)',
-                                        'contact_point_value': 'contact_point_value  (pN)', 'force_min_press_value': 'force_min_press_value (pN)',
+            self.output.rename(columns={'contact_point_value': 'contact_point_value  (pN)', 'force_min_press_value': 'force_min_press_value (pN)',
                                         'point_release_value': 'point_release_value (pN)', 'force_max_pull_value': 'force_max_pull_value (pN)',
                                         'point_return_endline_value': 'point_return_endline_value (pN)'}, inplace=True)
 
