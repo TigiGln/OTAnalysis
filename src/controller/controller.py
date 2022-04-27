@@ -2,6 +2,7 @@
 Class Controller
 """
 import sys
+import traceback
 from os import sep
 from pathlib import Path
 from shutil import copy
@@ -18,6 +19,7 @@ from matplotlib import gridspec
 import re
 import argparse
 from math import ceil, floor
+from pympler.tracker import SummaryTracker
 
 
 class Controller:
@@ -35,11 +37,13 @@ class Controller:
             path_files: str
                 path of the folder containing the curves to be analyzed
         """
+        #self.tracker = SummaryTracker()
         self.view = view
         self.files = []
         self.dict_curve = {}
         self.test = None
-        self.output = pd.DataFrame()
+        self.output = pd.DataFrame(dtype='float64')
+        
         if path_files is not None:
             self.set_list_files(path_files)
             methods = {'threshold_align': 30, 'pulling_length': 50, 'model': 'linear', 'eta': 0.5, 'bead_radius': 1, 'factor_noise': 5,
@@ -68,13 +72,11 @@ class Controller:
         self.dict_type_files = {'txt': 0, 'jpk': 0, 'NC':0, 'PB':0, 'INC':0}
         self.list_file_imcomplete = set()
         for index_file in range(0, len(self.files), 1):
-            # print(index_file)
-            # print(self.files[index_file])
+            #self.tracker.print_diff()
             new_curve = None
             type_file = self.files[index_file].split('.')[-1]
             name_file = self.files[index_file].split(
-                sep)[-1]  # .split('.')[0:-1]
-            #name_file = '.'.join(name_file)
+                sep)[-1]
             regex = re.match("^b[1-9]+c[1-9]+[a-z]{0,2}-", name_file)
             name_file = name_file.split('-')
             name_file = str(name_file[0][0:4]) + '-' + '-'.join(name_file[1:])
@@ -98,13 +100,14 @@ class Controller:
                     else:
                         print('non-conforming file.')
                         self.dict_type_files['NC'] +=1
-                except:
+                except Exception as error:
                     message = "The file curve is not conform for transformation in curve object"
-                    self.problematic_curve(self.files[index_file], type_file, message)
+                    self.problematic_curve(self.files[index_file], type_file, message, error)
                     self.dict_type_files['PB'] +=1
                 if check_incomplete:
                     self.list_file_imcomplete.add(
                         self.files[index_file].split(sep)[-1])
+                    self.dict_type_files['INC'] +=1
                 if new_curve is not None:
                     if new_curve.check_incomplete:
                         if type_file == 'jpk-nt-force':
@@ -120,9 +123,9 @@ class Controller:
                                 methods, False)
                             self.dict_curve[new_curve.file] = new_curve
                             new_curve.features['type'] = new_curve.features['automatic_type']
-                        except:
-                            message = "curve object created but problem in analysis due to erroneous data"
-                            self.problematic_curve(self.files[index_file], type_file, message)
+                        except Exception as error:
+                            message = "The curve object created but problem in analysis due to erroneous data"
+                            self.problematic_curve(self.files[index_file], type_file, message, error)
                             self.dict_type_files['PB'] +=1
             else:
                 print('files already processed')
@@ -131,7 +134,7 @@ class Controller:
             print(self.dict_type_files)
 
     ##################################################################################################################
-    def problematic_curve(self, file, extension, message):
+    def problematic_curve(self, file, extension, message, error):
         path_dir_problem = ""
         if extension == "jpk":
             path_dir_problem = Path(
@@ -142,6 +145,12 @@ class Controller:
         path_dir_problem.mkdir(parents=True, exist_ok=True)
         file_curve = file.__str__().split(sep)[-1]
         copy(file, str(path_dir_problem))
+        print('###########################################')
+        print(type(error).__name__, ':')
+        print(error)
+        print(traceback.format_exc())
+        print(message)
+        print('###########################################')
 
     ##################################################################################################################
     def create_list_for_graphs(self):
@@ -279,18 +288,6 @@ class Controller:
             else:
                 index_x_0 = curve.features['point_release']['index']
             index_max = curve.features['force_max_curve']['index']
-            # if curve.features['automatic_type'] != 'NAD' and curve.features['automatic_type'] != 'RE':
-                # if 'milieu_pente' in curve.graphics:
-                #     index_milieu_derive = curve.graphics['milieu_pente']
-                #     index_max_derive = curve.graphics['index_max_derive']
-                #     index_min_derive = curve.graphics['min_derive']
-                #     ax.plot(distance_data[index_milieu_derive],
-                #             force_data[index_milieu_derive], marker='D', color='cyan')
-                #     ax.plot(distance_data[index_max_derive],
-                #             force_data[index_max_derive], marker='D', color='red')
-                #     ax.plot(distance_data[index_min_derive],
-                #             force_data[index_min_derive], marker='D', color='black')
-            print(curve.features['point_return_endline']['index'])
             if curve.features['point_return_endline']['index'] != "NaN":
                 index_return = curve.features['point_return_endline']['index']
                 index_transition = curve.features['point_transition']['index'] 
@@ -299,15 +296,17 @@ class Controller:
                 ax.plot(distance_data[index_transition], force_data[index_transition],
                         color='#1E90FF', marker='o', label='transition')
             if 'type' in curve.features:
-                if curve.features['type'] != 'NAD':
+                
+                if curve.features['type'] != 'NAD' and curve.features['type'] != 'RE':
                     ax.plot(distance_data[index_max], force_data[index_max],
                             color='#1b7837', marker='o', label='max')
             else:
-                if curve.features['automatic_type'] != 'NAD':
+                if curve.features['automatic_type'] != 'NAD' or curve.features['automatic_type'] != 'RE':
                     ax.plot(distance_data[index_max], force_data[index_max],
                             color='#1b7837', marker='o', label='max')
-        ax.plot(distance_data[index_x_0], force_data[index_x_0],
-                color='#762a83', marker='o', label='contact')
+        if index_x_0 != 0:
+            ax.plot(distance_data[index_x_0], force_data[index_x_0],
+                    color='#762a83', marker='o', label='contact')
         
         ax.set_ylim(curve.features['force_min_curve']['value']-2,
                     curve.features['force_max_curve']['value'] + 2)
@@ -371,6 +370,10 @@ class Controller:
                  ['value'], marker='o', label='min curve', color='red')
         ax1.plot(time_data_pull[index_release], force_data_pull[index_release],
                  marker='o', color='#762a83', label='release point')
+        # if curve.features['type'] != 'NAD' and curve.features['type'] != 'RE':
+        #     if 'type' in curve.features:
+
+
         ax1.plot(data_total['seriesTime'][index_max], data_total[main_axis + 'Signal1'][index_max],
                  marker='o', color='#1b7837', label='max curve')
         ax1.legend(loc="lower left", ncol=2)
@@ -394,10 +397,20 @@ class Controller:
             threshold_line_pos = np.full(len(data_total), threshold_align)
             threshold_line_neg = np.negative(
                 np.full(len(data_total['seriesTime']), threshold_align))
+            line_time_min = None
+            line_time_max = None
+            
+            if 'distance' in data_total:
+                gs = gridspec.GridSpec(8, 10) 
+                line_time_min = 0
+                line_time_max = 3
+            else:
+                gs = gridspec.GridSpec(4, 10)
+                line_time_min = 1
+                line_time_max = 3
 
-            gs = gridspec.GridSpec(7, 10)
             ax1 = fig.add_subplot(
-                gs[0:2, 0:4], title="Main axis: " + main_axis)
+                gs[line_time_min:line_time_max, 0:4], title="Main axis: " + main_axis)
             # data_total.plot(kind="line", x='seriesTime', y=main_axis + 'Signal1', \
             #     xlabel='time (s)', ylabel='Force (pN)', ax=ax1, color='green', alpha=0.5, legend=None)
             ax1.plot(data_total['seriesTime'], data_total[main_axis +
@@ -416,7 +429,7 @@ class Controller:
             ax1.set_ylim(-scale - 3, scale + 3)
             # ax1.legend(loc='upper left')
             if main_axis == 'x':
-                ax2 = fig.add_subplot(gs[0:2, 5:7], title="Axis: y")
+                ax2 = fig.add_subplot(gs[line_time_min:line_time_max, 5:7], title="Axis: y")
                 ax2.plot(data_total['seriesTime'], data_total['ySignal1'],
                          color='grey', alpha=0.5)
                 ax2.set_xlabel('time (s)')
@@ -428,7 +441,7 @@ class Controller:
                          color='blue', ls='-.', alpha=0.5)
                 ax2.set_ylim(ax1.get_ylim())
             elif main_axis == 'y':
-                ax2 = fig.add_subplot(gs[0:2, 5:7], title="Axis: x")
+                ax2 = fig.add_subplot(gs[line_time_min:line_time_max, 5:7], title="Axis: x")
                 ax2.plot(data_total['seriesTime'], data_total['xSignal1'],
                          color='grey', alpha=0.5)
                 ax2.set_xlabel('time (s)')
@@ -439,7 +452,7 @@ class Controller:
                 ax2.plot(data_total['seriesTime'], threshold_line_neg,
                          color='blue', ls='-.', alpha=0.5)
                 ax2.set_ylim(ax1.get_ylim())
-            ax3 = fig.add_subplot(gs[0:2, 8:10], title="Axis: z")
+            ax3 = fig.add_subplot(gs[line_time_min:line_time_max, 8:10], title="Axis: z")
             ax3.plot(data_total['seriesTime'], data_total['zSignal1'],
                      color='grey', alpha=0.5)
             ax3.set_xlabel('time (s)')
@@ -464,7 +477,7 @@ class Controller:
                         else:
                             position_end_graph = 10
                         ax4 = fig.add_subplot(
-                            gs[4:7, position_start_graph:position_end_graph])
+                            gs[4:8, position_start_graph:position_end_graph])
                         position_start_graph = position_end_graph + 1
                         ax4.plot(
                             segment.corrected_data['distance'], segment.corrected_data[main_axis + 'Signal1'], color="#c2a5cf")
@@ -475,7 +488,7 @@ class Controller:
                         position_end_graph = floor(
                             position_start_graph + 10/length - 1)
                         ax4 = fig.add_subplot(
-                            gs[4:7, position_start_graph:position_end_graph])
+                            gs[4:8, position_start_graph:position_end_graph])
                         ax4.plot(
                             segment.corrected_data['seriesTime'], segment.corrected_data[main_axis + 'Signal1'], color="#34b6cf")
                         position_start_graph = position_end_graph + 1
@@ -911,10 +924,6 @@ class Controller:
         path_dir_incomplete.mkdir(parents=True, exist_ok=True)
         file_curve = file.__str__().split(sep)[-1]
         copy(file, str(path_dir_incomplete))
-        # print("\n")
-        # print("========================================================================")
-        # print(file_curve)
-        # print("========================================================================")
         print("File incomplete")
 
     ############################################################################################
@@ -1027,7 +1036,6 @@ class Controller:
                 nb_alignment_auto += 1
             elif curve.features['automatic_AL']['AL'] == 'Yes':
                 if curve.features['automatic_type'] in dict_type_auto:
-                    print(curve.features['automatic_type'])
                     dict_type_auto[curve.features['automatic_type']] += 1
             if curve.features['AL'] == 'No':
                 nb_alignment_supervised += 1
@@ -1036,7 +1044,6 @@ class Controller:
                     if curve.features['type'] in dict_type_supervised:
                         dict_type_supervised[curve.features['type']] += 1
             dict_correction[curve.features['optical_state']] += 1
-        print(dict_type_auto)
         nb_conforming_curves_auto = nb_curves - nb_alignment_auto
         percent_alignment_auto = nb_alignment_auto/nb_curves * 100
         percent_conforming_auto = nb_conforming_curves_auto/nb_curves * 100
@@ -1155,8 +1162,13 @@ class Controller:
                 return f"{pct}%({val})"
             else:
                 return f"{pct}%\n({val})"
-        except:
+        except Exception as error:
+            print('###########################################')
+            print(type(error).__name__, ':')
+            print(error)
+            print(traceback.format_exc())
             print('value problem')
+            print('###########################################')
     #########################################################################################################
 
     def count_cell_bead(self):
@@ -1195,7 +1207,7 @@ class Controller:
             path_directory: str
                 name of the folder to save the output
         """
-        print("\noutput_save")
+        print("output_save")
         today = str(date.today())
         time_today = str(datetime.now().time().replace(
             microsecond=0)).replace(':', '-')

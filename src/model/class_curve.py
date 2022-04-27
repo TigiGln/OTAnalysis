@@ -4,6 +4,7 @@ File describing the instance class of the curved objects
 import math
 import numpy as np
 import pandas as pd
+import traceback
 # import matplotlib.pyplot as plt
 # from matplotlib.figure import Figure
 from scipy.optimize import curve_fit
@@ -11,7 +12,6 @@ from scipy.signal import savgol_filter
 # from scipy.interpolate import UnivariateSpline
 # from lmfit import Model
 from model.class_optical_effect import OpticalEffect
-
 
 class Curve:
     """
@@ -373,9 +373,9 @@ class Curve:
         """
         print("compare_baseline")
         type_curve = ""
-        baseline_start = self.calcul_baseline("Press", True)
+        baseline_start = float(self.features['baseline_corrected_press (pN)'])
         line_end = self.calcul_baseline("Pull", True)
-        std_start = self.calcul_std("Press", True)
+        std_start = float(self.features['std_corrected_press (pN)'])
         # print('baseline_start: ', baseline_start)
         # print('std_start: ', std_start)
         # print('line_end: ', line_end)
@@ -435,12 +435,8 @@ class Curve:
         list_index_contact = []
         index_contact = 0
         line_pos_threshold = ""
-        segment_press = self.dict_segments['Press']
-        data = segment_press.corrected_data[self.features['main_axis']['axe'] + 'Signal1']
-        # baseline = data[0:200].mean()
-        baseline = self.features['baseline_corrected_press (pN)']
-        # std = data[0:200].std()
-        std = self.features['std_corrected_press (pN)']
+        baseline = float(self.features['baseline_corrected_press (pN)'])
+        std = float(self.features['std_corrected_press (pN)'])
         line_pos_threshold = np.full(len(data_analyze), std*tolerance)
         for index in range(len(data_analyze)-1, -1, -1):
             if baseline - std < data_analyze[index] < abs(baseline) + abs(std):
@@ -500,8 +496,7 @@ class Curve:
         index_contact, line_pos_threshold = self.retrieve_contact(
             y_smooth, "Press", tolerance)
         self.graphics['threshold_press'] = line_pos_threshold
-        #baseline = force_data[0:300].mean() + force_data[0:300].std()  # y0
-        baseline = self.features['baseline_corrected_press (pN)']
+        baseline = float(self.features['baseline_corrected_press (pN)']) #y0
         x_1 = time_data[len(time_data)-index_contact]
         y_1 = force_data[len(force_data)-index_contact]
         x_2 = time_data[len(time_data)-10]
@@ -546,17 +541,17 @@ class Curve:
         return young
 
     ###############################################################################################
-    def curve_approach_analyze(self, model, eta, bead_ray, tolerance, window_smooth):
+    def curve_approach_analyze(self, methods):
         """
         TODO
         """
-        self.features['model'] = model
+        self.features['model'] = methods['model'].lower()
         error = None
         young = None
         error_young = None
         #error_contact = None
         slope = None
-        f_parameters = self.fit_curve_approach(tolerance, window_smooth)
+        f_parameters = self.fit_curve_approach(methods['factor_noise'], methods['width_window_smooth'])
         if np.isfinite(np.sum(f_parameters[1])):
             error = np.sqrt(np.diag(f_parameters[1]))
         if self.features['model'] == 'linear':
@@ -573,9 +568,9 @@ class Curve:
                     " +/-" + str(error_young))
         elif self.features['model'] == 'sphere':
             young = Curve.determine_young_modulus(
-                f_parameters[0][1], eta, bead_ray)
+                f_parameters[0][1], methods['eta'], methods['bead_radius'])
             error_young = Curve.determine_young_modulus(
-                error[1], eta, bead_ray)
+                error[1], methods['eta'], methods['bead_radius'])
             if young.any() < 0.0:
                 young = None
                 error_young = None
@@ -639,109 +634,129 @@ class Curve:
 
     ################################################################################################
     
-    def fit_curve_retraction(self, seuil_jump_force, seuil_nb_point, seuil_jump_distance, tolerance, type_curve, window_smooth):
+    def fit_curve_retraction(self, methods, type_curve):
         """
         TODO
         """
-        main_axis = self.features["main_axis"]['axe']
+        ###### data ###############
         segment = self.dict_segments['Pull']
-        force_data = segment.corrected_data[main_axis + 'Signal1']
-        y_smooth = self.smooth(force_data, window_smooth, 2)
-        distance_data = None
-        if 'distance' in segment.corrected_data:
-            distance_data = np.abs(segment.corrected_data['distance'])
+        force_data = segment.corrected_data[self.features["main_axis"]['axe'] + 'Signal1']
+        y_smooth = self.smooth(force_data, methods['width_window_smooth'], 2)
+        self.graphics['y_smooth_Pull'] = y_smooth
         time_data = segment.corrected_data['time']
-        mean_final_points = force_data[len(force_data)-1000:].mean()
-        std_final_points = force_data[len(force_data)-1000:].std()
-        endline = mean_final_points - std_final_points  # y0
+
+        ######## calcul release #########
         index_release, line_pos_threshold = self.retrieve_contact(
-            y_smooth, "Pull", tolerance)
+            y_smooth, "Pull", methods['factor_noise'])
         self.graphics['threshold_pull'] = line_pos_threshold
         self.features['point_release'] = {
             'index': index_release, 'value': force_data[index_release]}
+
+        ################## calcul guess and fit ################
+        ###### guess  ########
         if index_release > 40:
             x_1 = time_data[index_release-20]
-            y_1 = force_data[index_release-20]
+            y_1 = y_smooth[index_release-20]
         else:
             x_1 = time_data[20]
-            y_1 = force_data[20]
+            y_1 = y_smooth[20]
         if index_release > 100:
             x_2 = time_data[index_release-100]
-            y_2 = force_data[index_release-100]
+            y_2 = y_smooth[index_release-100]
         else:
             x_2 = time_data[0]
-            y_2 = force_data[0]
+            y_2 = y_smooth[0]
         k = (y_1 - y_2) / (x_1 - x_2)
         point_release = time_data[index_release]  # x0
-        # index_return_end_line = Curve.retrieve_retour_line_end(
-        #     y_smooth, mean_final_points, std_final_points, tolerance)
-        index_return_end_line = Curve.retrieve_retour_line_end(
-            y_smooth, line_pos_threshold)
+        baseline = float(self.features['baseline_corrected_press (pN)'])
         # initial_guess = [10**(9), point_release, 10**3]
-        initial_guesses_accuracy = [k, point_release, endline]
+        initial_guesses_accuracy = [k, point_release, baseline]
+        ######## fit #########
         f_parameters = curve_fit(
-            Curve.fit_model_retraction, time_data, force_data, initial_guesses_accuracy)
+            Curve.fit_model_retraction, time_data, y_smooth, initial_guesses_accuracy)
         self.message += str(f_parameters)
         self.features['Pente (pN/nm)'] = f_parameters[0][1]
         fitted = Curve.fit_model_retraction(
             time_data, f_parameters[0][0], f_parameters[0][1], f_parameters[0][2])
         self.graphics['fitted_Pull'] = fitted
-        self.graphics['y_smooth_Pull'] = y_smooth
-        self.features['point_return_endline'] = {
-            'index': 'NaN', 'value': 'NaN'}
-        self.features['point_transition'] = {
-            'index': 'NaN', 'value (pN)': 'NaN'}
-        print('type: ', type_curve)
+
+        ############## calcul return point and transition ######################
+
+        index_return_end_line = Curve.retrieve_retour_line_end(
+            y_smooth, line_pos_threshold)
+        if index_return_end_line != None :
+            index_transition = index_return_end_line - 10
+            self.features['point_return_endline'] = {
+                            'index': index_return_end_line, 'value': y_smooth[index_return_end_line]}
+            self.features['point_transition'] = {
+                        'index': index_transition, 'value (pN)': y_smooth[index_transition]}
+        else:
+            self.features['point_return_endline'] = {'index': 'NaN', 'value': 'NaN'}
+            self.features['point_transition'] = {'index': 'NaN', 'value (pN)': 'NaN'}
+
+        type_curve = self.classification(methods, type_curve)
+
+        return type_curve
+
+    ###########################################################################################################################
+
+    def classification(self, methods, type_curve ):
+        ########### data ############
+        segment = self.dict_segments['Pull']
+        force_data = segment.corrected_data[self.features["main_axis"]['axe'] + 'Signal1']
+        distance_data = None
+        if 'distance' in segment.corrected_data:
+            distance_data = np.abs(segment.corrected_data['distance'])
+        time_data = segment.corrected_data['time']
+
+        ############ points characteristics ##################
+        index_release = self.features['point_release']['index']
+        index_return_end_line = self.features['point_return_endline']['index']
+
+        ############## classification NAD, AD, FTU ##################
         if type_curve == None:
-            index_force_max = y_smooth[index_release:index_release+1500].argmax()
-            if force_data[self.features['force_max_curve']['index']] <= seuil_jump_force:
+            index_force_max = self.graphics['y_smooth_Pull'][index_release:index_release+1500].argmax()
+            if self.features['force_max_curve']['value'] <= methods['jump_force']:
                 type_curve = 'NAD'
             else:
                 if index_return_end_line is not None:
-                    self.features['point_return_endline'] = {
-                        'index': index_return_end_line, 'value': y_smooth[index_return_end_line]}
-                    index_transition = index_return_end_line - 10
-                        # int(segment.header_segment['segment-settings.num-points'])//1000
-                    self.features['point_transition'] = {
-                        'index': index_transition, 'value (pN)': y_smooth[index_transition]}
-                    if index_release < index_return_end_line:
-                        index_force_max = y_smooth[index_release:index_return_end_line].argmax()
-                    elif index_release > index_return_end_line:
-                        index_force_max = y_smooth[index_return_end_line:index_release].argmax()
-                    else:
-                        index_force_max = y_smooth.argmax()
-                    jump_force_start_pull = force_data[index_force_max] - \
-                        force_data[index_release]
+                    # if index_release < index_return_end_line:
+                    #     index_force_max = self.graphics['y_smooth_Pull'][index_release:index_return_end_line].argmax()
+                    # elif index_release > index_return_end_line:
+                    #     index_force_max = self.graphics['y_smooth_Pull'][index_return_end_line:index_release].argmax()
+                    # else:
+                    index_force_max = self.features['force_max_curve']['index']
+                    ##################### calcul jump ########################
+                    jump_force_start_pull = self.features['force_max_curve']['value'] - \
+                        self.graphics['y_smooth_Pull'][index_release]
                     jump_nb_points = index_return_end_line - index_force_max
-                    jump_force_end_pull = force_data[index_release] - \
-                        force_data[index_return_end_line]
+                    jump_force_end_pull = self.graphics['y_smooth_Pull'][index_return_end_line] - self.graphics['y_smooth_Pull'][index_release]
                     self.features['jump_force_start_pull (pN)'] = jump_force_start_pull
                     self.features['jump_force_end_pull (pN)'] = jump_force_end_pull
+                    self.features['jump_nb_points'] = jump_nb_points
                     
-                    jump_time_start_pull = time_data[index_force_max] - \
-                        time_data[index_release]
-                    
-                    jump_time_end_pull = time_data[index_return_end_line] - \
-                        time_data[index_release]
+                    jump_time_start_pull = time_data[index_force_max] - time_data[index_release]
+                    jump_time_end_pull = time_data[index_return_end_line] - time_data[index_release]
                     self.features['jump_time_start_pull (s)'] = jump_time_start_pull
                     self.features['jump_time_end_pull (s)'] = jump_time_end_pull
+                    
                     jump_distance_start_pull = 0
                     jump_distance_end_pull = 0
+                    
                     if distance_data is not None:
+                        print('hey')
                         jump_distance_start_pull = distance_data[index_force_max] - \
                             distance_data[index_release]
                         
-                        jump_distance_end_pull = distance_data[index_release] - \
-                            distance_data[index_return_end_line]
+                        jump_distance_end_pull = distance_data[index_return_end_line] - distance_data[index_release]
                         self.features['jump_distance_start_pull (nm)'] = jump_distance_start_pull
-                        self.features['jump_distance_end_pull (nm)'] = jump_distance_end_pull
                     else:
                         speed = float(segment.header_segment['segment-settings.length'])/float(segment.header_segment['segment-settings.duration'])
-                        print('speed: ', speed*1e9)
-                        print(jump_time_end_pull)
-                        jump_distance_end_pull = speed*1e9 * jump_time_end_pull
-                    print(jump_distance_end_pull)
-                    if jump_nb_points < seuil_nb_point and jump_distance_end_pull < seuil_jump_distance:
+                        jump_distance_end_pull = (speed*1e9) * jump_time_end_pull
+                    self.features['jump_distance_end_pull (nm)'] = jump_distance_end_pull
+
+                    ############### determination AD ou FTU ###############
+                    if jump_nb_points < methods['jump_point'] and jump_distance_end_pull < methods['jump_distance']:
                         type_curve = 'AD'
                     else:
                         type_curve = 'FTU'
@@ -754,12 +769,11 @@ class Curve:
 
     ################################################################################################
     
-    def curve_return_analyze(self, seuil_jump_force, seuil_nb_point, seuil_jump_distance, tolerance, type_curve, window_smooth):
+    def curve_return_analyze(self, methods, type_curve):
         """
         TODO
         """
-        type_curve = self.fit_curve_retraction(
-            seuil_jump_force, seuil_nb_point, seuil_jump_distance, tolerance, type_curve, window_smooth)
+        type_curve = self.fit_curve_retraction(methods, type_curve)
 
         return type_curve
 
@@ -783,12 +797,16 @@ class Curve:
                     self.correction_optical_effect_object.automatic_correction(
                         methods['factor_noise'])
                     optical_state = "Auto_correction"
-                except:
+                except Exception as error:
+                    print('###########################################')
+                    print(())
+                    print(type(error).__name__, ':')
+                    print(error)
+                    print(traceback.format_exc())
                     print('index error No correction')
-        self.curve_approach_analyze(
-            methods['model'].lower(), methods['eta'], methods['bead_radius'], methods['factor_noise'], methods['width_window_smooth'])
-        type_curve = self.curve_return_analyze(
-            methods['jump_force'], methods['jump_point'], methods['jump_distance'], methods['factor_noise'], type_curve, methods['width_window_smooth'])
+                    print('###########################################')
+        self.curve_approach_analyze(methods)
+        type_curve = self.curve_return_analyze(methods, type_curve)
         self.features['drug'] = methods['drug']
         self.features['condition'] = methods['condition']
         self.features['tolerance'] = methods['factor_noise']
@@ -797,8 +815,6 @@ class Curve:
             self.features['type'] = type_curve
         else:
             self.features['automatic_type'] = type_curve
-        print(self.features['automatic_type'])
-        #print(self.features['type'])
 
     ###############################################################################################
                                  # Methods used in the supervision of the interface
@@ -898,7 +914,7 @@ class Curve:
 
     ##################################################################################################
     # @staticmethod
-    # def test_fit(time_data, slope, offset):
+    # def linear_fit(time_data, slope, offset):
     #     return slope*time_data + offset
 
     ################################################################################################

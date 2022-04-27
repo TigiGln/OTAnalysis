@@ -18,6 +18,7 @@ class Segment:
         self.corrected_data = pd.DataFrame()
         self.statistic_data = pd.DataFrame()
         self.features = {}
+        # print(self.data['distance']*1e9)
 
     #########################################################################################
 

@@ -3,6 +3,7 @@ Class View
 """
 from time import sleep
 from os import sep
+import traceback
 from datetime import date, datetime
 from pathlib import Path
 from PyQt5.QtWidgets import QWidget, QFileDialog, QFrame, QSpinBox, QApplication, QProgressBar
@@ -75,7 +76,6 @@ class View(QMainWindow, QWidget):
             self.initialize_window()
             self.widget.setLayout(self.main_layout)
             self.setCentralWidget(self.widget)
-            print(self.widget.geometry())
             #self.main_layout.addWidget(self.toogle, 0, 1, 1, 1)
 
     ###############################################################################################################
@@ -183,10 +183,8 @@ class View(QMainWindow, QWidget):
             if self.n != 0:
                 self.frame_physical.hide()
                 self.physical_parameters.hide()
-                print(self.window_geometry.height())
                 #self.resize(self.window_geometry.width(), self.window_geometry.height())
                 self.setGeometry(self.window_geometry)
-                print(self.geometry())
         if self.sphere.isChecked():
             self.n += 1
             if self.n == 1:
@@ -807,7 +805,6 @@ class View(QMainWindow, QWidget):
         self.animate_toggle = QtToggle(
             110, 30, '#777', '#ffffff', 'orange', 'Distance', 'Time')
         self.animate_toggle.setChecked(self.abscissa_curve)
-        print(self.check_distance)
         if self.check_distance:
             self.animate_toggle.clicked.connect(lambda: self.select_plot(
                 self.toggle_display.isChecked(), self.animate_toggle.isChecked()))
@@ -992,8 +989,13 @@ class View(QMainWindow, QWidget):
             else:
                 plt.close()
             self.setFocus()
-        except:
+        except Exception as error:
+            print('###########################################')
+            print(type(error).__name__, ':')
+            print(error)
+            print(traceback.format_exc())
             print('Index error')
+            print('###########################################')
 
     ###########################################################################################
 
