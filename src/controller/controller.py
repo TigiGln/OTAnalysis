@@ -283,6 +283,8 @@ class Controller:
                     label=legend_threshold, ls='-.', alpha=0.5)
             ax.plot(distance_data, threshold_pull_neg,
                     color='blue', alpha=0.5, ls='-.')
+            if 'distance_fitted_classification' in curve.graphics:
+                ax.plot(curve.graphics['distance_fitted_classification'], curve.graphics['fitted_classification'], label='fit classification')
             if self.view.methods['optical'] == "Correction":
                 index_x_0 = curve.features['contact_theorical_pull']['index']
             else:
@@ -290,9 +292,10 @@ class Controller:
             index_max = curve.features['force_max_curve']['index']
             if curve.features['point_return_endline']['index'] != "NaN":
                 index_return = curve.features['point_return_endline']['index']
-                index_transition = curve.features['point_transition']['index'] 
                 ax.plot(distance_data[index_return], y_smooth[index_return],             
                 color='#50441b', marker='o', label='return')
+            if 'transition_point' in curve.features and curve.features['transition_point']['index'] != 'NaN':
+                index_transition = curve.features['transition_point']['index']   
                 ax.plot(distance_data[index_transition], force_data[index_transition],
                         color='#1E90FF', marker='o', label='transition')
             if 'type' in curve.features:
@@ -354,8 +357,8 @@ class Controller:
         index_min_press = curve.features['force_min_press']['index']
         index_release = curve.features['point_release']['index']
         index_max = data_total[main_axis + 'Signal1'].argmax()
-        if curve.features['point_transition']['index'] != 'NaN':
-            index_trasition = curve.features['point_transition']['index']
+        if 'transition_point' in curve.features and curve.features['transition_point']['index'] != 'NaN':
+            index_trasition = curve.features['transition_point']['index']
             ax1.plot(time_data_pull[index_trasition], force_data_pull[index_trasition],
                      marker='o', color='#1E90FF', label='transition point')
         if curve.features['point_return_endline']['index'] != 'NaN':
@@ -370,12 +373,14 @@ class Controller:
                  ['value'], marker='o', label='min curve', color='red')
         ax1.plot(time_data_pull[index_release], force_data_pull[index_release],
                  marker='o', color='#762a83', label='release point')
-        # if curve.features['type'] != 'NAD' and curve.features['type'] != 'RE':
-        #     if 'type' in curve.features:
-
-
-        ax1.plot(data_total['seriesTime'][index_max], data_total[main_axis + 'Signal1'][index_max],
-                 marker='o', color='#1b7837', label='max curve')
+        if 'type' in curve.features:
+            if curve.features['type'] != 'NAD' and curve.features['type'] != 'RE':
+                ax1.plot(data_total['seriesTime'][index_max], data_total[main_axis + 'Signal1'][index_max],
+                    marker='o', color='#1b7837', label='max curve')
+        else:
+            if curve.features['automatic_type'] != 'NAD' and curve.features['automatic_type'] != 'RE':
+                ax1.plot(data_total['seriesTime'][index_max], data_total[main_axis + 'Signal1'][index_max],
+                    marker='o', color='#1b7837', label='max curve')
         ax1.legend(loc="lower left", ncol=2)
         return graph_position
 

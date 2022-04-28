@@ -53,16 +53,17 @@ class OpticalEffect:
             length_end = len(self.force_data_press[index_contact[0]:])
             baseline = force_data_start.mean()
             baseline_force_data = np.full(len(self.force_data_press), baseline)
-            f_param = curve_fit(self.curve.test_fit,
+            f_param = curve_fit(self.curve.linear_fit,
                                 time_data_end, force_data_end)
-            fitted = self.curve.test_fit(
+            fitted = self.curve.linear_fit(
                 self.time_data_press[-length_end:], f_param[0][0], f_param[0][1])
             coor_x_contact_point_extrapolated = (
                 f_param[0][1] - baseline)/(-f_param[0][0])
             coor_y_contact_point_extrapolated = f_param[0][0] * \
                 coor_x_contact_point_extrapolated + f_param[0][1]
-            value_contact_point_theorical = self.time_data_press[self.time_data_press >= coor_x_contact_point_extrapolated].reset_index(drop=True)[
-                0]
+            value_contact_point_theorical = self.time_data_press[self.time_data_press >= coor_x_contact_point_extrapolated].reset_index(drop=True)
+            if len(value_contact_point_theorical) > 0:
+                value_contact_point_theorical = value_contact_point_theorical[0]
             index_contact_point_theorical = np.where(
                 self.time_data_press == value_contact_point_theorical)[0][0]
             self.curve.features['contact_theorical_press'] = {
@@ -83,9 +84,9 @@ class OpticalEffect:
                 drop=True)
             baseline = force_data_end.mean()
             baseline_force_data = np.full(len(self.force_data_pull), baseline)
-            f_param = curve_fit(self.curve.test_fit,
+            f_param = curve_fit(self.curve.linear_fit,
                                 time_data_start, force_data_start)
-            fitted = self.curve.test_fit(
+            fitted = self.curve.linear_fit(
                 self.time_data_pull[start_point:length_end], f_param[0][0], f_param[0][1])
             coor_x_contact_point_extrapolated = (
                 f_param[0][1] - baseline)/(-f_param[0][0])
@@ -108,7 +109,7 @@ class OpticalEffect:
         print('manual_correction')
         force_data_press_copy = self.force_data_press_copy.copy()
         force_data_pull_copy = self.force_data_pull_copy.copy()
-        std = float(self.curve.features['std_press'])
+        std = float(self.curve.features['std_corrected_press (pN)'])
         # if len(self.curve.dict_segments) == 2:
         coor_x_contact_point_extrapolated_press, coor_y_contact_point_extrapolated_press, baseline_force_data_press,\
             fitted_press, length_stop_press = self.fitting_and_contact_theorical(

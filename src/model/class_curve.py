@@ -5,7 +5,7 @@ import math
 import numpy as np
 import pandas as pd
 import traceback
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 # from matplotlib.figure import Figure
 from scipy.optimize import curve_fit
 from scipy.signal import savgol_filter
@@ -630,6 +630,35 @@ class Curve:
             (fit[fit < point_release]-point_release) + endline
         fit[fit >= point_release] = endline
         return fit
+    ###############################################################################################
+    def derivation(self, force_data, time_data, n):
+        derivation = []
+        if n%2 != 0:
+            n -= 1
+        for index in range(n//2, len(force_data)-n//2, 1):
+            derivation.append((force_data[index+n//2] - force_data[index-n//2])/(
+                time_data[index+n//2] - time_data[index-n//2]))
+        i = n//2
+        while i != 0:
+            derivation.insert(0, derivation[0])
+            derivation.append(derivation[-1])
+            i -= 1
+        derivation = np.array(derivation)
+        return derivation
+    ################################################################################################
+    def search_transition_point(self, time_data, force_data):
+        y_smooth = self.graphics['y_smooth_Pull']
+        derive_smooth = self.derivation(y_smooth, time_data, 4)
+        index_transition_point = derive_smooth.argmin() - 1
+        # fig = plt.figure()
+        # ax = fig.add_subplot(111)
+        # ax.plot(time_data, force_data)
+        # ax2 = ax.twinx()
+        # ax2.plot(time_data, derive_smooth, color='red', alpha=0.25)
+        if index_transition_point > 0:
+            #ax.plot(time_data[index_transition_point], force_data[index_transition_point], marker='o', color='green', label='transition_point')
+            self.features['transition_point'] = {'index': index_transition_point, 'value': force_data[index_transition_point]}
+        #plt.show()
 
 
     ################################################################################################
@@ -685,14 +714,15 @@ class Curve:
         index_return_end_line = Curve.retrieve_retour_line_end(
             y_smooth, line_pos_threshold)
         if index_return_end_line != None :
-            index_transition = index_return_end_line - 10
+            #index_transition = index_return_end_line - 20
             self.features['point_return_endline'] = {
                             'index': index_return_end_line, 'value': y_smooth[index_return_end_line]}
-            self.features['point_transition'] = {
-                        'index': index_transition, 'value (pN)': y_smooth[index_transition]}
+            # self.features['point_transition'] = {
+            #             'index': index_transition, 'value (pN)': y_smooth[index_transition]}
+            self.search_transition_point(time_data, force_data)
         else:
             self.features['point_return_endline'] = {'index': 'NaN', 'value': 'NaN'}
-            self.features['point_transition'] = {'index': 'NaN', 'value (pN)': 'NaN'}
+            self.features['transition_point'] = {'index': 'NaN', 'value (pN)': 'NaN'}
 
         type_curve = self.classification(methods, type_curve)
 
@@ -713,13 +743,18 @@ class Curve:
         index_release = self.features['point_release']['index']
         index_return_end_line = self.features['point_return_endline']['index']
 
+
+        if 'fitted_classification' in self.graphics:
+            del self.graphics['fitted_classification']
+        if 'distance_fitted_classification' in self.graphics:
+            del self.graphics['distance_fitted_classification']
         ############## classification NAD, AD, FTU ##################
         if type_curve == None:
             index_force_max = self.graphics['y_smooth_Pull'][index_release:index_release+1500].argmax()
             if self.features['force_max_curve']['value'] <= methods['jump_force']:
                 type_curve = 'NAD'
             else:
-                if index_return_end_line is not None:
+                if index_return_end_line is not None and index_return_end_line != 'NaN':
                     # if index_release < index_return_end_line:
                     #     index_force_max = self.graphics['y_smooth_Pull'][index_release:index_return_end_line].argmax()
                     # elif index_release > index_return_end_line:
@@ -729,7 +764,10 @@ class Curve:
                     ##################### calcul jump ########################
                     jump_force_start_pull = self.features['force_max_curve']['value'] - \
                         self.graphics['y_smooth_Pull'][index_release]
+                    print('return: ', index_return_end_line)
+                    print('max: ', index_force_max)
                     jump_nb_points = index_return_end_line - index_force_max
+
                     jump_force_end_pull = self.graphics['y_smooth_Pull'][index_return_end_line] - self.graphics['y_smooth_Pull'][index_release]
                     self.features['jump_force_start_pull (pN)'] = jump_force_start_pull
                     self.features['jump_force_end_pull (pN)'] = jump_force_end_pull
@@ -744,16 +782,18 @@ class Curve:
                     jump_distance_end_pull = 0
                     
                     if distance_data is not None:
-                        print('hey')
                         jump_distance_start_pull = distance_data[index_force_max] - \
                             distance_data[index_release]
                         
-                        jump_distance_end_pull = distance_data[index_return_end_line] - distance_data[index_release]
+                        jump_distance_end_pull = distance_data[index_force_max] - distance_data[index_return_end_line]
                         self.features['jump_distance_start_pull (nm)'] = jump_distance_start_pull
+                        ###################### fit linear for classification #############################
+                        self.fit_linear_classification(distance_data)
                     else:
                         speed = float(segment.header_segment['segment-settings.length'])/float(segment.header_segment['segment-settings.duration'])
                         jump_distance_end_pull = (speed*1e9) * jump_time_end_pull
                     self.features['jump_distance_end_pull (nm)'] = jump_distance_end_pull
+                    
 
                     ############### determination AD ou FTU ###############
                     if jump_nb_points < methods['jump_point'] and jump_distance_end_pull < methods['jump_distance']:
@@ -766,7 +806,26 @@ class Curve:
             'index': index_force_max, 'value': force_data[index_force_max]}
 
         return type_curve
+    
+    ################################################################################################
+    def fit_linear_classification(self, distance_data):
+        """
+        TODO
+        """
+        y_smooth_pull = self.graphics['y_smooth_Pull']
+        index_max_curve = y_smooth_pull.argmax()
+        index_return = self.features['point_return_endline']['index']
+        if index_return is not None:
+            f_parameters = curve_fit(Curve.linear_fit, distance_data[index_max_curve:index_return], y_smooth_pull[index_max_curve:index_return])
+            fitted_classification = Curve.linear_fit(distance_data[index_max_curve:index_return], f_parameters[0][0], f_parameters[0][1])
+            self.graphics['fitted_classification'] = fitted_classification
+            self.graphics['distance_fitted_classification'] = distance_data[index_max_curve:index_return]
+        
 
+    ##################################################################################################
+    @staticmethod
+    def linear_fit(time_data, slope, offset):
+        return slope*time_data + offset
     ################################################################################################
     
     def curve_return_analyze(self, methods, type_curve):
@@ -790,6 +849,7 @@ class Curve:
             correction: change from the initial correction mode requested
         """
         optical_state = "No_correction"
+        self.detected_min_force()
         type_curve = self.compare_baseline_start_end(methods['factor_noise'])
         if not manual_correction:
             if methods['optical'] == "Correction":
@@ -912,10 +972,6 @@ class Curve:
     #     derivation = np.array(derivation)
     #     return derivation
 
-    ##################################################################################################
-    # @staticmethod
-    # def linear_fit(time_data, slope, offset):
-    #     return slope*time_data + offset
 
     ################################################################################################
 
