@@ -43,7 +43,7 @@ class Controller:
         self.dict_curve = {}
         self.test = None
         self.output = pd.DataFrame(dtype='float64')
-        
+
         if path_files is not None:
             self.set_list_files(path_files)
             methods = {'threshold_align': 30, 'pulling_length': 50, 'model': 'linear', 'eta': 0.5, 'bead_radius': 1, 'factor_noise': 5,
@@ -69,10 +69,10 @@ class Controller:
         """
         creation of the curve list according to the file extension and its conformity
         """
-        self.dict_type_files = {'txt': 0, 'jpk': 0, 'NC':0, 'PB':0, 'INC':0}
+        self.dict_type_files = {'txt': 0, 'jpk': 0, 'NC': 0, 'PB': 0, 'INC': 0}
         self.list_file_imcomplete = set()
         for index_file in range(0, len(self.files), 1):
-            #self.tracker.print_diff()
+            # self.tracker.print_diff()
             new_curve = None
             type_file = self.files[index_file].split('.')[-1]
             name_file = self.files[index_file].split(
@@ -99,22 +99,23 @@ class Controller:
                         self.dict_type_files['jpk'] += 1
                     else:
                         print('non-conforming file.')
-                        self.dict_type_files['NC'] +=1
+                        self.dict_type_files['NC'] += 1
                 except Exception as error:
                     message = "The file curve is not conform for transformation in curve object"
-                    self.problematic_curve(self.files[index_file], type_file, message, error)
-                    self.dict_type_files['PB'] +=1
+                    self.problematic_curve(
+                        self.files[index_file], type_file, message, error)
+                    self.dict_type_files['PB'] += 1
                 if check_incomplete:
                     self.list_file_imcomplete.add(
                         self.files[index_file].split(sep)[-1])
-                    self.dict_type_files['INC'] +=1
+                    self.dict_type_files['INC'] += 1
                 if new_curve is not None:
                     if new_curve.check_incomplete:
                         if type_file == 'jpk-nt-force':
                             type_file = type_file.split('-')[0]
                         Controller.file_incomplete_rejected(
                             type_file, self.files[index_file])
-                        self.dict_type_files['INC'] +=1
+                        self.dict_type_files['INC'] += 1
                         self.list_file_imcomplete.add(
                             self.files[index_file].split(sep)[-1])
                     else:
@@ -125,8 +126,9 @@ class Controller:
                             new_curve.features['type'] = new_curve.features['automatic_type']
                         except Exception as error:
                             message = "The curve object created but problem in analysis due to erroneous data"
-                            self.problematic_curve(self.files[index_file], type_file, message, error)
-                            self.dict_type_files['PB'] +=1
+                            self.problematic_curve(
+                                self.files[index_file], type_file, message, error)
+                            self.dict_type_files['PB'] += 1
             else:
                 print('files already processed')
             if self.view is not None:
@@ -135,6 +137,9 @@ class Controller:
 
     ##################################################################################################################
     def problematic_curve(self, file, extension, message, error):
+        """
+        TODO
+        """
         path_dir_problem = ""
         if extension == "jpk":
             path_dir_problem = Path(
@@ -209,7 +214,7 @@ class Controller:
                                 #calcul_threshold = curve.features['tolerance'] * curve.graphics['threshold_pull'][0]/curve.features['tolerance']
                                 title = f"{segment.name} segment"
                             position = int(str(nb_graph) + '2' +
-                                        str(graph_position))
+                                           str(graph_position))
                             ax = fig.add_subplot(position, title=title)
                             graph_position = self.plot_distance(
                                 curve, segment, ax, graph_position)
@@ -248,7 +253,8 @@ class Controller:
         ax.plot(distance_data, fitted_data, color="#5aae61",
                 label=curve.features['model'] + " fit")
         #y_smooth = curve.graphics['y_smooth_' + segment.name]
-        y_smooth = curve.smooth(force_data, self.view.methods['width_window_smooth'], 2)
+        y_smooth = curve.smooth(
+            force_data, self.view.methods['width_window_smooth'], 2)
         ax.plot(distance_data, y_smooth, color="#80cdc1")
         index_x_0 = 0
         if segment.name == 'Press':
@@ -284,7 +290,8 @@ class Controller:
             ax.plot(distance_data, threshold_pull_neg,
                     color='blue', alpha=0.5, ls='-.')
             if 'distance_fitted_classification' in curve.graphics:
-                ax.plot(curve.graphics['distance_fitted_classification'], curve.graphics['fitted_classification'], label='fit classification')
+                ax.plot(curve.graphics['distance_fitted_classification'],
+                        curve.graphics['fitted_classification'], label='fit classification')
             if self.view.methods['optical'] == "Correction":
                 index_x_0 = curve.features['contact_theorical_pull']['index']
             else:
@@ -292,14 +299,14 @@ class Controller:
             index_max = curve.features['force_max_curve']['index']
             if curve.features['point_return_endline']['index'] != "NaN":
                 index_return = curve.features['point_return_endline']['index']
-                ax.plot(distance_data[index_return], y_smooth[index_return],             
-                color='#50441b', marker='o', label='return')
+                ax.plot(distance_data[index_return], y_smooth[index_return],
+                        color='#50441b', marker='o', label='return')
             if 'transition_point' in curve.features and curve.features['transition_point']['index'] != 'NaN':
-                index_transition = curve.features['transition_point']['index']   
+                index_transition = curve.features['transition_point']['index']
                 ax.plot(distance_data[index_transition], force_data[index_transition],
                         color='#1E90FF', marker='o', label='transition')
             if 'type' in curve.features:
-                
+
                 if curve.features['type'] != 'NAD' and curve.features['type'] != 'RE':
                     ax.plot(distance_data[index_max], force_data[index_max],
                             color='#1b7837', marker='o', label='max')
@@ -310,7 +317,7 @@ class Controller:
         if index_x_0 != 0:
             ax.plot(distance_data[index_x_0], force_data[index_x_0],
                     color='#762a83', marker='o', label='contact')
-        
+
         ax.set_ylim(curve.features['force_min_curve']['value']-2,
                     curve.features['force_max_curve']['value'] + 2)
         ax.set_xlabel("Corrected distance (nm)")
@@ -376,18 +383,30 @@ class Controller:
         if 'type' in curve.features:
             if curve.features['type'] != 'NAD' and curve.features['type'] != 'RE':
                 ax1.plot(data_total['seriesTime'][index_max], data_total[main_axis + 'Signal1'][index_max],
-                    marker='o', color='#1b7837', label='max curve')
+                         marker='o', color='#1b7837', label='max curve')
         else:
             if curve.features['automatic_type'] != 'NAD' and curve.features['automatic_type'] != 'RE':
                 ax1.plot(data_total['seriesTime'][index_max], data_total[main_axis + 'Signal1'][index_max],
-                    marker='o', color='#1b7837', label='max curve')
+                         marker='o', color='#1b7837', label='max curve')
         ax1.legend(loc="lower left", ncol=2)
         return graph_position
 
     ###########################################################################################################################################
     def global_plot(self, n):
         """
-        TODO
+        Function allowing the graphical representation of the curves on the different axes 
+        as a function of time and the main axis on the distance
+
+        :parameters:
+            n: int
+                index of the curve in the curves dict
+        :return:
+            fig: object
+                the figure to be displayed in the canvas
+            curve: object
+                the curve associated with the figure
+            check_distance: bool
+                presence of the distance column in the curve segment data
         """
         #nb_graph = 1
         check_distance = False
@@ -404,9 +423,9 @@ class Controller:
                 np.full(len(data_total['seriesTime']), threshold_align))
             line_time_min = None
             line_time_max = None
-            
+
             if 'distance' in data_total:
-                gs = gridspec.GridSpec(8, 10) 
+                gs = gridspec.GridSpec(8, 10)
                 line_time_min = 0
                 line_time_max = 3
             else:
@@ -434,7 +453,8 @@ class Controller:
             ax1.set_ylim(-scale - 3, scale + 3)
             # ax1.legend(loc='upper left')
             if main_axis == 'x':
-                ax2 = fig.add_subplot(gs[line_time_min:line_time_max, 5:7], title="Axis: y")
+                ax2 = fig.add_subplot(
+                    gs[line_time_min:line_time_max, 5:7], title="Axis: y")
                 ax2.plot(data_total['seriesTime'], data_total['ySignal1'],
                          color='grey', alpha=0.5)
                 ax2.set_xlabel('time (s)')
@@ -446,7 +466,8 @@ class Controller:
                          color='blue', ls='-.', alpha=0.5)
                 ax2.set_ylim(ax1.get_ylim())
             elif main_axis == 'y':
-                ax2 = fig.add_subplot(gs[line_time_min:line_time_max, 5:7], title="Axis: x")
+                ax2 = fig.add_subplot(
+                    gs[line_time_min:line_time_max, 5:7], title="Axis: x")
                 ax2.plot(data_total['seriesTime'], data_total['xSignal1'],
                          color='grey', alpha=0.5)
                 ax2.set_xlabel('time (s)')
@@ -457,7 +478,8 @@ class Controller:
                 ax2.plot(data_total['seriesTime'], threshold_line_neg,
                          color='blue', ls='-.', alpha=0.5)
                 ax2.set_ylim(ax1.get_ylim())
-            ax3 = fig.add_subplot(gs[line_time_min:line_time_max, 8:10], title="Axis: z")
+            ax3 = fig.add_subplot(
+                gs[line_time_min:line_time_max, 8:10], title="Axis: z")
             ax3.plot(data_total['seriesTime'], data_total['zSignal1'],
                      color='grey', alpha=0.5)
             ax3.set_xlabel('time (s)')
@@ -501,8 +523,8 @@ class Controller:
                     if segment.name == 'Press':
                         ax4.set_ylabel('Force (pN)')
                     ax4.set_title(segment.name + ' Segment')
-                    ax4.set_ylim(curve.features['force_min_curve']['value'] -1,
-                                curve.features['force_max_curve']['value'] + 2)
+                    ax4.set_ylim(curve.features['force_min_curve']['value'] - 1,
+                                 curve.features['force_max_curve']['value'] + 2)
                     num_segment += 1
         return fig, curve, check_distance
 
@@ -884,7 +906,7 @@ class Controller:
                                                           + str(num_segment) + ".duration"]) == 0.0:
                     num_segment += 1
                 if segment.header['segment-settings.style'] == "motion":
-                    if num_segment == 0 or num_segment==1 or num_segment == 2:
+                    if num_segment == 0 or num_segment == 1 or num_segment == 2:
                         name_segment = list_name_segment[num_segment]
                     # else:
                     #     name_segment = "Motion_" + str(num_segment)
@@ -1075,11 +1097,11 @@ class Controller:
             pct, dict_align_supervised), shadow=True, startangle=45)
         ax_alignment_supervised.set_title(
             'Supervised Alignment\nTreated curves: ' + str(nb_curves))
-        percent_NAD_auto=0
-        percent_AD_auto=0
-        percent_FTU_auto=0
-        percent_ITU_auto=0
-        percent_RE_auto=0
+        percent_NAD_auto = 0
+        percent_AD_auto = 0
+        percent_FTU_auto = 0
+        percent_ITU_auto = 0
+        percent_RE_auto = 0
         if nb_conforming_curves_auto != 0:
             percent_NAD_auto = (
                 dict_type_auto['NAD']/nb_conforming_curves_auto * 100)
@@ -1089,10 +1111,12 @@ class Controller:
                 dict_type_auto['FTU']/nb_conforming_curves_auto * 100)
             percent_ITU_auto = (
                 dict_type_auto['ITU']/nb_conforming_curves_auto * 100)
-            percent_RE_auto = (dict_type_auto['RE']/nb_conforming_curves_auto*100)
+            percent_RE_auto = (
+                dict_type_auto['RE']/nb_conforming_curves_auto*100)
         dict_classification_auto = {'NAD': f"{percent_NAD_auto:.2f}", 'AD': f"{percent_AD_auto:.2f}",
                                     'FTU': f"{percent_FTU_auto:.2f}", 'ITU': f"{percent_ITU_auto:.2f}", 'RE': f"{percent_RE_auto:.2f}"}
-        values = [f"{percent_FTU_auto:.2f}", f"{percent_NAD_auto:.2f}", f"{percent_RE_auto:.2f}", f"{percent_AD_auto:.2f}", f"{percent_ITU_auto:.2f}"]
+        values = [f"{percent_FTU_auto:.2f}", f"{percent_NAD_auto:.2f}",
+                  f"{percent_RE_auto:.2f}", f"{percent_AD_auto:.2f}", f"{percent_ITU_auto:.2f}"]
         values_auto = [value for value in values if value != '0.00']
         ax_classification_before.pie(values_auto, autopct=lambda pct: Controller.make_autopct(
             pct, dict_classification_auto), shadow=True, startangle=45)
@@ -1115,11 +1139,11 @@ class Controller:
             pct, dict_correction_percent), shadow=True, startangle=45)
         ax_correction.set_title(
             'State Correction\nTreated curves: ' + str(nb_curves))
-        percent_NAD_supervised=0
-        percent_AD_supervised=0
-        percent_FTU_supervised=0
-        percent_ITU_supervised=0
-        percent_RE_supervised=0
+        percent_NAD_supervised = 0
+        percent_AD_supervised = 0
+        percent_FTU_supervised = 0
+        percent_ITU_supervised = 0
+        percent_RE_supervised = 0
         if nb_conforming_curves_supervised != 0:
             percent_NAD_supervised = (
                 dict_type_supervised['NAD']/nb_conforming_curves_supervised * 100)
@@ -1178,7 +1202,15 @@ class Controller:
 
     def count_cell_bead(self):
         """
-        TODO
+        Calculation of the number of cells, beads and couples in each set for the bilan window
+
+        :return:
+            nb_beads: int
+                number of beads
+            nb_cells: int
+                number of cells
+            nb_couples: int
+                number of couples
         """
         dict_beads = {}
         dict_cells = {}

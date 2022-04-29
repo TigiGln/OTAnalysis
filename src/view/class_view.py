@@ -381,7 +381,8 @@ class View(QMainWindow, QWidget):
             self.input_jump_position.setValue(methods_data['jump_distance'][0])
             self.input_nb_points_jump.setValue(methods_data['jump_point'][0])
             self.input_factor.setValue(methods_data['factor_noise'][0])
-            self.input_width_window_smooth.setValue(methods_data['width_window_smooth'][0])
+            self.input_width_window_smooth.setValue(
+                methods_data['width_window_smooth'][0])
             self.button_load.deleteLater()
             self.check_methods = True
 
@@ -544,6 +545,16 @@ class View(QMainWindow, QWidget):
 
     ###################################################################################################
     def select_plot(self, visualization_data, abscissa_data):
+        """
+        Recovery of graphics to be displayed according to the given conditions 
+        (overview or analysed and time or distance)
+
+        :parameters:
+            visualization_data: bool
+                True for the "Analyzed" part and False for the "Overview" part
+            abscissa_data: bool
+                True for the "Time" part and False for the "Distance" part
+        """
         self.fig = None
         self.current_curve = None
         if visualization_data:
@@ -567,7 +578,8 @@ class View(QMainWindow, QWidget):
             if self.count_select_plot > 0 and self.check_supervised:
                 self.animate_toggle.hide()
                 self.animate_toggle.setChecked(self.abscissa_curve)
-            self.fig, self.current_curve, self.check_distance = self.controller.global_plot(self.n)
+            self.fig, self.current_curve, self.check_distance = self.controller.global_plot(
+                self.n)
 
         if self.fig is not None:
             self.canvas = FigureCanvasQTAgg(self.fig)
@@ -581,6 +593,9 @@ class View(QMainWindow, QWidget):
     ###################################################################################################
 
     def show_graphic(self):
+        """
+        Creation of the graphics window with or without supervision
+        """
         self.clear()
         self.setMouseTracking(True)
         if self.screen_display.height() > 1000:
@@ -605,12 +620,15 @@ class View(QMainWindow, QWidget):
     ###################################################################################################
 
     def navigation_button(self):
+        """
+        Management of the buttons "Next", "Previous", "Bilan" according to the index of the curve to display
+        """
         button_next = QPushButton('Next')
         button_next.setFocusPolicy(Qt.StrongFocus)
         button_next.clicked.connect(self.next_plot)
         button_previous = QPushButton('Previous')
         button_previous.clicked.connect(self.previous_plot)
-        
+
         if self.length_list_curve > 1:
             if self.n > 0:
                 # switch to the second page previous button always present
@@ -641,14 +659,16 @@ class View(QMainWindow, QWidget):
             if not self.check_supervised:
                 self.main_layout.addWidget(button_next, 8, 0, 1, 6)
             else:
-                self.main_layout.addWidget(button_next, 1, 6, 1, 2) 
-            
+                self.main_layout.addWidget(button_next, 1, 6, 1, 2)
 
     ###################################################################################################
 
     def save_supervision_panel(self):
-        button_save_graph = QPushButton("Save graphics")
-        button_save_graph.clicked.connect(self.save_graph)
+        """
+        Management of the "Save" button according to the index of the curve to display
+        """
+        # button_save_graph = QPushButton("Save graphics")
+        # button_save_graph.clicked.connect(self.save_graph)
         button_save = QPushButton()
         if self.n < len(self.controller.dict_curve)-1:
             button_save.setText("Stop and Save")
@@ -656,11 +676,14 @@ class View(QMainWindow, QWidget):
             button_save.setText("Save")
         button_save.clicked.connect(self.save)
         button_save.setStyleSheet("QPushButton { background-color: red; }")
-        self.main_layout.addWidget(button_save_graph, 2, 6, 1, 1)
-        self.main_layout.addWidget(button_save, 2, 7, 1, 1)
+        # self.main_layout.addWidget(button_save_graph, 2, 6, 1, 1)
+        self.main_layout.addWidget(button_save, 2, 6, 1, 2)
 
     ###################################################################################################
     def supervision_panel(self):
+        """
+        Creation of the supervision panel with the different options
+        """
         self.check_supervised = True
         self.button_supervised.setText('Close supervision Panel')
         self.button_supervised.clicked.connect(
@@ -700,6 +723,9 @@ class View(QMainWindow, QWidget):
 
     ###################################################################################################
     def change(self):
+        """
+        Pagination in the base part of the supervision panel
+        """
         num_page = self.num_curve_current.text()
         regex = match("^[0-9]+$", num_page)
         if regex:
@@ -712,6 +738,9 @@ class View(QMainWindow, QWidget):
     ###################################################################################################
 
     def alignment_supervised(self):
+        """
+        Creation of the supervised part of the curve alignment
+        """
         axe_align = ""
         if len(self.current_curve.features['automatic_AL']['axe']) > 1:
             for index_axe in range(0, len(self.current_curve.features['automatic_AL']['axe']), 1):
@@ -746,6 +775,10 @@ class View(QMainWindow, QWidget):
 
     ####################################################################################################
     def valid_fit(self):
+        """
+        Creation of radio button groups for supervision and validation of fits on both segments
+        """
+        # radio group for the validation of the "Press" segment fit
         group_button_fit_press = QGroupBox("Press: Fit valid ?")
         group_fit_press = QButtonGroup()
         hbox_fit_press = QHBoxLayout()
@@ -792,6 +825,10 @@ class View(QMainWindow, QWidget):
     ##################################################################################################
 
     def toggle_all_curve_characteristics_point(self):
+        """
+        Creation of the toggle for the visualization of the curves on all the axes to visualize the alignment (overview) 
+        and the curves for the analysis with the characteristic points
+        """
         self.toggle_display = QtToggle(
             120, 30, '#777', '#ffffff', '#0cc03c', 'Overview', 'Analyzed')
         self.toggle_display.setChecked(self.check_global_local_graph)
@@ -802,6 +839,10 @@ class View(QMainWindow, QWidget):
     ##################################################################################################
 
     def toggle_abscissa_curve(self):
+        """
+        Creation of the toggle for the visualization of the curves according 
+        to the time or according to the distance
+        """
         self.animate_toggle = QtToggle(
             110, 30, '#777', '#ffffff', 'orange', 'Distance', 'Time')
         self.animate_toggle.setChecked(self.abscissa_curve)
@@ -817,6 +858,9 @@ class View(QMainWindow, QWidget):
     #################################################################################################
 
     def toggle_optical_effect(self):
+        """
+        Creation of the toggle for manual optical correction
+        """
         # Corrected optical effect
         grid_optical = QGridLayout()
         label_optical = QLabel("Correction optical effect")
@@ -836,6 +880,9 @@ class View(QMainWindow, QWidget):
     ##################################################################################################
 
     def type_supervised(self):
+        """
+        Creation of the curve type supervision
+        """
         # radio group for the type of each curve
         group_button_type = QGroupBox('Pull: Type?')
         group_type = QButtonGroup()
@@ -876,13 +923,24 @@ class View(QMainWindow, QWidget):
     ##################################################################################################
 
     def keyPressEvent(self, event):
+        """
+        management of the press of a key on the keyboard
+        """
         super(View, self).keyPressEvent(event)
         self.keyPressed.emit(event)
 
     ##################################################################################################
     def mousePressEvent(self, event):
-        if self.check_graph:
-            self.setFocus()
+        """
+        Action when left mouse button is clicked
+
+        :parameters:
+            event: object signal
+                clique event
+        """
+        if event:
+            if self.check_graph:
+                self.setFocus()
 
     ##################################################################################################
 
@@ -933,6 +991,10 @@ class View(QMainWindow, QWidget):
     def modif_supervised(self, name_group):
         """
         Action when clicking on the checkboxes
+
+        :parameters:
+            name_group:str
+                 name of the button group that is clicked for modification 
         """
         sender = self.sender()
         if self.dict_supervised[self.current_curve.file] == sender.parent().parent():
@@ -945,6 +1007,10 @@ class View(QMainWindow, QWidget):
     def option_supervised(self, option):
         """
         Action when clicking on the checkboxes in the supervised menu
+
+        :parameters:
+            option:bool
+
         """
         self.check_supervised = option
         self.count_select_plot = 0
@@ -964,7 +1030,7 @@ class View(QMainWindow, QWidget):
             if self.check_toggle:
                 if self.dict_supervised[self.current_curve.file] == self.sender().parent():
                     # if len(self.current_curve.dict_segments) == 2:
-                    fig = Figure()
+                    fig = plt.figure()
                     self.dict_fig_open[self.current_curve.file] = fig
                     fig = self.current_curve.correction_optical_effect_object.manual_correction(
                         fig, self.methods['factor_noise'])
@@ -976,14 +1042,19 @@ class View(QMainWindow, QWidget):
                     toolbar_optical = NavigationToolbar2QT(
                         canvas, self.graph_view)
                     button_accept_correction = QPushButton('Accept correction')
+                    button_cancel_correction = QPushButton('Cancel correction')
                     self.graph_view.main_layout.addWidget(
                         toolbar_optical, 0, 0, 1, 1)
                     self.graph_view.main_layout.addWidget(
-                        canvas, 1, 0, 4, 2)
+                        canvas, 1, 0, 4, 3)
                     self.graph_view.main_layout.addWidget(
-                        button_accept_correction, 0, 1, 1, 1)
+                        button_accept_correction, 0, 2, 1, 1)
+                    self.graph_view.main_layout.addWidget(
+                        button_cancel_correction, 0, 1, 1, 1)
                     button_accept_correction.clicked.connect(
                         self.accept_manual_correction)
+                    button_cancel_correction.clicked.connect(
+                        self.cancel_correction)
                     button_accept_correction.hide()
                     self.graph_view.showMaximized()
             else:
@@ -1011,6 +1082,7 @@ class View(QMainWindow, QWidget):
             xdata = thisline.get_xdata()
             ydata = thisline.get_ydata()
             ind = event.ind
+            print(ind[0])
             self.intreval_optical_effect.append(ind[0])
             if len(self.intreval_optical_effect) > 2:
                 self.dict_fig_open[self.current_curve.file].clear()
@@ -1050,6 +1122,15 @@ class View(QMainWindow, QWidget):
         self.current_curve.features['optical_state'] = "Manual_correction"
         self.show_graphic()
 
+    ######################################################################################################
+    def cancel_correction(self):
+        """
+        cancellation of the correction of the optical effect
+        """
+        self.current_curve.correction_optical_effect_object.cancel_correction(
+            self.dict_fig_open[self.current_curve.file])
+        self.accept_manual_correction()
+
     #####################################################################################################
 
     def show_bilan(self):
@@ -1061,7 +1142,8 @@ class View(QMainWindow, QWidget):
         self.graph_bilan = GraphView()
         hbox_bilan = QHBoxLayout()
         frame = QFrame()
-        label_day = QLabel('Date: ' + today +  '\n' + 'Condition: ' + str(self.methods['condition']) + '\n' + 'Drug: ' + str(self.methods['drug']))
+        label_day = QLabel('Date: ' + today + '\n' + 'Condition: ' + str(
+            self.methods['condition']) + '\n' + 'Drug: ' + str(self.methods['drug']))
         nb_beads, nb_cells, nb_couples = self.controller.count_cell_bead()
         label_nb_bead = QLabel('Nb beads: ' + str(nb_beads) + '\nNb cells: ' +
                                str(nb_cells) + '\nNb couples: ' + str(nb_couples))
@@ -1082,9 +1164,10 @@ class View(QMainWindow, QWidget):
         toolbar = NavigationToolbar2QT(self.canvas, self)
         self.graph_bilan.main_layout.addWidget(toolbar, 0, 0, 1, 1)
         self.graph_bilan.main_layout.addWidget(frame, 0, 1, 1, 4)
-        self.toogle_bilan = QtToggle(120, 30, '#777', '#ffffff', '#4997d0', 'Piechart', 'Scatter')
+        self.toogle_bilan = QtToggle(
+            120, 30, '#777', '#ffffff', '#4997d0', 'Piechart', 'Scatter')
         self.graph_bilan.main_layout.addWidget(self.toogle_bilan, 0, 5, 1, 1)
-        
+
         self.graph_bilan.main_layout.addWidget(canvas, 1, 0, 6, 6)
 
         self.graph_bilan.showMaximized()
@@ -1096,10 +1179,12 @@ class View(QMainWindow, QWidget):
         Management of the closing of the window of manual optical correction
         """
         # self.setFocus()
-        if self.check_toggle:
-            self.toggle.setChecked(False)
-            self.check_toggle = False
-            del self.dict_fig_open[self.current_curve.file]
+        if event:
+            if self.check_toggle:
+                if self.graph_view.close():
+                    self.toggle.setChecked(False)
+                    self.check_toggle = False
+                    del self.dict_fig_open[self.current_curve.file]
 
     ################################################################################################
     def save(self):
@@ -1185,11 +1270,12 @@ class View(QMainWindow, QWidget):
         """
         Management of the closing of the main window
         """
-        if self.info:
-            self.info.close()
-        if self.check_bilan:
-            self.graph_bilan.close()
-        plt.close('all')
+        if event:
+            if self.info:
+                self.info.close()
+            if self.check_bilan:
+                self.graph_bilan.close()
+            plt.close('all')
 
 
 if __name__ == "__main__":

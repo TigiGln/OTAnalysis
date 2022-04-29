@@ -20,7 +20,7 @@ class OpticalEffect:
 
     def initialization_data(self):
         """
-        TODO
+        Recovery of all segment data for optical corrections
         """
         self.force_data_press = self.segment_press.corrected_data[
             self.curve.features['main_axis']['axe'] + 'Signal1']
@@ -38,7 +38,24 @@ class OpticalEffect:
 
     def fitting_and_contact_theorical(self, segment, tolerance):
         """
-        TODO
+        fitting piecewise curves to determine the theoretical contact point.
+
+        :parameters:
+            segment: str
+                name of the segment to analyze
+            tolerance: int
+                number of times the tolerated standard deviation (threshold for determining the contact point)
+        :return:
+            coor_x_contact_point_extrapolated: float
+                theoretical time value of the artificial contact point (not on the curve)
+            coor_y_contact_point_extrapolated: float
+                theoretical force value of the artificial contact point (not on the curve)
+            baseline_force_data: list(array)
+                artificial data vector representing the baseline
+            fitted: list(array)
+                artificial data vector representing the fitter force
+            length_end: int
+                length for fitter data (end for "Press" segment and start for "Pull" segment)
         """
         if segment == 'Press':
             force_data_start = self.force_data_press[0:3000].reset_index(
@@ -61,7 +78,8 @@ class OpticalEffect:
                 f_param[0][1] - baseline)/(-f_param[0][0])
             coor_y_contact_point_extrapolated = f_param[0][0] * \
                 coor_x_contact_point_extrapolated + f_param[0][1]
-            value_contact_point_theorical = self.time_data_press[self.time_data_press >= coor_x_contact_point_extrapolated].reset_index(drop=True)
+            value_contact_point_theorical = self.time_data_press[self.time_data_press >=
+                                                                 coor_x_contact_point_extrapolated].reset_index(drop=True)
             if len(value_contact_point_theorical) > 0:
                 value_contact_point_theorical = value_contact_point_theorical[0]
             index_contact_point_theorical = np.where(
@@ -104,7 +122,17 @@ class OpticalEffect:
 
     def manual_correction(self, fig, tolerance):
         """
-        TODO
+        creation of the figure to select the area for the optical correction
+
+        :parameters:
+            fig: object
+                figure to which add the visualization axes
+            tolerance: int
+                number of times the tolerated standard deviation (threshold for determining the contact point)
+
+        :return:
+            fig: object
+                the figure with the two axes of uncorrected data
         """
         print('manual_correction')
         force_data_press_copy = self.force_data_press_copy.copy()
@@ -121,13 +149,13 @@ class OpticalEffect:
 
         ax1 = fig.add_subplot(221)
         ax1.plot(self.time_data_press, force_data_press_copy,
-                    picker=True, pickradius=1)
+                 picker=True, pickradius=1)
         ax1.plot(self.time_data_press, baseline_force_data_press)
         ax1.plot(self.time_data_press[-length_stop_press:], fitted_press)
         ax1.plot(coor_x_contact_point_extrapolated_press, coor_y_contact_point_extrapolated_press,
-                    marker='D', color='yellow', label='contact point extrapolated')
+                 marker='D', color='yellow', label='contact point extrapolated')
         ax1.plot(self.time_data_press[self.curve.features['contact_theorical_press']['index']], force_data_press_copy[
-                    self.curve.features['contact_theorical_press']['index']], marker='o', color='brown', label='contact_theorical')
+            self.curve.features['contact_theorical_press']['index']], marker='o', color='brown', label='contact_theorical')
         ax1.set_ylabel('force (pN')
         ax1.set_xlabel('time (s)')
 
@@ -136,9 +164,9 @@ class OpticalEffect:
         ax2.plot(self.time_data_pull, baseline_force_data_pull)
         ax2.plot(self.time_data_pull[:length_stop_pull], fitted_pull)
         ax2.plot(coor_x_contact_point_extrapolated_pull, coor_y_contact_point_extrapolated_pull,
-                    marker='D', color='yellow', label='contact point extrapolated')
+                 marker='D', color='yellow', label='contact point extrapolated')
         ax2.plot(self.time_data_pull[self.curve.features['contact_theorical_pull']['index']],
-                    force_data_pull_copy[self.curve.features['contact_theorical_pull']['index']], marker='o', color='brown', label='contact_theorical')
+                 force_data_pull_copy[self.curve.features['contact_theorical_pull']['index']], marker='o', color='brown', label='contact_theorical')
         ax2.set_ylabel('force (pN)')
         ax2.set_xlabel('time (s)')
 
@@ -146,7 +174,12 @@ class OpticalEffect:
 
     def automatic_correction(self, tolerance):
         """
-        TODO
+        Management of the automatic correction of the optical effect on the "Press" segment 
+        on the data between the beginning and the contact point
+
+        :parameters:
+            tolerance: int
+                number of times the tolerated standard deviation (threshold for determining the contact point)
         """
         print('automatic correction')
         # if len(self.curve.dict_segments) == 2:
@@ -182,15 +215,20 @@ class OpticalEffect:
 
     def correction_optical_effect(self, list_ind_correction, fig):
         """
-        TODO
+        Management of the manual correction of the optical effect on the segment "Press" on the data between the two points chosen by the user
+
+        :parameters:
+            list_ind_correction: list
+                list of length 2 with the coordinates of the points chosen by the user (start point of the data range and end point)
+            fig: object
+                the figure to be modified for the visualization of the modification 
         """
         force_data_pull_copy = self.force_data_pull_copy.copy()
         #index_contact_point_press = self.curve.features['contact_point']['index']
         index_contact_point_press = self.curve.features['contact_theorical_press']['index']
         index_contact_point_pull = self.curve.features['contact_theorical_pull']['index']
         force_smooth = pd.Series(self.force_smooth_press_copy)
-        data_range_press = force_smooth.loc[list_ind_correction[0]
-            :list_ind_correction[1]]
+        data_range_press = force_smooth.loc[list_ind_correction[0]:list_ind_correction[1]]
         delta_i2_press = 0
         delta_i2_pull = 0
         add_force_data_pull = 0
@@ -230,7 +268,13 @@ class OpticalEffect:
 
     def plot_correction_manual(self, fig, dict_param):
         """
-        TODO
+        creation of graphics allowing the visualization of the manual correction of the optical effect
+
+        :parameters:
+            fig: object
+                the figure to be modified for the visualization of the modification
+            dict_param: dict
+                dictionary containing all the coordinates of the points either to be used for modification or to be displayed on the curves
         """
         force_data_press_copy = self.force_data_press_copy.copy()
         force_data_pull_copy = self.force_data_pull_copy.copy()
@@ -320,9 +364,21 @@ class OpticalEffect:
 
     def accept_correction(self):
         """
-        TODO
+        Action of the interface button for accepting the correction after viewing and modifying the data to be displayed in the main interface
         """
         self.segment_press.corrected_data[self.curve.features['main_axis']
                                           ['axe'] + 'Signal1'] = self.ydata_press
         self.segment_pull.corrected_data[self.curve.features['main_axis']
                                          ['axe'] + 'Signal1'] = self.ydata_pull
+
+    def cancel_correction(self, fig):
+        """
+        cancellation of the correction of the optical effect
+
+        fig: object
+            the figure to be modified for the visualization of the modification
+        """
+        print("cancel")
+        list_ind_correction = [87, 1394]
+        self.correction_optical_effect(list_ind_correction, fig)
+        self.accept_correction()

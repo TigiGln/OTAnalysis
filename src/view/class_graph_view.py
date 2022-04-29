@@ -3,10 +3,12 @@
 
 from PyQt5.QtWidgets import QLabel, QWidget, QGridLayout
 
+
 class GraphView(QWidget):
     """
     Instantiation of manual optical correction graph window
     """
+
     def __init__(self, parent=None):
         """
         TODO
