@@ -74,12 +74,14 @@ conda install scipy
 pip install PyQt5
 conda install pyqt qtpy
 conda install matplotlib
+pip install supyr-struct
+pip install pathlib
+pip install pytest
 ```
 
 ## Launch project
 ```{}
-cd packages
-python main.py
+python src/main.py
 ```
 
 ## Documentation
