@@ -1,0 +1,376 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>src.model package &#8212; OTAnalysis January 3, 2022 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="src.multithread package" href="src.multithread.html" />
+    <link rel="prev" title="src.extractor package" href="src.extractor.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="src-model-package">
+<h1>src.model package<a class="headerlink" href="#src-model-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="src-model-class-curve-module">
+<h2>src.model.class_curve module<a class="headerlink" href="#src-model-class-curve-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.model.class_optical_effect">
+<span id="src-model-class-optical-effect-module"></span><h2>src.model.class_optical_effect module<a class="headerlink" href="#module-src.model.class_optical_effect" title="Permalink to this headline">¶</a></h2>
+<p>File describing the instance class of the optical effect objects</p>
+<dl class="class">
+<dt id="src.model.class_optical_effect.OpticalEffect">
+<em class="property">class </em><code class="descclassname">src.model.class_optical_effect.</code><code class="descname">OpticalEffect</code><span class="sig-paren">(</span><em>curve</em><span class="sig-paren">)</span><a class="headerlink" href="#src.model.class_optical_effect.OpticalEffect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Construction plan of an optical effect correction on a curved object</p>
+<dl class="method">
+<dt id="src.model.class_optical_effect.OpticalEffect.accept_correction">
+<code class="descname">accept_correction</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.model.class_optical_effect.OpticalEffect.accept_correction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Action of the interface button for accepting the correction after viewing and modifying the data to be displayed in the main interface</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.model.class_optical_effect.OpticalEffect.automatic_correction">
+<code class="descname">automatic_correction</code><span class="sig-paren">(</span><em>tolerance</em><span class="sig-paren">)</span><a class="headerlink" href="#src.model.class_optical_effect.OpticalEffect.automatic_correction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Management of the automatic correction of the optical effect on the “Press” segment 
+on the data between the beginning and the contact point</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt>tolerance: int</dt>
+<dd><p class="first last">number of times the tolerated standard deviation (threshold for determining the contact point)</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.model.class_optical_effect.OpticalEffect.cancel_correction">
+<code class="descname">cancel_correction</code><span class="sig-paren">(</span><em>fig</em><span class="sig-paren">)</span><a class="headerlink" href="#src.model.class_optical_effect.OpticalEffect.cancel_correction" title="Permalink to this definition">¶</a></dt>
+<dd><p>cancellation of the correction of the optical effect</p>
+<dl class="docutils">
+<dt>fig: object</dt>
+<dd>the figure to be modified for the visualization of the modification</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.model.class_optical_effect.OpticalEffect.correction_optical_effect">
+<code class="descname">correction_optical_effect</code><span class="sig-paren">(</span><em>list_ind_correction</em>, <em>fig</em><span class="sig-paren">)</span><a class="headerlink" href="#src.model.class_optical_effect.OpticalEffect.correction_optical_effect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Management of the manual correction of the optical effect on the segment “Press” on the data between the two points chosen by the user</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt>list_ind_correction: list</dt>
+<dd><p class="first last">list of length 2 with the coordinates of the points chosen by the user (start point of the data range and end point)</p>
+</dd>
+<dt>fig: object</dt>
+<dd><p class="first last">the figure to be modified for the visualization of the modification</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.model.class_optical_effect.OpticalEffect.fitting_and_contact_theorical">
+<code class="descname">fitting_and_contact_theorical</code><span class="sig-paren">(</span><em>segment</em>, <em>tolerance</em><span class="sig-paren">)</span><a class="headerlink" href="#src.model.class_optical_effect.OpticalEffect.fitting_and_contact_theorical" title="Permalink to this definition">¶</a></dt>
+<dd><p>fitting piecewise curves to determine the theoretical contact point.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>segment: str</dt>
+<dd><p class="first last">name of the segment to analyze</p>
+</dd>
+<dt>tolerance: int</dt>
+<dd><p class="first last">number of times the tolerated standard deviation (threshold for determining the contact point)</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><dl class="docutils">
+<dt>coor_x_contact_point_extrapolated: float</dt>
+<dd><p class="first last">theoretical time value of the artificial contact point (not on the curve)</p>
+</dd>
+<dt>coor_y_contact_point_extrapolated: float</dt>
+<dd><p class="first last">theoretical force value of the artificial contact point (not on the curve)</p>
+</dd>
+<dt>baseline_force_data: list(array)</dt>
+<dd><p class="first last">artificial data vector representing the baseline</p>
+</dd>
+<dt>fitted: list(array)</dt>
+<dd><p class="first last">artificial data vector representing the fitter force</p>
+</dd>
+<dt>length_end: int</dt>
+<dd><p class="first last">length for fitter data (end for “Press” segment and start for “Pull” segment)</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.model.class_optical_effect.OpticalEffect.initialization_data">
+<code class="descname">initialization_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.model.class_optical_effect.OpticalEffect.initialization_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recovery of all segment data for optical corrections</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.model.class_optical_effect.OpticalEffect.manual_correction">
+<code class="descname">manual_correction</code><span class="sig-paren">(</span><em>fig</em>, <em>tolerance</em><span class="sig-paren">)</span><a class="headerlink" href="#src.model.class_optical_effect.OpticalEffect.manual_correction" title="Permalink to this definition">¶</a></dt>
+<dd><p>creation of the figure to select the area for the optical correction</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>fig: object</dt>
+<dd><p class="first last">figure to which add the visualization axes</p>
+</dd>
+<dt>tolerance: int</dt>
+<dd><p class="first last">number of times the tolerated standard deviation (threshold for determining the contact point)</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><dl class="docutils">
+<dt>fig: object</dt>
+<dd><p class="first last">the figure with the two axes of uncorrected data</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.model.class_optical_effect.OpticalEffect.plot_correction_manual">
+<code class="descname">plot_correction_manual</code><span class="sig-paren">(</span><em>fig</em>, <em>dict_param</em><span class="sig-paren">)</span><a class="headerlink" href="#src.model.class_optical_effect.OpticalEffect.plot_correction_manual" title="Permalink to this definition">¶</a></dt>
+<dd><p>creation of graphics allowing the visualization of the manual correction of the optical effect</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt>fig: object</dt>
+<dd><p class="first last">the figure to be modified for the visualization of the modification</p>
+</dd>
+<dt>dict_param: dict</dt>
+<dd><p class="first last">dictionary containing all the coordinates of the points either to be used for modification or to be displayed on the curves</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.model.class_segment_curve">
+<span id="src-model-class-segment-curve-module"></span><h2>src.model.class_segment_curve module<a class="headerlink" href="#module-src.model.class_segment_curve" title="Permalink to this headline">¶</a></h2>
+<p>File describing the instance 
+class of the segment objects</p>
+<dl class="class">
+<dt id="src.model.class_segment_curve.Segment">
+<em class="property">class </em><code class="descclassname">src.model.class_segment_curve.</code><code class="descname">Segment</code><span class="sig-paren">(</span><em>header_segment</em>, <em>data</em>, <em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#src.model.class_segment_curve.Segment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class instantiating curve segment objects</p>
+<dl class="method">
+<dt id="src.model.class_segment_curve.Segment.calcul_statistic">
+<code class="descname">calcul_statistic</code><span class="sig-paren">(</span><em>axe</em><span class="sig-paren">)</span><a class="headerlink" href="#src.model.class_segment_curve.Segment.calcul_statistic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves all the statistical data for a given axis</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>axe: str</dt>
+<dd><p class="first last">the Axis whose statistical parameters are desired</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><dl class="docutils">
+<dt>self.statistic_data: Dataframe</dt>
+<dd><p class="first last">basic statistical parameters</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.model.class_segment_curve.Segment.check_alignment">
+<code class="descname">check_alignment</code><span class="sig-paren">(</span><em>main_axis</em>, <em>force_threshold</em><span class="sig-paren">)</span><a class="headerlink" href="#src.model.class_segment_curve.Segment.check_alignment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checking the alignment of the curve segment on the main axis
+:parameters:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>main_axis: str</dt>
+<dd>main axis of the manipulation</dd>
+<dt>seuil: float</dt>
+<dd>applied force defined at the beginning of the manipulation</dd>
+</dl>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>check_align: bool</dt>
+<dd>True if misaligned on a secondary axis</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.model.class_segment_curve.Segment.real_time">
+<code class="descname">real_time</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.model.class_segment_curve.Segment.real_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculation of the time for a segment of the curve</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.model.class_segment_curve.Segment.set_name">
+<code class="descname">set_name</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#src.model.class_segment_curve.Segment.set_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setter of the segment name</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt>name: str</dt>
+<dd><p class="first last">name segment to be given</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.model">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.model" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">OTAnalysis</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">OTAnalysis</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="src.html">src package</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">OTAnalysis</a><ul>
+  <li><a href="src.html">src package</a><ul>
+      <li>Previous: <a href="src.extractor.html" title="previous chapter">src.extractor package</a></li>
+      <li>Next: <a href="src.multithread.html" title="next chapter">src.multithread package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Thierry GALLIANO.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="_sources/src.model.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

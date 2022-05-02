@@ -313,7 +313,7 @@ class Curve:
         self.features['force_min_curve'] = {
             'index': index_data_min_curve, 'value': data_min_curve}
         self.features['time_min_curve'] = {
-            'index': index_data_min_curve, 'value': time_min_curve}
+            'index': index_data_min_curve, 'value (s)': time_min_curve}
         self.features['force_max_curve'] = {
             'index': index_data_max_curve, 'value': force_max_curve}
         return data_min_curve
@@ -695,10 +695,10 @@ class Curve:
         if index_transition_point > 0:
             #ax.plot(time_data[index_transition_point], force_data[index_transition_point], marker='o', color='green', label='transition_point')
             self.features['transition_point'] = {
-                'index': index_transition_point, 'value': force_data[index_transition_point]}
+                'index': index_transition_point, 'value (pN)': force_data[index_transition_point]}
         else:
             self.features['transition_point'] = {
-                'index': 'NaN', 'value': 'NaN'}
+                'index': 'NaN', 'value (pN)': 'NaN'}
         # plt.show()
 
     ################################################################################################
@@ -813,13 +813,11 @@ class Curve:
                     # else:
                     index_force_max = self.features['force_max_curve']['index']
                     ##################### calcul jump ########################
-                    jump_force_start_pull = self.features['force_max_curve']['value'] - \
+                    jump_force_start_pull = force_data[index_force_max] - \
                         self.graphics['y_smooth_Pull'][index_release]
-                    print('return: ', index_return_end_line)
-                    print('max: ', index_force_max)
                     jump_nb_points = index_return_end_line - index_force_max
 
-                    jump_force_end_pull = self.graphics['y_smooth_Pull'][index_return_end_line] - \
+                    jump_force_end_pull = force_data[index_force_max] - \
                         self.graphics['y_smooth_Pull'][index_release]
                     self.features['jump_force_start_pull (pN)'] = jump_force_start_pull
                     self.features['jump_force_end_pull (pN)'] = jump_force_end_pull

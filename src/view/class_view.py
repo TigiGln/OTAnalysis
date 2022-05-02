@@ -1181,7 +1181,7 @@ class View(QMainWindow, QWidget):
         # self.setFocus()
         if event:
             if self.check_toggle:
-                if self.graph_view.close():
+                if self.graph_view:
                     self.toggle.setChecked(False)
                     self.check_toggle = False
                     del self.dict_fig_open[self.current_curve.file]
@@ -1192,7 +1192,7 @@ class View(QMainWindow, QWidget):
         Generates the output file when Save is clicked
         """
         directory = QFileDialog.getExistingDirectory(
-            self, "Open folder", ".", QFileDialog.ShowDirsOnly)
+            self, "Open folder", "..", QFileDialog.ShowDirsOnly)
         today = str(date.today())
         time_today = str(datetime.now().time().replace(
             microsecond=0)).replace(':', '-')

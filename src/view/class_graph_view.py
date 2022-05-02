@@ -11,7 +11,7 @@ class GraphView(QWidget):
 
     def __init__(self, parent=None):
         """
-        TODO
+        Initialization of a graphic window
         """
         super(GraphView, self).__init__(parent)
         self.main_layout = QGridLayout()

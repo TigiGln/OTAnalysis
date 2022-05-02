@@ -84,7 +84,7 @@ class OpticalEffect:
                 value_contact_point_theorical = value_contact_point_theorical[0]
             index_contact_point_theorical = np.where(
                 self.time_data_press == value_contact_point_theorical)[0][0]
-            self.curve.features['contact_theorical_press'] = {
+            self.curve.graphics['contact_theorical_press'] = {
                 'index': index_contact_point_theorical, 'value': self.force_data_press[index_contact_point_theorical]}
 
         elif segment == 'Pull':
@@ -116,7 +116,7 @@ class OpticalEffect:
                 value_contact_point_theorical)-1]
             index_contact_point_theorical = np.where(
                 self.time_data_pull == value_contact_point_theorical)[0][0]
-            self.curve.features['contact_theorical_pull'] = {
+            self.curve.graphics['contact_theorical_pull'] = {
                 'index': index_contact_point_theorical, 'value': self.force_data_pull[index_contact_point_theorical]}
         return coor_x_contact_point_extrapolated, coor_y_contact_point_extrapolated, baseline_force_data, fitted, length_end
 
@@ -154,8 +154,8 @@ class OpticalEffect:
         ax1.plot(self.time_data_press[-length_stop_press:], fitted_press)
         ax1.plot(coor_x_contact_point_extrapolated_press, coor_y_contact_point_extrapolated_press,
                  marker='D', color='yellow', label='contact point extrapolated')
-        ax1.plot(self.time_data_press[self.curve.features['contact_theorical_press']['index']], force_data_press_copy[
-            self.curve.features['contact_theorical_press']['index']], marker='o', color='brown', label='contact_theorical')
+        ax1.plot(self.time_data_press[self.curve.graphics['contact_theorical_press']['index']], force_data_press_copy[
+            self.curve.graphics['contact_theorical_press']['index']], marker='o', color='brown', label='contact_theorical')
         ax1.set_ylabel('force (pN')
         ax1.set_xlabel('time (s)')
 
@@ -165,8 +165,8 @@ class OpticalEffect:
         ax2.plot(self.time_data_pull[:length_stop_pull], fitted_pull)
         ax2.plot(coor_x_contact_point_extrapolated_pull, coor_y_contact_point_extrapolated_pull,
                  marker='D', color='yellow', label='contact point extrapolated')
-        ax2.plot(self.time_data_pull[self.curve.features['contact_theorical_pull']['index']],
-                 force_data_pull_copy[self.curve.features['contact_theorical_pull']['index']], marker='o', color='brown', label='contact_theorical')
+        ax2.plot(self.time_data_pull[self.curve.graphics['contact_theorical_pull']['index']],
+                 force_data_pull_copy[self.curve.graphics['contact_theorical_pull']['index']], marker='o', color='brown', label='contact_theorical')
         ax2.set_ylabel('force (pN)')
         ax2.set_xlabel('time (s)')
 
@@ -189,8 +189,8 @@ class OpticalEffect:
         coor_x_contact_point_extrapolated_pull, coor_y_contact_point_extrapolated_pull, baseline_force_data_pull,\
             fitted_pull, length_stop_pull = self.fitting_and_contact_theorical(
                 'Pull', tolerance)
-        index_contact_point__theo_press = self.curve.features['contact_theorical_press']['index']
-        index_contact_point_theo_pull = self.curve.features['contact_theorical_pull']['index']
+        index_contact_point__theo_press = self.curve.graphics['contact_theorical_press']['index']
+        index_contact_point_theo_pull = self.curve.graphics['contact_theorical_pull']['index']
 
         force_data_press_part = self.force_data_press.loc[:index_contact_point__theo_press]
         time_data_press_part = self.time_data_press.loc[:index_contact_point__theo_press]
@@ -225,8 +225,8 @@ class OpticalEffect:
         """
         force_data_pull_copy = self.force_data_pull_copy.copy()
         #index_contact_point_press = self.curve.features['contact_point']['index']
-        index_contact_point_press = self.curve.features['contact_theorical_press']['index']
-        index_contact_point_pull = self.curve.features['contact_theorical_pull']['index']
+        index_contact_point_press = self.curve.graphics['contact_theorical_press']['index']
+        index_contact_point_pull = self.curve.graphics['contact_theorical_pull']['index']
         force_smooth = pd.Series(self.force_smooth_press_copy)
         data_range_press = force_smooth.loc[list_ind_correction[0]:list_ind_correction[1]]
         delta_i2_press = 0

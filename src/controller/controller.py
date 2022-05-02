@@ -69,7 +69,10 @@ class Controller:
         """
         creation of the curve list according to the file extension and its conformity
         """
-        self.dict_type_files = {'txt': 0, 'jpk': 0, 'NC': 0, 'PB': 0, 'INC': 0}
+        self.dict_type_files = {'txt': 0, 'jpk': 0,
+                                'NC': 0, 'PB': 0, 'INC': 0, 'DP': 0}
+        # 'txt': fichier .txt, 'jpk':fichier .jpk-nt-force, 'NC': not in conformity, 'PB': problematic
+        # 'INC': Incomplete, 'DP': Duplicate
         self.list_file_imcomplete = set()
         for index_file in range(0, len(self.files), 1):
             # self.tracker.print_diff()
@@ -79,6 +82,7 @@ class Controller:
                 sep)[-1]
             regex = re.match("^b[1-9]+c[1-9]+[a-z]{0,2}-", name_file)
             name_file = name_file.split('-')
+            print(name_file)
             name_file = str(name_file[0][0:4]) + '-' + '-'.join(name_file[1:])
             nb = str(index_file+1) + "/" + str(len(self.files))
             print(
@@ -86,17 +90,21 @@ class Controller:
             print(self.files[index_file].split(sep)[-1])
             print(
                 '===============================================================================')
-            if name_file not in self.dict_curve:
+            filename = name_file.split('.')[0:-1]
+            filename = '.'.join(filename)
+            if filename not in self.dict_curve:
                 check_incomplete = False
                 try:
                     if type_file == 'txt' and regex:
                         new_curve, check_incomplete = Controller.open_file(
-                            self.files[index_file], methods['threshold_align'], methods['pulling_length'])
-                        self.dict_type_files['txt'] += 1
+                            self.files[index_file], name_file,  methods['threshold_align'], methods['pulling_length'])
+                        if not check_incomplete:
+                            self.dict_type_files['txt'] += 1
                     elif type_file == 'jpk-nt-force' and regex:
                         new_curve, check_incomplete = Controller.create_object_curve(
-                            self.files[index_file], methods['threshold_align'], methods['pulling_length'])
-                        self.dict_type_files['jpk'] += 1
+                            self.files[index_file], name_file, methods['threshold_align'], methods['pulling_length'])
+                        if not check_incomplete:
+                            self.dict_type_files['jpk'] += 1
                     else:
                         print('non-conforming file.')
                         self.dict_type_files['NC'] += 1
@@ -116,6 +124,8 @@ class Controller:
                         Controller.file_incomplete_rejected(
                             type_file, self.files[index_file])
                         self.dict_type_files['INC'] += 1
+                        print(type_file[0:3])
+                        self.dict_type_files[type_file[0:3]] -= 1
                         self.list_file_imcomplete.add(
                             self.files[index_file].split(sep)[-1])
                     else:
@@ -131,22 +141,34 @@ class Controller:
                             self.dict_type_files['PB'] += 1
             else:
                 print('files already processed')
+                self.dict_type_files['DP'] += 1
             if self.view is not None:
                 self.view.info_processing(nb, len(self.files))
             print(self.dict_type_files)
+            print(len(self.dict_curve))
 
     ##################################################################################################################
     def problematic_curve(self, file, extension, message, error):
         """
-        TODO
+        function allowing to put in a separate folder the curves having had a problem during their analysis
+
+        :parameters:
+            file: str
+                name of the file to copy
+            extension: str
+                file extension
+            message: str
+                message to write in the terminal
+            error: object
+                error according to the exception raised
         """
         path_dir_problem = ""
         if extension == "jpk":
             path_dir_problem = Path(
-                '..' + sep + 'problem_file' + sep + 'JPK')
+                '..' + sep + 'File_rejected' + sep + 'problem_curve' + sep + 'JPK')
         else:
             path_dir_problem = Path(
-                '..' + sep + 'problem_file' + sep + 'TXT')
+                '..' + sep + 'File_rejected' + sep + 'problem_curve' + sep + 'TXT')
         path_dir_problem.mkdir(parents=True, exist_ok=True)
         file_curve = file.__str__().split(sep)[-1]
         copy(file, str(path_dir_problem))
@@ -376,7 +398,7 @@ class Controller:
                  [index_contact], marker='o', color='#762a83', label='contact point')
         ax1.plot(data_total['time'][index_min_press], data_total[main_axis + 'Signal1']
                  [index_min_press], marker='o', color='#8b5847', label='min press')
-        ax1.plot(curve.features['time_min_curve']['value'], curve.features['force_min_curve']
+        ax1.plot(curve.features['time_min_curve']['value (s)'], curve.features['force_min_curve']
                  ['value'], marker='o', label='min curve', color='red')
         ax1.plot(time_data_pull[index_release], force_data_pull[index_release],
                  marker='o', color='#762a83', label='release point')
@@ -441,7 +463,7 @@ class Controller:
                      'Signal1'], color='green', alpha=0.5)
             ax1.plot(data_total['seriesTime'], np.zeros(len(data_total[main_axis + 'Signal1'])),
                      color='black', alpha=0.75)
-            # ax1.plot(curve.features['time_min_curve']['value'],
+            # ax1.plot(curve.features['time_min_curve']['value (s)'],
             #          curve.features['force_min_curve']['value'], marker='o', label='force_min')
             scale = 0
             if abs(ax1.get_ylim()[0]) < ax1.get_ylim()[1]:
@@ -785,7 +807,7 @@ class Controller:
     #############################################################################################
 
     @staticmethod
-    def open_file(file, threshold_align, pulling_length):
+    def open_file(file, name_file, threshold_align, pulling_length):
         """
         if file .txt
         Processing of the curve file to create an object
@@ -807,8 +829,10 @@ class Controller:
         check_incomplete = False
         nb_segments = 0
         dict_segments = {}
-        title = file.split(sep)[-1].replace(".txt", "")
-        file_curve = file.__str__().split(sep)[-1]  # .replace('.txt', "")
+        title = name_file.split(sep)[-1].replace(".txt", "")
+        # file_curve = file.__str__().split(sep)[-1]  # .replace('.txt', "")
+        file_curve = name_file.split('.')[0:-1]
+        file_curve = '.'.join(file_curve)
         check_incomplete = False
         with open(file, 'r') as file_study:
             lines = file_study.read()
@@ -847,7 +871,7 @@ class Controller:
     ################################################################################################
 
     @staticmethod
-    def create_object_curve(file, threshold_align, pulling_length):
+    def create_object_curve(file, name_file, threshold_align, pulling_length):
         """
         Creation of the Curve object after extraction of the data from the jpk-nt-force coded file
 
@@ -866,7 +890,9 @@ class Controller:
         new_curve = None
         new_jpk = JPKFile(file)
         # .replace('.jpk-nt-force', '')
-        file_curve = file.__str__().split(sep)[-1]
+        # file_curve = name_file.__str__().split(sep)[-1]
+        file_curve = name_file.split('.')[0:-1]
+        file_curve = '.'.join(file_curve)
         check_incomplete = False
         check_incomplete = Controller.file_troncated(new_jpk)
         if check_incomplete:
@@ -1260,7 +1286,7 @@ class Controller:
             self.output.drop(
                 ['main_axis_sign', 'main_axis_axe'], axis=1, inplace=True)
             if 'valid_fit_press' not in self.output:
-                self.output['valid_fit_press'] = True
+                self.output['valid_fit_press'] = False
             if 'valid_fit_pull' not in self.output:
                 self.output['valid_fit_pull'] = False
             name_parameters = ""
@@ -1272,15 +1298,18 @@ class Controller:
                 name_parameters = 'young (Pa)'
                 error_parameters = 'error young (Pa)'
             liste_labels = ['treat_supervised', 'automatic_type', 'type', 'automatic_AL', 'AL', 'automatic_AL_axe',
-                            'optical_state', 'model', 'Date', 'Hour', 'condition', 'drug', 'tolerance', 'bead', 'cell',
+                            'optical_state', 'model', 'Date', 'Hour', 'condition', 'drug', 'tolerance', 'bead', 'cell', 'couple',
                             'main_axis', 'stiffness (N/m)', 'theorical_contact_force (N)', 'theorical_distance_Press (m)',
                             'theorical_speed_Press (m/s)', 'theorical_freq_Press (Hz)', 'theorical_distance_Pull (m)',
                             'theorical_speed_Pull (m/s)', 'theorical_freq_Pull (Hz)', 'baseline_origin_press (N)',
                             'baseline_corrected_press (pN)', 'std_origin_press (N)', 'std_corrected_press (pN)',
                             name_parameters, error_parameters, 'contact_point_index', 'contact_point_value',
-                            'force_min_press_index', 'force_min_press_value', 'point_release_index',
-                            'point_release_value', 'force_max_pull_index', 'force_max_pull_value',
-                            'point_return_endline_index', 'point_return_endline_value']
+                            'force_min_press_index', 'force_min_press_value', 'force_min_curve_index',
+                            'force_min_curve_value', 'time_min_curve_index', 'time_min_curve_value (s)',
+                            'point_release_index', 'point_release_value', 'force_max_pull_index',
+                            'force_max_pull_value', 'force_max_curve_index', 'force_max_curve_value',
+                            'transition_point_index', 'transition_point_value (pN)', 'point_return_endline_index',
+                            'point_return_endline_value']
             if len(liste_labels) != len(self.output.columns):
                 for label in self.output.columns:
                     if label not in liste_labels:
@@ -1300,6 +1329,7 @@ class Controller:
             self.output = self.output[liste_labels]
 
             self.output.rename(columns={'contact_point_value': 'contact_point_value  (pN)', 'force_min_press_value': 'force_min_press_value (pN)',
+                                        'force_min_curve_value': 'force_min_curve_value (pN)', 'force_max_curve_value': 'force_max_curve_value (pN)',
                                         'point_release_value': 'point_release_value (pN)', 'force_max_pull_value': 'force_max_pull_value (pN)',
                                         'point_return_endline_value': 'point_return_endline_value (pN)'}, inplace=True)
 
