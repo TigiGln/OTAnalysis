@@ -56,7 +56,7 @@ Visualization of all curves as a function of time on the 3 axes and as a functio
 - Pagination to determine our position in the whole analysis. Possibility to move with the 'Enter' key and the number of the curve
 
 ## Install MiniConda && Create conda environment
-```{}
+```
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 chmod +x Miniconda3-latest-Linux-x86_64.sh
 ./Miniconda3-latest-Linux-x86_64.sh
@@ -65,7 +65,7 @@ conda activate newenv
 
 ```
 ## Dependencies
-```{}
+```
 conda install numpy
 conda install pandas
 conda install scipy
@@ -75,30 +75,29 @@ conda install matplotlib
 pip install supyr-struct
 pip install pathlib
 pip install pytest
-pip install m2r2
-pip install sphinx-rtd-theme
 
 ```
 
 ## Install package
+You can install napari-openlabframe via <a href="https://pypi.org/project/pip/" rel="nofollow" target="_blank">pip</a>:
 ```
 python -m pip install -e
 ```
 
 ## Launch project
-```{}
+```
 python -m src.main
 ```
 
 ## Documentation
 
 ### Update
-```{}
+```
 make html
 ```
 
 ### Visualization
-```{}
+```
 firefox docs/_build/html/index.html
 ```
 
@@ -141,6 +140,7 @@ columns
     number of the cell used for the curve
 - couple: str
     couple ball number and cell number
+
 #### Theoretical data present in the headers of the files
 - main_axis: str
     main axis of the experiment and the direction of approach of the cell with respect to the ball:
@@ -190,13 +190,13 @@ columns
 - force_min_press_value (pN): float
     value of the minimum force of the "Press" segment
 - force_min_curve_index: int
-    index of the minimum force of the curve (sometimes confused with minimum Press)
+    index of the minimum force of the curve (sometimes confused with minimum Press)  
 - force_min_curve_value (pN): float
     value of the minimum force of the curve (sometimes confused with minimum Press)
 - point_release_index: int
-    index of the point where the cell loses contact with the ball (without taking into account the adhesive molecules or the membrane tubes)
-- point_release_value (pN): float
-    value of the point where the cell loses contact with the ball (without taking into account the adhesive molecules or the membrane tubes)
+    'index of the point where the cell loses contact with the ball (without taking \ into account the adhesive molecules or the membrane tubes).'
+- point_release_value (pN): float 
+    value of the point where the cell loses contact with the ball (without taking \ into account the adhesive molecules or the membrane tubes).
 - force_max_pull_index: int
     index of the maximum force on a part of the "Pull" segment between the release point and the return to the baseline
 - force_max_pull_value (pN): float
@@ -205,7 +205,7 @@ columns
     index of the maximum force of the curve
 - force_max_curve_value (pN) : float
     value of the maximum force of the curve
-- Pente (pN/nm)
+- Pente (pN/nm): float
     coefficient of the contact loss slope between the ball and the cell due to the retraction effect of the cell with respect to the ball
 
 #### Data calculated if type of curves different from non-adhesive, infinite tube or rejected
