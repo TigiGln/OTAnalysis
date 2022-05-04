@@ -7,7 +7,7 @@ requires = [
     'scipy',
     'pandas',
     'matplotlib',
-    'PyQt5' 
+    'PyQt5', 
 ]
 build-backend = "setuptools.build_meta"
 

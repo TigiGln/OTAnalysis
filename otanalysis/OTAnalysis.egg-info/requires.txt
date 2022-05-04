@@ -1,0 +1,8 @@
+numpy
+pandas
+scipy
+matplotlib
+PyQt5
+supyr-struct
+pathlib
+pytest

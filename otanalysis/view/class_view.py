@@ -141,7 +141,11 @@ class View(QMainWindow, QWidget):
 
     def ask_help(self, event):
         """
-        TODO
+        Allows you to redirect to the sphinx project documentation
+
+        :parameters:
+           event: signal object
+            corresponds to the mouse click 
         """
         if event:
             webbrowser.open("docs/_build/html/index.html")
