@@ -1,7 +1,5 @@
 ![Python 3.8.5](https://img.shields.io/badge/Python-3.8.5-blue.svg)
 
-# OTAnalysis
-
 ## Tool for managing the results of optical tweezers
 Tool for extracting, analyzing and classifying optical tweezer data curves
 
@@ -77,11 +75,19 @@ conda install matplotlib
 pip install supyr-struct
 pip install pathlib
 pip install pytest
+pip install m2r2
+pip install sphinx-rtd-theme
+
+```
+
+## Install package
+```
+python -m pip install -e
 ```
 
 ## Launch project
 ```{}
-python src/main.py
+python -m src.main
 ```
 
 ## Documentation
