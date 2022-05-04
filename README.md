@@ -79,7 +79,7 @@ pip install pytest
 ```
 
 ## Install package
-You can install napari-openlabframe via <a href="https://pypi.org/project/pip/" rel="nofollow" target="_blank">pip</a>:
+You can install napari-openlabframe via <a href="https://pypi.org/project/pip/" target="_blank">pip</a>:
 ```
 python -m pip install -e
 ```
