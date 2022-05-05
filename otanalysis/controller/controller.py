@@ -306,7 +306,7 @@ class Controller:
             ax.plot(distance_data[index_max], force_data[index_max],
                     color='#1b7837', marker='o', label='min press')
             ax.plot(distance_data[index_max], max_curve,
-                    color='yellow', marker='o', label='min curve')
+                    color='pink', marker='o', label='min curve', ls='None')
             ax.set_ylabel("Force (pN)")
         elif segment.name == 'Pull':
             calcul_threshold = curve.features['tolerance'] * \
@@ -318,9 +318,12 @@ class Controller:
                     label=legend_threshold, ls='-.', alpha=0.5)
             ax.plot(distance_data, threshold_pull_neg,
                     color='blue', alpha=0.5, ls='-.')
-            if 'distance_fitted_classification' in curve.graphics:
-                ax.plot(curve.graphics['distance_fitted_classification'],
-                        curve.graphics['fitted_classification'], label='fit classification')
+            if 'distance_fitted_classification_release' in curve.graphics:
+                ax.plot(curve.graphics['distance_fitted_classification_release'],
+                        curve.graphics['fitted_classification_release'], label='fit classification release')
+            if 'distance_fitted_classification_max' in curve.graphics:
+                ax.plot(curve.graphics['distance_fitted_classification_max'],
+                        curve.graphics['fitted_classification_max'], label='fit classification max')
             if self.view.methods['optical'] == "Correction":
                 index_x_0 = curve.features['contact_theorical_pull']['index']
             else:

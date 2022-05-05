@@ -1,6 +1,7 @@
 """
 Class View
 """
+import sys
 from time import sleep
 from os import sep
 import traceback
@@ -10,10 +11,10 @@ from re import match
 import webbrowser
 import pandas as pd
 import matplotlib.pyplot as plt
-from PyQt5.QtWidgets import QWidget, QFileDialog, QFrame, QSpinBox, QApplication
+from PyQt5.QtWidgets import QWidget, QFileDialog, QFrame, QSpinBox, QApplication, QMenuBar
 from PyQt5.QtWidgets import QPushButton, QRadioButton, QHBoxLayout, QVBoxLayout, QLabel, QMessageBox
 from PyQt5.QtWidgets import QLineEdit, QGridLayout, QGroupBox, QDoubleSpinBox, QButtonGroup
-from PyQt5.QtWidgets import QScrollArea, QMainWindow
+from PyQt5.QtWidgets import QScrollArea, QMainWindow, QAction
 from PyQt5.QtCore import Qt, pyqtSignal, QEvent, QEventLoop, QTimer
 from PyQt5.QtGui import QIcon
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
@@ -23,6 +24,7 @@ from matplotlib.lines import Line2D
 from otanalysis.view.class_info import Infowindow
 from otanalysis.view.class_toggle import QtToggle
 from otanalysis.view.class_graph_view import GraphView
+from otanalysis.controller.controller import Controller
 
 
 
@@ -147,8 +149,8 @@ class View(QMainWindow, QWidget):
            event: signal object
             corresponds to the mouse click 
         """
-        if event:
-            webbrowser.open("docs/_build/html/index.html")
+        
+        webbrowser.open("docs/_build/html/index.html")
 
     ###################################################################################
 
@@ -604,12 +606,91 @@ class View(QMainWindow, QWidget):
         if self.fig is not None:
             self.canvas = FigureCanvasQTAgg(self.fig)
             self.canvas.mpl_connect('button_press_event', self.mousePressEvent)
+            self.canvas.mpl_connect('pick_event', self.select_fit)
             self.toolbar = NavigationToolbar2QT(self.canvas, self)
             self.canvas.draw()
-            self.main_layout.addWidget(self.toolbar, 0, 0, 1, 6)
-            self.main_layout.addWidget(self.canvas, 1, 0, 7, 6)
+            self.main_layout.addWidget(self.toolbar, 1, 0, 1, 6)
+            self.main_layout.addWidget(self.canvas, 2, 0, 7, 6)
         self.count_select_plot += 1
         self.setFocus()
+
+    ########################################################################################
+
+    def add_menu_bar(self):
+        """
+        Create a menu bar to restart an analysis or get helpp
+        """
+        help = QAction("Help", self)
+        help.setStatusTip("Ask help")
+        help.triggered.connect(self.ask_help)
+
+        exitApp = QAction("Quit", self)
+        exitApp.setShortcut('Ctrl+Q')
+        exitApp.setStatusTip('Exit applicatiion')
+        exitApp.triggered.connect(self.close)
+        
+        new = QAction("New analysis", self)
+        new.setShortcut("Ctrl+N")
+        new.setStatusTip("New analysis")
+        new.triggered.connect(self.new_analysis)
+
+        pick_event = QAction("pick_event", self, checkable=True)
+        pick_event.setStatusTip("Select fit transition")
+        pick_event.triggered.connect(self.check_pick_event)
+
+
+        menubar = QMenuBar()
+        action_file = menubar.addMenu("File")
+        action_file.addAction(exitApp)
+        action_file.addAction(new)
+        action_edit =  menubar.addMenu("Edit")
+        action_edit.addAction(pick_event)
+        menubar.addAction(help)
+
+        self.main_layout.addWidget(menubar, 0, 0, 1, 6)
+
+    ########################################################################################
+    def new_analysis(self):
+        """
+        Relaunch an analysis without taking into account the one in progress
+        """
+        self.close()
+        view = View()
+        controller = Controller(view)
+        view.set_controller(controller)
+        view.show()
+    
+    ########################################################################################
+
+    def check_pick_event(self):
+        """
+        TODO
+        """
+        sender = self.sender()
+        if not self.abscissa_curve:
+            for graph in self.fig.axes:
+                print(graph.get_title())
+                if graph.get_title() == 'Pull segment':
+                    if sender.isChecked():
+                        print("hey")
+                        self.cidpick = self.canvas.mpl_connect('pick_event', self.select_fit)
+                    else:
+                        self.fig.canvas.mpl_disconnect(self.cidpick)
+        else:
+            print("Graph distance only")
+            sender.setChecked(False)
+    ########################################################################################
+
+    def select_fit(self, event):
+        print('hello')
+        print(event)
+        if isinstance(event.artist, Line2D):
+            thisline = event.artist
+            xdata = thisline.get_xdata()
+            ydata = thisline.get_ydata()
+            ind = event.ind
+            print(ind)
+        
     ########################################################################################
 
     def show_graphic(self):
@@ -617,6 +698,7 @@ class View(QMainWindow, QWidget):
         Creation of the graphics window with or without supervision
         """
         self.clear()
+        self.add_menu_bar()
         self.setMouseTracking(True)
         if self.screen_display.height() > 1000:
             self.setGeometry(0, 0, self.screen_display.width(
@@ -1105,7 +1187,6 @@ class View(QMainWindow, QWidget):
             xdata = thisline.get_xdata()
             ydata = thisline.get_ydata()
             ind = event.ind
-            print(ind[0])
             self.intreval_optical_effect.append(ind[0])
             if len(self.intreval_optical_effect) > 2:
                 self.dict_fig_open[self.current_curve.file].clear()

@@ -779,6 +779,44 @@ class Curve:
         type_curve = self.classification(methods, type_curve)
         return type_curve
 
+    ################################################################################################
+    def fit_linear_classification(self, distance_data):
+        """
+        Allows classification based on the shape of the fit line between two selected zones (max and transition point)
+        
+        :parameters:
+            distance_data: list
+                distance value of the "Pull" segment
+        """
+        jump_nb_points_start = int(self.features['jump_nb_points_start']/3)
+        print('jump_nb_points_start: ', jump_nb_points_start)
+        y_smooth_pull = self.graphics['y_smooth_Pull']
+        index_max_curve = y_smooth_pull.argmax()
+        index_release = self.features['point_release']['index']
+        f_parameters_release = curve_fit(
+            Curve.linear_fit, distance_data[index_release:index_release+jump_nb_points_start], y_smooth_pull[index_release:index_release+jump_nb_points_start])
+        fitted_classification_release = Curve.linear_fit(
+            distance_data[index_release:index_release+jump_nb_points_start], f_parameters_release[0][0], f_parameters_release[0][1])
+        self.graphics['fitted_classification_release'] = fitted_classification_release
+        self.graphics['distance_fitted_classification_release'] = distance_data[index_release:index_release+jump_nb_points_start]
+
+        f_parameters_max = curve_fit(
+            Curve.linear_fit, distance_data[index_max_curve-jump_nb_points_start:index_max_curve], y_smooth_pull[index_max_curve-jump_nb_points_start:index_max_curve])
+        
+        fitted_classification_max = Curve.linear_fit(
+            distance_data[index_max_curve-jump_nb_points_start:index_max_curve], f_parameters_max[0][0], f_parameters_max[0][1])
+        self.graphics['fitted_classification_max'] = fitted_classification_max
+        self.graphics['distance_fitted_classification_max'] = distance_data[index_max_curve-jump_nb_points_start:index_max_curve]
+        
+        # fig = plt.figure()
+        # ax = fig.add_subplot(111)
+        # ax.plot(time_data, force_data)
+        # ax2 = ax.twinx()
+        # ax2.plot(time_data, derive_smooth, color='red', alpha=0.25)
+        #ax.plot(time_data[index_transition_point], force_data[index_transition_point],
+        #           marker='o', color='green', label='transition_point')
+        # plt.show()
+
     ###########################################################################################################################
 
     def classification(self, methods, type_curve):
@@ -866,35 +904,6 @@ class Curve:
 
         return type_curve
 
-    ################################################################################################
-    def fit_linear_classification(self, distance_data):
-        """
-        Allows classification based on the shape of the fit line between two selected zones (max and transition point)
-        
-        :parameters:
-            distance_data: list
-                distance value of the "Pull" segment
-        """
-        jump_nb_points_start = int(self.features['jump_nb_points_start']/3)
-        print('jump_nb_points_start: ', jump_nb_points_start)
-        y_smooth_pull = self.graphics['y_smooth_Pull']
-        index_max_curve = y_smooth_pull.argmax()
-        index_transition = self.features['transition_point']['index']
-        if index_transition is not None and index_transition != "NaN":
-            f_parameters = curve_fit(
-                Curve.linear_fit, distance_data[index_max_curve:index_transition], y_smooth_pull[index_max_curve:index_transition])
-            fitted_classification = Curve.linear_fit(
-                distance_data[index_max_curve:index_transition], f_parameters[0][0], f_parameters[0][1])
-            self.graphics['fitted_classification'] = fitted_classification
-            self.graphics['distance_fitted_classification'] = distance_data[index_max_curve:index_transition]
-        # fig = plt.figure()
-        # ax = fig.add_subplot(111)
-        # ax.plot(time_data, force_data)
-        # ax2 = ax.twinx()
-        # ax2.plot(time_data, derive_smooth, color='red', alpha=0.25)
-        #ax.plot(time_data[index_transition_point], force_data[index_transition_point],
-        #           marker='o', color='green', label='transition_point')
-        # plt.show()
     ##################################################################################################
 
     @staticmethod
