@@ -15,6 +15,7 @@ import numpy as np
 from pandas.core.tools.numeric import to_numeric
 from matplotlib.figure import Figure
 from matplotlib import gridspec
+import matplotlib.pyplot as plt
 from otanalysis.model.class_curve import Curve
 from otanalysis.model.class_segment_curve import Segment
 from otanalysis.extractor.extractor_JPK import JPKFile
@@ -227,18 +228,18 @@ class Controller:
             curve = list_curves_for_graphs[n]
             if 'distance' in curve.dict_segments['Press'].corrected_data:
                 check_distance = True
-            fig = Figure()
+            fig = plt.figure()
             graph_position = 1
             if abscissa_curve == 'time':
-                graph_position = Controller.plot_time(curve, fig, graph_position)
+                graph_position = Controller.plot_time(
+                    curve, fig, graph_position)
             else:
                 for segment in curve.dict_segments.values():
                     if 'distance' in segment.corrected_data:
                         if segment.header_segment['segment-settings.style'] == "motion":
                             if segment.name == 'Press':
                                 time_wait = 'Waiting Time: ' + \
-                                    curve.parameters_header['header_global']\
-                                        ['settings.segment.1.duration'] + ' s'
+                                    curve.parameters_header['header_global']['settings.segment.1.duration'] + ' s'
                                 title = segment.name + ' segment, ' + time_wait
                             elif segment.name == 'Pull':
                                 title = f"{segment.name} segment"
@@ -250,7 +251,14 @@ class Controller:
                             if segment.name == 'Press':
                                 ax.legend(loc="lower left")
                             elif segment.name == 'Pull':
-                                ax.legend(loc="lower right")
+                                handles, labels = ax.get_legend_handles_labels()
+                                for label in labels:
+                                    if label == 'smooth':
+                                        handles.pop(labels.index(label))
+                                        labels.pop(labels.index(label))
+
+                                ax.legend(handles, labels, loc="lower right")
+
         fig.subplots_adjust(wspace=0.3, hspace=0.5)
         fig.tight_layout()
         return fig, curve, check_distance
@@ -284,7 +292,8 @@ class Controller:
         #y_smooth = curve.graphics['y_smooth_' + segment.name]
         y_smooth = curve.smooth(
             force_data, self.view.methods['width_window_smooth'], 2)
-        ax.plot(distance_data, y_smooth, color="#80cdc1")
+        ax.plot(distance_data, y_smooth,
+                color="#80cdc1", label='smooth')
         index_x_0 = 0
         if segment.name == 'Press':
             threshold_press = curve.graphics['threshold_press']
@@ -324,6 +333,9 @@ class Controller:
             if 'distance_fitted_classification_max' in curve.graphics:
                 ax.plot(curve.graphics['distance_fitted_classification_max'],
                         curve.graphics['fitted_classification_max'], label='fit classification max')
+            if 'distance_fitted_classification_transition' in curve.graphics:
+                ax.plot(curve.graphics['distance_fitted_classification_transition'],
+                        curve.graphics['fitted_classification_transition'], label='fit classification transition')
             if self.view.methods['optical'] == "Correction":
                 index_x_0 = curve.features['contact_theorical_pull']['index']
             else:
@@ -333,8 +345,7 @@ class Controller:
                 index_return = curve.features['point_return_endline']['index']
                 ax.plot(distance_data[index_return], y_smooth[index_return],
                         color='#50441b', marker='o', label='return')
-            if 'transition_point' in curve.features and curve.features['transition_point']\
-                                                                      ['index'] != 'NaN':
+            if 'transition_point' in curve.features and curve.features['transition_point']['index'] != 'NaN':
                 index_transition = curve.features['transition_point']['index']
                 ax.plot(distance_data[index_transition], force_data[index_transition],
                         color='#1E90FF', marker='o', label='transition')
@@ -345,7 +356,7 @@ class Controller:
                             color='#1b7837', marker='o', label='max')
             else:
                 if curve.features['automatic_type'] != 'NAD' \
-                    or curve.features['automatic_type'] != 'RE':
+                        or curve.features['automatic_type'] != 'RE':
                     ax.plot(distance_data[index_max], force_data[index_max],
                             color='#1b7837', marker='o', label='max')
         if index_x_0 != 0:
@@ -400,8 +411,7 @@ class Controller:
         index_min_press = curve.features['force_min_press']['index']
         index_release = curve.features['point_release']['index']
         index_max = data_total[main_axis + 'Signal1'].argmax()
-        if 'transition_point' in curve.features and curve.features['transition_point']\
-                                                                  ['index'] != 'NaN':
+        if 'transition_point' in curve.features and curve.features['transition_point']['index'] != 'NaN':
             index_trasition = curve.features['transition_point']['index']
             ax1.plot(time_data_pull[index_trasition], force_data_pull[index_trasition],
                      marker='o', color='#1E90FF', label='transition point')
@@ -597,7 +607,6 @@ class Controller:
             name_img = 'fig_' + name_curve + '_' + str(today) + '_time.png'
         fig.savefig(path_graphs.__str__() + sep +
                     name_img, bbox_inches='tight')
-
 
     ##############################################################################################
 
@@ -1230,7 +1239,7 @@ class Controller:
             retour = None
             if float(pct) < 10:
                 retour = f"{pct}%({val})"
-            retour =  f"{pct}%\n({val})"
+            retour = f"{pct}%\n({val})"
         except Exception as error:
             print('###########################################')
             print(type(error).__name__, ':')

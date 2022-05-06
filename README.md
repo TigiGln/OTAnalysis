@@ -86,7 +86,7 @@ python -m pip install -e
 
 ## Launch project
 ```
-python -m src.main
+python -m main
 ```
 
 ## Documentation

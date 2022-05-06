@@ -666,6 +666,7 @@ class Curve:
         fit[fit >= point_release] = endline
         return fit
     ###############################################################################################
+
     @staticmethod
     def derivation(force_data, time_data, n):
         """
@@ -780,42 +781,27 @@ class Curve:
         return type_curve
 
     ################################################################################################
-    def fit_linear_classification(self, distance_data):
+    def fit_linear_classification(self, index_start, index_end, name_fit):
         """
         Allows classification based on the shape of the fit line between two selected zones (max and transition point)
-        
+
         :parameters:
             distance_data: list
                 distance value of the "Pull" segment
         """
-        jump_nb_points_start = int(self.features['jump_nb_points_start']/3)
-        print('jump_nb_points_start: ', jump_nb_points_start)
+        segment = self.dict_segments['Pull']
         y_smooth_pull = self.graphics['y_smooth_Pull']
-        index_max_curve = y_smooth_pull.argmax()
-        index_release = self.features['point_release']['index']
-        f_parameters_release = curve_fit(
-            Curve.linear_fit, distance_data[index_release:index_release+jump_nb_points_start], y_smooth_pull[index_release:index_release+jump_nb_points_start])
-        fitted_classification_release = Curve.linear_fit(
-            distance_data[index_release:index_release+jump_nb_points_start], f_parameters_release[0][0], f_parameters_release[0][1])
-        self.graphics['fitted_classification_release'] = fitted_classification_release
-        self.graphics['distance_fitted_classification_release'] = distance_data[index_release:index_release+jump_nb_points_start]
-
-        f_parameters_max = curve_fit(
-            Curve.linear_fit, distance_data[index_max_curve-jump_nb_points_start:index_max_curve], y_smooth_pull[index_max_curve-jump_nb_points_start:index_max_curve])
-        
-        fitted_classification_max = Curve.linear_fit(
-            distance_data[index_max_curve-jump_nb_points_start:index_max_curve], f_parameters_max[0][0], f_parameters_max[0][1])
-        self.graphics['fitted_classification_max'] = fitted_classification_max
-        self.graphics['distance_fitted_classification_max'] = distance_data[index_max_curve-jump_nb_points_start:index_max_curve]
-        
-        # fig = plt.figure()
-        # ax = fig.add_subplot(111)
-        # ax.plot(time_data, force_data)
-        # ax2 = ax.twinx()
-        # ax2.plot(time_data, derive_smooth, color='red', alpha=0.25)
-        #ax.plot(time_data[index_transition_point], force_data[index_transition_point],
-        #           marker='o', color='green', label='transition_point')
-        # plt.show()
+        distance_data = None
+        if 'distance' in segment.corrected_data:
+            distance_data = np.abs(segment.corrected_data['distance'])
+        f_parameters = curve_fit(
+            Curve.linear_fit, distance_data[index_start:index_end], y_smooth_pull[index_start:index_end])
+        self.features["slope_" + name_fit] = f_parameters[0][0]
+        fitted_classification = Curve.linear_fit(
+            distance_data[index_start:index_end], f_parameters[0][0], f_parameters[0][1])
+        self.graphics[name_fit] = fitted_classification
+        self.graphics['distance_' +
+                      name_fit] = distance_data[index_start:index_end]
 
     ###########################################################################################################################
 
@@ -836,10 +822,11 @@ class Curve:
         index_release = self.features['point_release']['index']
         index_return_end_line = self.features['point_return_endline']['index']
 
-        if 'fitted_classification' in self.graphics:
-            del self.graphics['fitted_classification']
-        if 'distance_fitted_classification' in self.graphics:
-            del self.graphics['distance_fitted_classification']
+        self.graphics = dict([(x, y) for x, y in self.graphics.items(
+        ) if not x.startswith('fitted_classification')])
+        self.graphics = dict([(x, y) for x, y in self.graphics.items(
+        ) if not x.startswith('distance_fitted_classification')])
+
         ############## classification NAD, AD, FTU ##################
         if type_curve is None:
             index_force_max = self.graphics['y_smooth_Pull'][index_release:index_release+1500].argmax()
@@ -884,7 +871,22 @@ class Curve:
                             distance_data[index_return_end_line]
                         self.features['jump_distance_start_pull (nm)'] = jump_distance_start_pull
                         ###################### fit linear for classification #############################
-                        self.fit_linear_classification(distance_data)
+                        ###### fit max ######
+                        jump_nb_points_start = int(
+                            self.features['jump_nb_points_start']/3)
+                        y_smooth_pull = self.graphics['y_smooth_Pull']
+                        index_start = y_smooth_pull.argmax()-jump_nb_points_start
+                        index_end = y_smooth_pull.argmax()
+                        self.fit_linear_classification(
+                            index_start, index_end, "fitted_classification_max")
+
+                        ###### fit release ######
+                        jump_nb_points_start = int(
+                            self.features['jump_nb_points_start']/3)
+                        index_start = index_release
+                        index_end = index_release+jump_nb_points_start
+                        self.fit_linear_classification(
+                            index_start, index_end, "fitted_classification_release")
                     else:
                         speed = float(segment.header_segment['segment-settings.length'])/float(
                             segment.header_segment['segment-settings.duration'])

@@ -11,7 +11,7 @@ from re import match
 import webbrowser
 import pandas as pd
 import matplotlib.pyplot as plt
-from PyQt5.QtWidgets import QWidget, QFileDialog, QFrame, QSpinBox, QApplication, QMenuBar
+from PyQt5.QtWidgets import QWidget, QFileDialog, QFrame, QSpinBox, QApplication, QMenuBar, QMenu
 from PyQt5.QtWidgets import QPushButton, QRadioButton, QHBoxLayout, QVBoxLayout, QLabel, QMessageBox
 from PyQt5.QtWidgets import QLineEdit, QGridLayout, QGroupBox, QDoubleSpinBox, QButtonGroup
 from PyQt5.QtWidgets import QScrollArea, QMainWindow, QAction
@@ -25,7 +25,6 @@ from otanalysis.view.class_info import Infowindow
 from otanalysis.view.class_toggle import QtToggle
 from otanalysis.view.class_graph_view import GraphView
 from otanalysis.controller.controller import Controller
-
 
 
 class View(QMainWindow, QWidget):
@@ -79,7 +78,7 @@ class View(QMainWindow, QWidget):
             self.initialize_window()
             self.widget.setLayout(self.main_layout)
             self.setCentralWidget(self.widget)
-            #self.main_layout.addWidget(self.toogle, 0, 1, 1, 1)
+            # self.main_layout.addWidget(self.toogle, 0, 1, 1, 1)
 
     ######################################################################################
 
@@ -136,7 +135,8 @@ class View(QMainWindow, QWidget):
         frame.setLineWidth(3)
         frame.setMidLineWidth(3)
         self.main_layout.addWidget(self.title_description, 0, 0, 1, 1)
-        self.main_layout.addWidget(self.help, 0, 1, 1, 1, alignment=Qt.AlignRight)
+        self.main_layout.addWidget(
+            self.help, 0, 1, 1, 1, alignment=Qt.AlignRight)
         self.main_layout.addWidget(frame, 1, 0, 1, 2)
 
     ###################################################################################
@@ -147,9 +147,9 @@ class View(QMainWindow, QWidget):
 
         :parameters:
            event: signal object
-            corresponds to the mouse click 
+            corresponds to the mouse click
         """
-        
+
         webbrowser.open("docs/_build/html/index.html")
 
     ###################################################################################
@@ -197,7 +197,7 @@ class View(QMainWindow, QWidget):
             if self.page != 0:
                 self.frame_physical.hide()
                 self.physical_parameters.hide()
-                #self.resize(self.window_geometry.width(), self.window_geometry.height())
+                # self.resize(self.window_geometry.width(), self.window_geometry.height())
                 self.setGeometry(self.window_geometry)
         if self.sphere.isChecked():
             self.page += 1
@@ -555,7 +555,7 @@ class View(QMainWindow, QWidget):
             elif curve.features['automatic_type'] == 'ITU':
                 nb_tui += 1
             elif curve.features['automatic_type'] == 'RE' or \
-                curve.features['automatic_type'] is None:
+                    curve.features['automatic_type'] is None:
                 nb_re += 1
         label = "files processing: " + ratio_curve + "\n"
         label += "\nvalid curves for analysis:  " + \
@@ -606,12 +606,12 @@ class View(QMainWindow, QWidget):
         if self.fig is not None:
             self.canvas = FigureCanvasQTAgg(self.fig)
             self.canvas.mpl_connect('button_press_event', self.mousePressEvent)
-            self.canvas.mpl_connect('pick_event', self.select_fit)
             self.toolbar = NavigationToolbar2QT(self.canvas, self)
             self.canvas.draw()
             self.main_layout.addWidget(self.toolbar, 1, 0, 1, 6)
             self.main_layout.addWidget(self.canvas, 2, 0, 7, 6)
         self.count_select_plot += 1
+        self.add_menu_bar()
         self.setFocus()
 
     ########################################################################################
@@ -628,26 +628,29 @@ class View(QMainWindow, QWidget):
         exitApp.setShortcut('Ctrl+Q')
         exitApp.setStatusTip('Exit applicatiion')
         exitApp.triggered.connect(self.close)
-        
+
         new = QAction("New analysis", self)
         new.setShortcut("Ctrl+N")
         new.setStatusTip("New analysis")
         new.triggered.connect(self.new_analysis)
 
-        pick_event = QAction("pick_event", self, checkable=True)
+        pick_event = QAction("Pick event", self, checkable=True)
         pick_event.setStatusTip("Select fit transition")
         pick_event.triggered.connect(self.check_pick_event)
+        if not self.abscissa_curve:
+            pick_event.setDisabled(False)
+        else:
+            pick_event.setDisabled(True)
 
-
-        menubar = QMenuBar()
-        action_file = menubar.addMenu("File")
+        self.menubar = QMenuBar()
+        action_file = self.menubar.addMenu("File")
         action_file.addAction(exitApp)
         action_file.addAction(new)
-        action_edit =  menubar.addMenu("Edit")
+        action_edit = self.menubar.addMenu("Edit")
         action_edit.addAction(pick_event)
-        menubar.addAction(help)
+        self.menubar.addAction(help)
 
-        self.main_layout.addWidget(menubar, 0, 0, 1, 6)
+        self.main_layout.addWidget(self.menubar, 0, 0, 1, 6)
 
     ########################################################################################
     def new_analysis(self):
@@ -659,7 +662,7 @@ class View(QMainWindow, QWidget):
         controller = Controller(view)
         view.set_controller(controller)
         view.show()
-    
+
     ########################################################################################
 
     def check_pick_event(self):
@@ -669,28 +672,66 @@ class View(QMainWindow, QWidget):
         sender = self.sender()
         if not self.abscissa_curve:
             for graph in self.fig.axes:
-                print(graph.get_title())
                 if graph.get_title() == 'Pull segment':
                     if sender.isChecked():
-                        print("hey")
-                        self.cidpick = self.canvas.mpl_connect('pick_event', self.select_fit)
+                        self.interval_fit = []
+                        for child in graph.get_children():
+                            if child.get_label() == 'smooth':
+                                child.set_picker(True)
+                                child.set_pickradius(1.0)
+                        self.canvas.mpl_connect(
+                            'pick_event', self.select_fit)
                     else:
-                        self.fig.canvas.mpl_disconnect(self.cidpick)
+                        for child in graph.get_children():
+                            if child.get_label() == 'smooth':
+                                child.set_picker(False)
         else:
             print("Graph distance only")
-            sender.setChecked(False)
     ########################################################################################
 
     def select_fit(self, event):
-        print('hello')
-        print(event)
+        """
+        TODO
+        """
+        pick_event_menu = ""
+        for child in self.menubar.children():
+            if isinstance(child, QMenu):
+                if child.title() == "Edit":
+                    for action in child.actions():
+                        if action.text() == "Pick event":
+                            pick_event_menu = action
         if isinstance(event.artist, Line2D):
             thisline = event.artist
             xdata = thisline.get_xdata()
             ydata = thisline.get_ydata()
             ind = event.ind
-            print(ind)
-        
+            self.interval_fit.append(ind[0])
+            ax = ""
+            if len(self.interval_fit) <= 2:
+                for graph in self.fig.axes:
+                    if graph.get_title() == 'Pull segment':
+                        ax = graph
+                        ax.plot(xdata[ind[0]], ydata[ind[0]],
+                                marker='D', color='orange')
+                        plt.draw()
+                if len(self.interval_fit) == 2:
+                    pick_event_menu.setChecked(False)
+                    self.current_curve.fit_linear_classification(
+                        self.interval_fit[0], self.interval_fit[1], "fitted_classification_transition")
+                    for elem_graph in ax.lines:
+                        if elem_graph.get_marker() == 'D':
+                            elem_graph.set_marker("")
+                    ax.plot(self.current_curve.graphics['distance_fitted_classification_transition'],
+                            self.current_curve.graphics['fitted_classification_transition'], label='fitted classification transition')
+                    plt.draw()
+                    handles, labels = ax.get_legend_handles_labels()
+                    for label in labels:
+                        if label == 'smooth':
+                            handles.pop(labels.index(label))
+                            labels.pop(labels.index(label))
+
+                    ax.legend(handles, labels, loc="lower right")
+
     ########################################################################################
 
     def show_graphic(self):
@@ -698,7 +739,6 @@ class View(QMainWindow, QWidget):
         Creation of the graphics window with or without supervision
         """
         self.clear()
-        self.add_menu_bar()
         self.setMouseTracking(True)
         if self.screen_display.height() > 1000:
             self.setGeometry(0, 0, self.screen_display.width(
@@ -1077,6 +1117,7 @@ class View(QMainWindow, QWidget):
             self.page += 1
             self.current_curve.output['treat_supervised'] = True
             self.check_toggle = False
+            plt.close()
             self.show_graphic()
 
     #########################################################################################
@@ -1089,6 +1130,7 @@ class View(QMainWindow, QWidget):
             self.page -= 1
             self.current_curve.output['treat_supervised'] = False
             self.check_toggle = False
+            plt.close()
             self.show_graphic()
 
     ########################################################################################
@@ -1140,8 +1182,6 @@ class View(QMainWindow, QWidget):
                     fig = self.current_curve.correction_optical_effect_object.manual_correction(
                         fig, self.methods['factor_noise'])
                     fig.canvas.mpl_connect('pick_event', self.data_select)
-                    fig.canvas.mpl_connect(
-                        'close_event', self.close_window_optical)
                     self.graph_view = GraphView()
                     canvas = FigureCanvasQTAgg(fig)
                     toolbar_optical = NavigationToolbar2QT(
@@ -1162,6 +1202,7 @@ class View(QMainWindow, QWidget):
                         self.cancel_correction)
                     button_accept_correction.hide()
                     self.graph_view.showMaximized()
+                    self.graph_view.closeEvent = self.close_window_optical
             else:
                 plt.close()
             self.setFocus()
@@ -1190,8 +1231,7 @@ class View(QMainWindow, QWidget):
             self.intreval_optical_effect.append(ind[0])
             if len(self.intreval_optical_effect) > 2:
                 self.dict_fig_open[self.current_curve.file].clear()
-                self.dict_fig_open[self.current_curve.file] = \
-                    self.current_curve.correction_optical_effect_object.manual_correction(
+                self.dict_fig_open[self.current_curve.file] = self.current_curve.correction_optical_effect_object.manual_correction(
                     self.dict_fig_open[self.current_curve.file], self.methods['factor_noise'])
                 for child in self.graph_view.children():
                     if isinstance(child, QPushButton):
@@ -1253,7 +1293,7 @@ class View(QMainWindow, QWidget):
         label_nb_bead = QLabel('Nb beads: ' + str(nb_beads) + '\nNb cells: ' +
                                str(nb_cells) + '\nNb couples: ' + str(nb_couples))
         label_type_files = QLabel('Nb txt files: ' + str(
-            self.controller.dict_type_files['txt']) + '\nNb jpk files: ' + \
+            self.controller.dict_type_files['txt']) + '\nNb jpk files: ' +
             str(self.controller.dict_type_files['jpk']))
         hbox_bilan.addWidget(label_day)
         # hbox_bilan.addWidget(label_condition)
@@ -1338,7 +1378,7 @@ class View(QMainWindow, QWidget):
         else:
             self.controller.save_plot_step(
                 self.fig, self.current_curve, 'distance', self.directory_graphs)
-        #label_save_graphs = QLabel('graph registered under the name: \n' + name_img)
+        # label_save_graphs = QLabel('graph registered under the name: \n' + name_img)
         label_save_graphs = QLabel('well registered graphic')
         self.main_layout.addWidget(label_save_graphs, 3, 6, 1, 1)
         self.setFocus()
