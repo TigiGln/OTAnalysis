@@ -18,7 +18,7 @@ from matplotlib import gridspec
 import matplotlib.pyplot as plt
 from otanalysis.model.class_curve import Curve
 from otanalysis.model.class_segment_curve import Segment
-from otanalysis.extractor.extractor_JPK import JPKFile
+from otanalysis.extractor.jpk_extractor import JPKFile
 
 # from pympler.tracker import SummaryTracker
 
@@ -603,8 +603,10 @@ class Controller:
         name_img = ""
         if abscissa_curve == 'distance':
             name_img = 'fig_' + name_curve + '_' + str(today) + '_distance.png'
-        else:
+        elif abscissa_curve == 'time':
             name_img = 'fig_' + name_curve + '_' + str(today) + '_time.png'
+        else:
+            name_img = 'fig_' + name_curve + '_' + str(today) + '_overview.png'
         fig.savefig(path_graphs.__str__() + sep +
                     name_img, bbox_inches='tight')
 
@@ -1046,12 +1048,13 @@ class Controller:
             directory_graphs: str
                 path to which to save the graphs
         """
-        #list_curves_for_graphs = self.create_list_for_graphs()
-        list_curves_for_graphs = list(self.dict_curve.values())
+        list_curves_for_graphs = list(self.dict_curve)
         for index_list in range(0, len(list_curves_for_graphs), 1):
-            fig, curve = self.show_plot(index_list)
+            fig, curve, check_distance = self.global_plot(index_list)
+            Controller.save_plot_step(fig, curve, 'overview', directory_graphs)
+            fig, curve, check_distance = self.show_plot(index_list, 'distance')
             Controller.save_plot_step(fig, curve, 'distance', directory_graphs)
-            fig, curve = self.show_plot(index_list, 'time')
+            fig, curve, check_distance = self.show_plot(index_list, 'time')
             Controller.save_plot_step(fig, curve, 'time', directory_graphs)
             nb = str(index_list+1) + "/" + str(len(list_curves_for_graphs))
             self.view.info_processing(nb, len(list_curves_for_graphs))
@@ -1229,6 +1232,7 @@ class Controller:
             pct: percentage
             val: label
         """
+        retour = None
         try:
             pct = f"{pct:.2f}"
             list_keys = list(dico.keys())
@@ -1247,7 +1251,8 @@ class Controller:
             print(traceback.format_exc())
             print('value problem')
             print('###########################################')
-        return retour
+        if retour != None:
+            return retour
     #########################################################################################################
 
     def count_cell_bead(self):
@@ -1360,9 +1365,6 @@ class Controller:
             for incomplete in self.list_file_imcomplete:
                 self.output.loc[incomplete, 'automatic_type'] = 'INC'
                 self.output.loc[incomplete, 'type'] = 'INC'
-            print(self.output)
-            print(self.output['type'])
-            print(self.output['automatic_AL'])
             if self.view is None:
                 path_directory = Path("Result")
                 path_directory.mkdir(parents=True, exist_ok=True)

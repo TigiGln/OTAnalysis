@@ -960,6 +960,8 @@ class Curve:
         self.features['condition'] = methods['condition']
         self.features['tolerance'] = methods['factor_noise']
         self.features['optical_state'] = optical_state
+        if type_curve == None:
+            type_curve = 'RE'
         if manual_correction:
             self.features['type'] = type_curve
         else:

@@ -44,7 +44,7 @@ class View(QMainWindow, QWidget):
         self.msg_box = QMessageBox()
         self.keyPressed.connect(self.on_key)
         self.nb_save_graph = 0
-        self.setWindowIcon(QIcon('../pictures' + sep + 'icon.png'))
+        self.setWindowIcon(QIcon('pictures' + sep + 'icon.png'))
         self.info.setWindowIcon(QIcon('../pictures' + sep + 'icon.png'))
         self.setWindowTitle("View")
         self.size_window()
@@ -620,39 +620,49 @@ class View(QMainWindow, QWidget):
         """
         Create a menu bar to restart an analysis or get helpp
         """
-        help = QAction("Help", self)
-        help.setStatusTip("Ask help")
-        help.triggered.connect(self.ask_help)
+        new = QAction("New analysis", self)
+        new.setShortcut("Ctrl+N")
+        new.setStatusTip("New analysis")
+        new.triggered.connect(self.new_analysis)
+
+        save_and_graphs = QAction("Save and graphs", self)
+        save_and_graphs.setShortcut("Ctrl+S")
+        save_and_graphs.setStatusTip("Save output and save gaphics")
+        save_and_graphs.triggered.connect(self.save_and_save_graphs)
 
         exitApp = QAction("Quit", self)
         exitApp.setShortcut('Ctrl+Q')
         exitApp.setStatusTip('Exit applicatiion')
         exitApp.triggered.connect(self.close)
 
-        new = QAction("New analysis", self)
-        new.setShortcut("Ctrl+N")
-        new.setStatusTip("New analysis")
-        new.triggered.connect(self.new_analysis)
-
         pick_event = QAction("Pick event", self, checkable=True)
         pick_event.setStatusTip("Select fit transition")
         pick_event.triggered.connect(self.check_pick_event)
-        if not self.abscissa_curve:
+        if not self.abscissa_curve and self.current_curve.features['type'] == "FTU":
             pick_event.setDisabled(False)
         else:
             pick_event.setDisabled(True)
 
+        help = QAction("Help", self)
+        help.setStatusTip("Ask help")
+        help.triggered.connect(self.ask_help)
+
         self.menubar = QMenuBar()
         action_file = self.menubar.addMenu("File")
-        action_file.addAction(exitApp)
         action_file.addAction(new)
+        action_file.addAction(save_and_graphs)
+        action_file.addAction(exitApp)
+
         action_edit = self.menubar.addMenu("Edit")
         action_edit.addAction(pick_event)
         self.menubar.addAction(help)
+        self.menubar.setFocusPolicy(Qt.StrongFocus)
+        self.setFocus()
 
         self.main_layout.addWidget(self.menubar, 0, 0, 1, 6)
 
     ########################################################################################
+
     def new_analysis(self):
         """
         Relaunch an analysis without taking into account the one in progress
@@ -670,23 +680,32 @@ class View(QMainWindow, QWidget):
         TODO
         """
         sender = self.sender()
-        if not self.abscissa_curve:
-            for graph in self.fig.axes:
-                if graph.get_title() == 'Pull segment':
-                    if sender.isChecked():
-                        self.interval_fit = []
-                        for child in graph.get_children():
-                            if child.get_label() == 'smooth':
-                                child.set_picker(True)
-                                child.set_pickradius(1.0)
-                        self.canvas.mpl_connect(
-                            'pick_event', self.select_fit)
-                    else:
-                        for child in graph.get_children():
-                            if child.get_label() == 'smooth':
-                                child.set_picker(False)
-        else:
-            print("Graph distance only")
+
+        for graph in self.fig.axes:
+            if graph.get_title() == 'Pull segment':
+                if sender.isChecked():
+                    self.interval_fit = []
+                    for child in graph.get_children():
+                        if child.get_label() == 'smooth':
+                            child.set_picker(True)
+                            child.set_pickradius(1.0)
+                        if child.get_label() == 'fitted classification transition':
+                            child.remove()
+                            plt.draw()
+                            handles, labels = graph.get_legend_handles_labels()
+                            for label in labels:
+                                if label == 'smooth':
+                                    handles.pop(labels.index(label))
+                                    labels.pop(labels.index(label))
+                            graph.legend(handles, labels, loc="lower right")
+                    self.canvas.mpl_connect(
+                        'pick_event', self.select_fit)
+                else:
+                    for child in graph.get_children():
+                        if child.get_label() == 'smooth':
+                            child.set_picker(False)
+        self.setFocus()
+
     ########################################################################################
 
     def select_fit(self, event):
@@ -729,7 +748,6 @@ class View(QMainWindow, QWidget):
                         if label == 'smooth':
                             handles.pop(labels.index(label))
                             labels.pop(labels.index(label))
-
                     ax.legend(handles, labels, loc="lower right")
 
     ########################################################################################
@@ -1358,6 +1376,9 @@ class View(QMainWindow, QWidget):
                               time_today + '.tsv', sep='\t', encoding='utf-8', na_rep="NaN")
 
         if self.check_graph or self.save_table.isChecked():
+            check_save_output = QMessageBox()
+            check_save_output.setText("Your exit has been registered")
+            check_save_output.exec()
             self.close()
 
         return directory
@@ -1389,7 +1410,7 @@ class View(QMainWindow, QWidget):
         """
         Allows on the first interface to save all the graphics and the output file
         """
-        length = str(len(self.controller.create_list_for_graphs()))
+        length = str(len(self.controller.dict_curve))
         directory = self.save()
         self.msg_box.show()
         self.msg_box.setWindowTitle("save_graph")
