@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 """
 Class View
 """
@@ -21,10 +23,10 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT
 from matplotlib.figure import Figure
 from matplotlib.lines import Line2D
-from otanalysis.view.class_info import Infowindow
-from otanalysis.view.class_toggle import QtToggle
-from otanalysis.view.class_graph_view import GraphView
-from otanalysis.controller.controller import Controller
+from ..view.class_info import Infowindow
+from ..view.class_toggle import QtToggle
+from ..view.class_graph_view import GraphView
+from ..controller.controller import Controller
 
 
 class View(QMainWindow, QWidget):
@@ -677,10 +679,9 @@ class View(QMainWindow, QWidget):
 
     def check_pick_event(self):
         """
-        TODO
+        Features when you check the pick event box in the Edit menu
         """
         sender = self.sender()
-
         for graph in self.fig.axes:
             if graph.get_title() == 'Pull segment':
                 if sender.isChecked():
@@ -698,6 +699,8 @@ class View(QMainWindow, QWidget):
                                     handles.pop(labels.index(label))
                                     labels.pop(labels.index(label))
                             graph.legend(handles, labels, loc="lower right")
+                            del self.current_curve.graphics['distance_fitted_classification_transition']
+                            del self.current_curve.graphics['fitted_classification_transition']
                     self.canvas.mpl_connect(
                         'pick_event', self.select_fit)
                 else:
@@ -710,7 +713,12 @@ class View(QMainWindow, QWidget):
 
     def select_fit(self, event):
         """
-        TODO
+        Management of the selection of points on the graph according 
+        to the distance to obtain the fit between these two points
+
+        :parameters:
+            event: Signal
+                mouse click event on the graph
         """
         pick_event_menu = ""
         for child in self.menubar.children():
@@ -915,7 +923,7 @@ class View(QMainWindow, QWidget):
                         self.current_curve.features['automatic_AL']['axe'][index_axe]
         else:
             axe_align = self.current_curve.features['automatic_AL']['axe'][0]
-        label_alignment = QLabel("<html><img src= \".." + sep + "pictures" +
+        label_alignment = QLabel("<html><img src= \"pictures" +
                                  sep + "warning.png\" /></html> Bad alignement on " + axe_align)
         group_box_align = QGroupBox('Accept')
         group_align = QButtonGroup()

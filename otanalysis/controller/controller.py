@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 """
 Class Controller
 """
@@ -16,9 +18,9 @@ from pandas.core.tools.numeric import to_numeric
 from matplotlib.figure import Figure
 from matplotlib import gridspec
 import matplotlib.pyplot as plt
-from otanalysis.model.class_curve import Curve
-from otanalysis.model.class_segment_curve import Segment
-from otanalysis.extractor.jpk_extractor import JPKFile
+from ..model.class_curve import Curve
+from ..model.class_segment_curve import Segment
+from ..extractor.jpk_extractor import JPKFile
 
 # from pympler.tracker import SummaryTracker
 
@@ -85,7 +87,6 @@ class Controller:
                 sep)[-1]
             regex = re.match("^b[1-9]+c[1-9]+[a-z]{0,2}-", name_file)
             name_file = name_file.split('-')
-            print(name_file)
             name_file = str(name_file[0][0:4]) + '-' + '-'.join(name_file[1:])
             nb = str(index_file+1) + "/" + str(len(self.files))
             print(
@@ -100,7 +101,7 @@ class Controller:
                 try:
                     if type_file == 'txt' and regex:
                         new_curve, check_incomplete = Controller.open_file(
-                            self.files[index_file], name_file,  methods['threshold_align'],
+                            self.files[index_file], name_file, methods['threshold_align'],
                             methods['pulling_length'])
                         if not check_incomplete:
                             self.dict_type_files['txt'] += 1
@@ -832,7 +833,7 @@ class Controller:
     #############################################################################################
 
     @staticmethod
-    def open_file(file, name_file, threshold_align, pulling_length):
+    def open_file(file, name_file, threshold_align, pulling_length=50):
         """
         if file .txt
         Processing of the curve file to create an object
@@ -896,7 +897,7 @@ class Controller:
     ################################################################################################
 
     @staticmethod
-    def create_object_curve(file, name_file, threshold_align, pulling_length):
+    def create_object_curve(file, name_file, threshold_align, pulling_length=50):
         """
         Creation of the Curve object after extraction of the data from the jpk-nt-force coded file
 

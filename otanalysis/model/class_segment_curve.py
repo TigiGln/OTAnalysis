@@ -1,11 +1,16 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 """
 File describing the instance class of the segment objects
 """
 import pandas as pd
+
+
 class Segment:
     """
     Class instantiating curve segment objects
     """
+
     def __init__(self, header_segment, data, name):
         """
         Initialization parameters of segment
@@ -72,7 +77,7 @@ class Segment:
                 True if misaligned on a secondary axis
         """
         # print("check_alignment")
-        dict_align = {'AL' : 'Yes', 'axe': []}
+        dict_align = {'AL': 'Yes', 'axe': []}
         axe = ''
         force_threshold = force_threshold
         baseline_no_main_axis = 0
@@ -83,10 +88,12 @@ class Segment:
         elif main_axis == 'y':
             no_main_axis = 'x'
         if self.name == 'Press':
-            baseline_no_main_axis = abs(self.corrected_data[no_main_axis + 'Signal1'][0:1000].mean())
+            baseline_no_main_axis = abs(
+                self.corrected_data[no_main_axis + 'Signal1'][0:1000].mean())
             baseline_z = abs(self.corrected_data['zSignal1'][0:1000].mean())
         elif self.name == 'Pull':
-            baseline_no_main_axis = abs(self.corrected_data[no_main_axis + 'Signal1'][-1000:].mean())
+            baseline_no_main_axis = abs(
+                self.corrected_data[no_main_axis + 'Signal1'][-1000:].mean())
             baseline_z = abs(self.corrected_data['zSignal1'][-1000:].mean())
         else:
             baseline_no_main_axis = 0
@@ -106,7 +113,7 @@ class Segment:
         max_value_z = self.corrected_data['zSignal1'].max()
         delta_min_value_z = min_value_z - baseline_z
         delta_max_value_z = max_value_z - baseline_z
-        if delta_min_value_no_main_axis < -force_threshold :
+        if delta_min_value_no_main_axis < -force_threshold:
             dict_align['axe'].append('-' + no_main_axis)
             dict_align['AL'] = 'No'
         # elif delta_value_no_main_axis > force_threshold:
@@ -120,7 +127,7 @@ class Segment:
             dict_align['axe'].append('+z')
             dict_align['AL'] = 'No'
         if len(dict_align['axe']) == 0:
-            dict_align['axe'] = 'NaN' 
+            dict_align['axe'] = 'NaN'
         return dict_align
 
     #########################################################################################

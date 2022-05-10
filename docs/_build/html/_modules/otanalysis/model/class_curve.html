@@ -1,19 +1,18 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html4" lang="en" >
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>otanalysis.model.class_curve &mdash; OTAnalysis 1.0.0 documentation</title>
-      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>otanalysis.model.class_curve &mdash; OTAnalysis 1.0.0 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/doctools.js"></script>
+  <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -34,7 +33,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html">README</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules.html">OTAnalysis</a></li>
@@ -65,7 +64,9 @@
            <div itemprop="articleBody">
              
   <h1>Source code for otanalysis.model.class_curve</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="ch">#!/usr/bin/python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">File describing the instance class of the curved objects</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">math</span>
@@ -75,11 +76,11 @@
 
 <span class="c1"># import matplotlib.pyplot as plt</span>
 <span class="c1"># from matplotlib.figure import Figure</span>
-<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">curve_fit</span>
-<span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="kn">import</span> <span class="n">savgol_filter</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="k">import</span> <span class="n">curve_fit</span>
+<span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="k">import</span> <span class="n">savgol_filter</span>
 <span class="c1"># from scipy.interpolate import UnivariateSpline</span>
 <span class="c1"># from lmfit import Model</span>
-<span class="kn">from</span> <span class="nn">otanalysis.model.class_optical_effect</span> <span class="kn">import</span> <span class="n">OpticalEffect</span>
+<span class="kn">from</span> <span class="nn">..model.class_optical_effect</span> <span class="k">import</span> <span class="n">OpticalEffect</span>
 
 
 <div class="viewcode-block" id="Curve"><a class="viewcode-back" href="../../../otanalysis.model.html#otanalysis.model.class_curve.Curve">[docs]</a><span class="k">class</span> <span class="nc">Curve</span><span class="p">:</span>
@@ -88,7 +89,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># pylint: disable=unbalanced-tuple-unpacking</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">dict_segments</span><span class="p">,</span> <span class="n">pulling_length</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">dict_segments</span><span class="p">,</span> <span class="n">pulling_length</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialization attributes of the object and launch the functions</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -733,10 +734,25 @@
         <span class="n">fit</span><span class="p">[</span><span class="n">fit</span> <span class="o">&gt;=</span> <span class="n">point_release</span><span class="p">]</span> <span class="o">=</span> <span class="n">endline</span>
         <span class="k">return</span> <span class="n">fit</span></div>
     <span class="c1">###############################################################################################</span>
+
 <div class="viewcode-block" id="Curve.derivation"><a class="viewcode-back" href="../../../otanalysis.model.html#otanalysis.model.class_curve.Curve.derivation">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">derivation</span><span class="p">(</span><span class="n">force_data</span><span class="p">,</span> <span class="n">time_data</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        TODO</span>
+<span class="sd">        function allowing to return the derivative of vector transmitted according to an interval </span>
+<span class="sd">        for each point (n being the point we take from n/2 before and n/2 after)</span>
+
+<span class="sd">        :parameters:</span>
+<span class="sd">            force_data: list(np.array)</span>
+<span class="sd">                force vector</span>
+<span class="sd">            time_data: list(np.array)</span>
+<span class="sd">                time vector</span>
+<span class="sd">            n: int</span>
+<span class="sd">                interval for each point</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">            derivation: list(np.array)</span>
+<span class="sd">                vector of the derivative for the force data</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">derivation</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -755,7 +771,17 @@
 
 <div class="viewcode-block" id="Curve.search_transition_point"><a class="viewcode-back" href="../../../otanalysis.model.html#otanalysis.model.class_curve.Curve.search_transition_point">[docs]</a>    <span class="k">def</span> <span class="nf">search_transition_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_data</span><span class="p">,</span> <span class="n">force_data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        TODO</span>
+<span class="sd">        Search for the transition point when it is detectable</span>
+
+<span class="sd">        :parameters:</span>
+<span class="sd">            time_data: list(np.array)</span>
+<span class="sd">                vector time</span>
+<span class="sd">            force_data: list(np_array)</span>
+<span class="sd">                vector force</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">            derive_smooth: list(np.array)</span>
+<span class="sd">                derivative of the force on the chosen interval</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">y_smooth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphics</span><span class="p">[</span><span class="s1">&#39;y_smooth_Pull&#39;</span><span class="p">]</span>
         <span class="n">derive_smooth</span> <span class="o">=</span> <span class="n">Curve</span><span class="o">.</span><span class="n">derivation</span><span class="p">(</span><span class="n">y_smooth</span><span class="p">,</span> <span class="n">time_data</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
@@ -846,11 +872,48 @@
         <span class="n">type_curve</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">classification</span><span class="p">(</span><span class="n">methods</span><span class="p">,</span> <span class="n">type_curve</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">type_curve</span></div>
 
+    <span class="c1">################################################################################################</span>
+<div class="viewcode-block" id="Curve.fit_linear_classification"><a class="viewcode-back" href="../../../otanalysis.model.html#otanalysis.model.class_curve.Curve.fit_linear_classification">[docs]</a>    <span class="k">def</span> <span class="nf">fit_linear_classification</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_start</span><span class="p">,</span> <span class="n">index_end</span><span class="p">,</span> <span class="n">name_fit</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Allows classification based on the shape of the fit line between two selected zones (max and transition point)</span>
+
+<span class="sd">        :parameters:</span>
+<span class="sd">            distance_data: list</span>
+<span class="sd">                distance value of the &quot;Pull&quot; segment</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">segment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_segments</span><span class="p">[</span><span class="s1">&#39;Pull&#39;</span><span class="p">]</span>
+        <span class="n">y_smooth_pull</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphics</span><span class="p">[</span><span class="s1">&#39;y_smooth_Pull&#39;</span><span class="p">]</span>
+        <span class="n">distance_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="s1">&#39;distance&#39;</span> <span class="ow">in</span> <span class="n">segment</span><span class="o">.</span><span class="n">corrected_data</span><span class="p">:</span>
+            <span class="n">distance_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">corrected_data</span><span class="p">[</span><span class="s1">&#39;distance&#39;</span><span class="p">])</span>
+        <span class="n">f_parameters</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span>
+            <span class="n">Curve</span><span class="o">.</span><span class="n">linear_fit</span><span class="p">,</span> <span class="n">distance_data</span><span class="p">[</span><span class="n">index_start</span><span class="p">:</span><span class="n">index_end</span><span class="p">],</span> <span class="n">y_smooth_pull</span><span class="p">[</span><span class="n">index_start</span><span class="p">:</span><span class="n">index_end</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s2">&quot;slope_&quot;</span> <span class="o">+</span> <span class="n">name_fit</span><span class="p">]</span> <span class="o">=</span> <span class="n">f_parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">fitted_classification</span> <span class="o">=</span> <span class="n">Curve</span><span class="o">.</span><span class="n">linear_fit</span><span class="p">(</span>
+            <span class="n">distance_data</span><span class="p">[</span><span class="n">index_start</span><span class="p">:</span><span class="n">index_end</span><span class="p">],</span> <span class="n">f_parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">f_parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graphics</span><span class="p">[</span><span class="n">name_fit</span><span class="p">]</span> <span class="o">=</span> <span class="n">fitted_classification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graphics</span><span class="p">[</span><span class="s1">&#39;distance_&#39;</span> <span class="o">+</span>
+                      <span class="n">name_fit</span><span class="p">]</span> <span class="o">=</span> <span class="n">distance_data</span><span class="p">[</span><span class="n">index_start</span><span class="p">:</span><span class="n">index_end</span><span class="p">]</span></div>
+
     <span class="c1">###########################################################################################################################</span>
 
 <div class="viewcode-block" id="Curve.classification"><a class="viewcode-back" href="../../../otanalysis.model.html#otanalysis.model.class_curve.Curve.classification">[docs]</a>    <span class="k">def</span> <span class="nf">classification</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">methods</span><span class="p">,</span> <span class="n">type_curve</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        TODO</span>
+<span class="sd">        classification of curves not yet classified as ITU or RE </span>
+<span class="sd">        - NAD if max force &lt; max defined force (pN)</span>
+<span class="sd">        - AD if nb of points (force_max-return_endline) &lt; nb of points defined in the interface </span>
+<span class="sd">        and distance (force_max-return_endline) &lt; defined distance</span>
+<span class="sd">        - FTU otherwise</span>
+
+<span class="sd">        :parameters:</span>
+<span class="sd">            methods: dict</span>
+<span class="sd">                dictionary of parameters defined in the first interface for launching the analysis</span>
+<span class="sd">            type_curve: str</span>
+<span class="sd">                classification of the curve. None by default</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">            type_curve: str</span>
+<span class="sd">                classification given to the curve during this analysis</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1">########### data ############</span>
         <span class="n">segment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_segments</span><span class="p">[</span><span class="s1">&#39;Pull&#39;</span><span class="p">]</span>
@@ -865,10 +928,11 @@
         <span class="n">index_release</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;point_release&#39;</span><span class="p">][</span><span class="s1">&#39;index&#39;</span><span class="p">]</span>
         <span class="n">index_return_end_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;point_return_endline&#39;</span><span class="p">][</span><span class="s1">&#39;index&#39;</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="s1">&#39;fitted_classification&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphics</span><span class="p">:</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphics</span><span class="p">[</span><span class="s1">&#39;fitted_classification&#39;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="s1">&#39;distance_fitted_classification&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphics</span><span class="p">:</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphics</span><span class="p">[</span><span class="s1">&#39;distance_fitted_classification&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graphics</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphics</span><span class="o">.</span><span class="n">items</span><span class="p">(</span>
+        <span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;fitted_classification&#39;</span><span class="p">)])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graphics</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphics</span><span class="o">.</span><span class="n">items</span><span class="p">(</span>
+        <span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;distance_fitted_classification&#39;</span><span class="p">)])</span>
+
         <span class="c1">############## classification NAD, AD, FTU ##################</span>
         <span class="k">if</span> <span class="n">type_curve</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">index_force_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphics</span><span class="p">[</span><span class="s1">&#39;y_smooth_Pull&#39;</span><span class="p">][</span><span class="n">index_release</span><span class="p">:</span><span class="n">index_release</span><span class="o">+</span><span class="mi">1500</span><span class="p">]</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
@@ -913,7 +977,22 @@
                             <span class="n">distance_data</span><span class="p">[</span><span class="n">index_return_end_line</span><span class="p">]</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;jump_distance_start_pull (nm)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jump_distance_start_pull</span>
                         <span class="c1">###################### fit linear for classification #############################</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">fit_linear_classification</span><span class="p">(</span><span class="n">distance_data</span><span class="p">)</span>
+                        <span class="c1">###### fit max ######</span>
+                        <span class="n">jump_nb_points_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;jump_nb_points_start&#39;</span><span class="p">]</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+                        <span class="n">y_smooth_pull</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphics</span><span class="p">[</span><span class="s1">&#39;y_smooth_Pull&#39;</span><span class="p">]</span>
+                        <span class="n">index_start</span> <span class="o">=</span> <span class="n">y_smooth_pull</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span><span class="o">-</span><span class="n">jump_nb_points_start</span>
+                        <span class="n">index_end</span> <span class="o">=</span> <span class="n">y_smooth_pull</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">fit_linear_classification</span><span class="p">(</span>
+                            <span class="n">index_start</span><span class="p">,</span> <span class="n">index_end</span><span class="p">,</span> <span class="s2">&quot;fitted_classification_max&quot;</span><span class="p">)</span>
+
+                        <span class="c1">###### fit release ######</span>
+                        <span class="n">jump_nb_points_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;jump_nb_points_start&#39;</span><span class="p">]</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+                        <span class="n">index_start</span> <span class="o">=</span> <span class="n">index_release</span>
+                        <span class="n">index_end</span> <span class="o">=</span> <span class="n">index_release</span><span class="o">+</span><span class="n">jump_nb_points_start</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">fit_linear_classification</span><span class="p">(</span>
+                            <span class="n">index_start</span><span class="p">,</span> <span class="n">index_end</span><span class="p">,</span> <span class="s2">&quot;fitted_classification_release&quot;</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">speed</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">header_segment</span><span class="p">[</span><span class="s1">&#39;segment-settings.length&#39;</span><span class="p">])</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span>
                             <span class="n">segment</span><span class="o">.</span><span class="n">header_segment</span><span class="p">[</span><span class="s1">&#39;segment-settings.duration&#39;</span><span class="p">])</span>
@@ -933,35 +1012,6 @@
 
         <span class="k">return</span> <span class="n">type_curve</span></div>
 
-    <span class="c1">################################################################################################</span>
-<div class="viewcode-block" id="Curve.fit_linear_classification"><a class="viewcode-back" href="../../../otanalysis.model.html#otanalysis.model.class_curve.Curve.fit_linear_classification">[docs]</a>    <span class="k">def</span> <span class="nf">fit_linear_classification</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distance_data</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Allows classification based on the shape of the fit line between two selected zones (max and transition point)</span>
-<span class="sd">        </span>
-<span class="sd">        :parameters:</span>
-<span class="sd">            distance_data: list</span>
-<span class="sd">                distance value of the &quot;Pull&quot; segment</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">jump_nb_points_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;jump_nb_points_start&#39;</span><span class="p">]</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;jump_nb_points_start: &#39;</span><span class="p">,</span> <span class="n">jump_nb_points_start</span><span class="p">)</span>
-        <span class="n">y_smooth_pull</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphics</span><span class="p">[</span><span class="s1">&#39;y_smooth_Pull&#39;</span><span class="p">]</span>
-        <span class="n">index_max_curve</span> <span class="o">=</span> <span class="n">y_smooth_pull</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
-        <span class="n">index_transition</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;transition_point&#39;</span><span class="p">][</span><span class="s1">&#39;index&#39;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">index_transition</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">index_transition</span> <span class="o">!=</span> <span class="s2">&quot;NaN&quot;</span><span class="p">:</span>
-            <span class="n">f_parameters</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span>
-                <span class="n">Curve</span><span class="o">.</span><span class="n">linear_fit</span><span class="p">,</span> <span class="n">distance_data</span><span class="p">[</span><span class="n">index_max_curve</span><span class="p">:</span><span class="n">index_transition</span><span class="p">],</span> <span class="n">y_smooth_pull</span><span class="p">[</span><span class="n">index_max_curve</span><span class="p">:</span><span class="n">index_transition</span><span class="p">])</span>
-            <span class="n">fitted_classification</span> <span class="o">=</span> <span class="n">Curve</span><span class="o">.</span><span class="n">linear_fit</span><span class="p">(</span>
-                <span class="n">distance_data</span><span class="p">[</span><span class="n">index_max_curve</span><span class="p">:</span><span class="n">index_transition</span><span class="p">],</span> <span class="n">f_parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">f_parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">graphics</span><span class="p">[</span><span class="s1">&#39;fitted_classification&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fitted_classification</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">graphics</span><span class="p">[</span><span class="s1">&#39;distance_fitted_classification&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">distance_data</span><span class="p">[</span><span class="n">index_max_curve</span><span class="p">:</span><span class="n">index_transition</span><span class="p">]</span></div>
-        <span class="c1"># fig = plt.figure()</span>
-        <span class="c1"># ax = fig.add_subplot(111)</span>
-        <span class="c1"># ax.plot(time_data, force_data)</span>
-        <span class="c1"># ax2 = ax.twinx()</span>
-        <span class="c1"># ax2.plot(time_data, derive_smooth, color=&#39;red&#39;, alpha=0.25)</span>
-        <span class="c1">#ax.plot(time_data[index_transition_point], force_data[index_transition_point],</span>
-        <span class="c1">#           marker=&#39;o&#39;, color=&#39;green&#39;, label=&#39;transition_point&#39;)</span>
-        <span class="c1"># plt.show()</span>
     <span class="c1">##################################################################################################</span>
 
 <div class="viewcode-block" id="Curve.linear_fit"><a class="viewcode-back" href="../../../otanalysis.model.html#otanalysis.model.class_curve.Curve.linear_fit">[docs]</a>    <span class="nd">@staticmethod</span>
@@ -1016,6 +1066,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;condition&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">methods</span><span class="p">[</span><span class="s1">&#39;condition&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;tolerance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">methods</span><span class="p">[</span><span class="s1">&#39;factor_noise&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;optical_state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">optical_state</span>
+        <span class="k">if</span> <span class="n">type_curve</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">type_curve</span> <span class="o">=</span> <span class="s1">&#39;RE&#39;</span>
         <span class="k">if</span> <span class="n">manual_correction</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">type_curve</span>
         <span class="k">else</span><span class="p">:</span>

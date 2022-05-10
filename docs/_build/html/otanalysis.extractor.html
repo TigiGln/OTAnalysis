@@ -90,12 +90,12 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
 </section>
-<section id="module-otanalysis.extractor.extractor_JPK">
-<span id="otanalysis-extractor-extractor-jpk-module"></span><h2>otanalysis.extractor.extractor_JPK module<a class="headerlink" href="#module-otanalysis.extractor.extractor_JPK" title="Permalink to this headline"></a></h2>
+<section id="module-otanalysis.extractor.jpk_extractor">
+<span id="otanalysis-extractor-jpk-extractor-module"></span><h2>otanalysis.extractor.jpk_extractor module<a class="headerlink" href="#module-otanalysis.extractor.jpk_extractor" title="Permalink to this headline"></a></h2>
 <p>JPK archive extractor for comprehensive processing of optical tweezer curves</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="otanalysis.extractor.extractor_JPK.JPKFile">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">otanalysis.extractor.extractor_JPK.</span></span><span class="sig-name descname"><span class="pre">JPKFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compressed_repository</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/extractor_JPK.html#JPKFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.extractor_JPK.JPKFile" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="otanalysis.extractor.jpk_extractor.JPKFile">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">otanalysis.extractor.jpk_extractor.</span></span><span class="sig-name descname"><span class="pre">JPKFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compressed_repository</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/jpk_extractor.html#JPKFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.jpk_extractor.JPKFile" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class to unzip a JPK archive and handle access to its headers and data.</p>
 <p>Initializes JPKFile object.</p>
@@ -108,8 +108,8 @@
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.extractor.extractor_JPK.JPKFile.decode_binary_strings">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">decode_binary_strings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_binary_strings</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/extractor_JPK.html#JPKFile.decode_binary_strings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.extractor_JPK.JPKFile.decode_binary_strings" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="otanalysis.extractor.jpk_extractor.JPKFile.decode_binary_strings">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">decode_binary_strings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_binary_strings</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/jpk_extractor.html#JPKFile.decode_binary_strings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.jpk_extractor.JPKFile.decode_binary_strings" title="Permalink to this definition"></a></dt>
 <dd><p>Permet de décoder en utf-8 le contenu du header</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -129,8 +129,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.extractor.extractor_JPK.JPKFile.extract_data">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">extract_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_points</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/extractor_JPK.html#JPKFile.extract_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.extractor_JPK.JPKFile.extract_data" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="otanalysis.extractor.jpk_extractor.JPKFile.extract_data">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">extract_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_points</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/jpk_extractor.html#JPKFile.extract_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.jpk_extractor.JPKFile.extract_data" title="Permalink to this definition"></a></dt>
 <dd><p>Converts data from contents of .dat files in the JPKArchive to
 python-understandable formats.
 This function requires the binary <cite>content</cite>, the <cite>dtype</cite> of the
@@ -159,8 +159,8 @@ the conversion.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.extractor.extractor_JPK.JPKFile.find_links_in_local_parameters">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">find_links_in_local_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_all_links</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter_subset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">link_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chain</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/extractor_JPK.html#JPKFile.find_links_in_local_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.extractor_JPK.JPKFile.find_links_in_local_parameters" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="otanalysis.extractor.jpk_extractor.JPKFile.find_links_in_local_parameters">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">find_links_in_local_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_all_links</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter_subset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">link_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chain</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/jpk_extractor.html#JPKFile.find_links_in_local_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.jpk_extractor.JPKFile.find_links_in_local_parameters" title="Permalink to this definition"></a></dt>
 <dd><p>Allows to find the link between the segment header and the “shared” calibration file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -179,8 +179,8 @@ the conversion.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.extractor.extractor_JPK.JPKFile.merge">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">merge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/extractor_JPK.html#JPKFile.merge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.extractor_JPK.JPKFile.merge" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="otanalysis.extractor.jpk_extractor.JPKFile.merge">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">merge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/jpk_extractor.html#JPKFile.merge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.jpk_extractor.JPKFile.merge" title="Permalink to this definition"></a></dt>
 <dd><p>Allows to merge dictionaries according to their keys and according to the type of their values</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -195,21 +195,21 @@ the conversion.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="otanalysis.extractor.extractor_JPK.JPKFile.num_segments">
-<span class="sig-name descname"><span class="pre">num_segments</span></span><a class="headerlink" href="#otanalysis.extractor.extractor_JPK.JPKFile.num_segments" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="otanalysis.extractor.jpk_extractor.JPKFile.num_segments">
+<span class="sig-name descname"><span class="pre">num_segments</span></span><a class="headerlink" href="#otanalysis.extractor.jpk_extractor.JPKFile.num_segments" title="Permalink to this definition"></a></dt>
 <dd><p>Number of segments in archive.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="otanalysis.extractor.extractor_JPK.JPKFile.parameters">
-<span class="sig-name descname"><span class="pre">parameters</span></span><a class="headerlink" href="#otanalysis.extractor.extractor_JPK.JPKFile.parameters" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="otanalysis.extractor.jpk_extractor.JPKFile.parameters">
+<span class="sig-name descname"><span class="pre">parameters</span></span><a class="headerlink" href="#otanalysis.extractor.jpk_extractor.JPKFile.parameters" title="Permalink to this definition"></a></dt>
 <dd><p>Dictionary containing parameters read from the top level
 <code class="docutils literal notranslate"><span class="pre">header.properties</span></code> file.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.extractor.extractor_JPK.JPKFile.parse_header_file">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">parse_header_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">choice_parse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/extractor_JPK.html#JPKFile.parse_header_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.extractor_JPK.JPKFile.parse_header_file" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="otanalysis.extractor.jpk_extractor.JPKFile.parse_header_file">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse_header_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">choice_parse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/jpk_extractor.html#JPKFile.parse_header_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.jpk_extractor.JPKFile.parse_header_file" title="Permalink to this definition"></a></dt>
 <dd><p>transform the header list into a dictionary for a faster access to the elements</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -233,8 +233,8 @@ the conversion.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.extractor.extractor_JPK.JPKFile.parse_shared_header">
-<span class="sig-name descname"><span class="pre">parse_shared_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_filenames</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/extractor_JPK.html#JPKFile.parse_shared_header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.extractor_JPK.JPKFile.parse_shared_header" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="otanalysis.extractor.jpk_extractor.JPKFile.parse_shared_header">
+<span class="sig-name descname"><span class="pre">parse_shared_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_filenames</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/jpk_extractor.html#JPKFile.parse_shared_header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.jpk_extractor.JPKFile.parse_shared_header" title="Permalink to this definition"></a></dt>
 <dd><p>parsing of the conversion and calibration file included in the archive</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -247,8 +247,8 @@ the conversion.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.extractor.extractor_JPK.JPKFile.read_files">
-<span class="sig-name descname"><span class="pre">read_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_filenames</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/extractor_JPK.html#JPKFile.read_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.extractor_JPK.JPKFile.read_files" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="otanalysis.extractor.jpk_extractor.JPKFile.read_files">
+<span class="sig-name descname"><span class="pre">read_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_filenames</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/jpk_extractor.html#JPKFile.read_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.jpk_extractor.JPKFile.read_files" title="Permalink to this definition"></a></dt>
 <dd><p>Crawls through list of files in archive and processes them automatically
 by name and extension.
 Allows you to fill in the attributes of the JPKFile object:
@@ -266,8 +266,8 @@ self.segments</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.extractor.extractor_JPK.JPKFile.read_segment_data">
-<span class="sig-name descname"><span class="pre">read_segment_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">segment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/extractor_JPK.html#JPKFile.read_segment_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.extractor_JPK.JPKFile.read_segment_data" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="otanalysis.extractor.jpk_extractor.JPKFile.read_segment_data">
+<span class="sig-name descname"><span class="pre">read_segment_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">segment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/jpk_extractor.html#JPKFile.read_segment_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.jpk_extractor.JPKFile.read_segment_data" title="Permalink to this definition"></a></dt>
 <dd><p>decodes the encrypted data in hexadecimal for each column of the segment dataframe</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -284,8 +284,8 @@ self.segments</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.extractor.extractor_JPK.JPKFile.read_segment_header">
-<span class="sig-name descname"><span class="pre">read_segment_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">segment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/extractor_JPK.html#JPKFile.read_segment_header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.extractor_JPK.JPKFile.read_segment_header" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="otanalysis.extractor.jpk_extractor.JPKFile.read_segment_header">
+<span class="sig-name descname"><span class="pre">read_segment_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">segment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/jpk_extractor.html#JPKFile.read_segment_header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.jpk_extractor.JPKFile.read_segment_header" title="Permalink to this definition"></a></dt>
 <dd><p>Decodes and parses the header files of the different segments of the archive.
 Allows to set up the “Time” and “Distance” columns of the curve</p>
 <dl class="field-list simple">
@@ -301,8 +301,8 @@ Allows to set up the “Time” and “Distance” columns of the curve</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.extractor.extractor_JPK.JPKFile.replace_links">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">replace_links</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">links</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_parameters</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/extractor_JPK.html#JPKFile.replace_links"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.extractor_JPK.JPKFile.replace_links" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="otanalysis.extractor.jpk_extractor.JPKFile.replace_links">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">replace_links</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">links</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared_parameters</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/jpk_extractor.html#JPKFile.replace_links"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.jpk_extractor.JPKFile.replace_links" title="Permalink to this definition"></a></dt>
 <dd><p>Allows you to retrieve the channel number corresponding to the associated column to include it in the “shared”
 directory and associate the information for the conversion.
 Transformation of the “shared” dictionary for data conversion</p>
@@ -321,22 +321,22 @@ Transformation of the “shared” dictionary for data conversion</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="otanalysis.extractor.extractor_JPK.JPKFile.segments">
-<span class="sig-name descname"><span class="pre">segments</span></span><a class="headerlink" href="#otanalysis.extractor.extractor_JPK.JPKFile.segments" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="otanalysis.extractor.jpk_extractor.JPKFile.segments">
+<span class="sig-name descname"><span class="pre">segments</span></span><a class="headerlink" href="#otanalysis.extractor.jpk_extractor.JPKFile.segments" title="Permalink to this definition"></a></dt>
 <dd><p>Dictionary containing one JPKSegment instance per segment.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="otanalysis.extractor.extractor_JPK.JPKFile.shared_parameters">
-<span class="sig-name descname"><span class="pre">shared_parameters</span></span><a class="headerlink" href="#otanalysis.extractor.extractor_JPK.JPKFile.shared_parameters" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="otanalysis.extractor.jpk_extractor.JPKFile.shared_parameters">
+<span class="sig-name descname"><span class="pre">shared_parameters</span></span><a class="headerlink" href="#otanalysis.extractor.jpk_extractor.JPKFile.shared_parameters" title="Permalink to this definition"></a></dt>
 <dd><p><code class="docutils literal notranslate"><span class="pre">None</span></code> if no shared header is present, dictionary containing parameters otherwise.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="otanalysis.extractor.extractor_JPK.JPKSegment">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">otanalysis.extractor.extractor_JPK.</span></span><span class="sig-name descname"><span class="pre">JPKSegment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shared_properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/extractor_JPK.html#JPKSegment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.extractor_JPK.JPKSegment" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="otanalysis.extractor.jpk_extractor.JPKSegment">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">otanalysis.extractor.jpk_extractor.</span></span><span class="sig-name descname"><span class="pre">JPKSegment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shared_properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/jpk_extractor.html#JPKSegment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.jpk_extractor.JPKSegment" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class to hold data and parameters of a single segment in a JPK archive.
 It is usually created internally when handling a JPK archive with the JPKFile class.</p>
@@ -350,15 +350,15 @@ It is usually created internally when handling a JPK archive with the JPKFile cl
 </dd>
 </dl>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="otanalysis.extractor.extractor_JPK.JPKSegment.data">
-<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#otanalysis.extractor.extractor_JPK.JPKSegment.data" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="otanalysis.extractor.jpk_extractor.JPKSegment.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#otanalysis.extractor.jpk_extractor.JPKSegment.data" title="Permalink to this definition"></a></dt>
 <dd><p>Dictionary assigning numpy arrays containing data and definitions on how
 to convert raw data to physical data to all channels present in this segment.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.extractor.extractor_JPK.JPKSegment.determine_conversions_automatically">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">determine_conversions_automatically</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conversion_set_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/extractor_JPK.html#JPKSegment.determine_conversions_automatically"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.extractor_JPK.JPKSegment.determine_conversions_automatically" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="otanalysis.extractor.jpk_extractor.JPKSegment.determine_conversions_automatically">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">determine_conversions_automatically</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conversion_set_dictionary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/jpk_extractor.html#JPKSegment.determine_conversions_automatically"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.jpk_extractor.JPKSegment.determine_conversions_automatically" title="Permalink to this definition"></a></dt>
 <dd><p>Takes all parameters on how to convert some channel’s data read from a header file
 to determine the chain of conversion steps automatically.</p>
 <dl class="field-list simple">
@@ -376,8 +376,8 @@ List of conversion keywords.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.extractor.extractor_JPK.JPKSegment.get_array">
-<span class="sig-name descname"><span class="pre">get_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/extractor_JPK.html#JPKSegment.get_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.extractor_JPK.JPKSegment.get_array" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="otanalysis.extractor.jpk_extractor.JPKSegment.get_array">
+<span class="sig-name descname"><span class="pre">get_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/jpk_extractor.html#JPKSegment.get_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.jpk_extractor.JPKSegment.get_array" title="Permalink to this definition"></a></dt>
 <dd><p>Constructs a numpy array containing data of given channels. If <cite>decode</cite> is True (default),
 data is converted following conversions defined in segment’s header (or shared header).</p>
 <dl class="field-list">
@@ -402,8 +402,8 @@ data is converted following conversions defined in segment’s header (or shared
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.extractor.extractor_JPK.JPKSegment.get_decoded_data">
-<span class="sig-name descname"><span class="pre">get_decoded_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conversions_to_be_applied</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/extractor_JPK.html#JPKSegment.get_decoded_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.extractor_JPK.JPKSegment.get_decoded_data" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="otanalysis.extractor.jpk_extractor.JPKSegment.get_decoded_data">
+<span class="sig-name descname"><span class="pre">get_decoded_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conversions_to_be_applied</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/extractor/jpk_extractor.html#JPKSegment.get_decoded_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.extractor.jpk_extractor.JPKSegment.get_decoded_data" title="Permalink to this definition"></a></dt>
 <dd><p>Get decoded data of one channel. ‘decoded’ here means the raw, digital data
 gets converted (to physical data) following certain conversion steps. These steps
 should be defined in the JPK archive’s header files. This routine tries to
@@ -433,8 +433,8 @@ conversion keywords as <cite>conversions_to_be_applied</cite> manually</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="otanalysis.extractor.extractor_JPK.JPKSegment.parameters">
-<span class="sig-name descname"><span class="pre">parameters</span></span><a class="headerlink" href="#otanalysis.extractor.extractor_JPK.JPKSegment.parameters" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="otanalysis.extractor.jpk_extractor.JPKSegment.parameters">
+<span class="sig-name descname"><span class="pre">parameters</span></span><a class="headerlink" href="#otanalysis.extractor.jpk_extractor.JPKSegment.parameters" title="Permalink to this definition"></a></dt>
 <dd><p>Dictionary holding parameters read from segment header.</p>
 </dd></dl>
 

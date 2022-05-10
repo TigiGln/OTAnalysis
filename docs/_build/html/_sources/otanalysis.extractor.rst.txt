@@ -4,10 +4,10 @@ otanalysis.extractor package
 Submodules
 ----------
 
-otanalysis.extractor.extractor\_JPK module
+otanalysis.extractor.jpk\_extractor module
 ------------------------------------------
 
-.. automodule:: otanalysis.extractor.extractor_JPK
+.. automodule:: otanalysis.extractor.jpk_extractor
    :members:
    :undoc-members:
    :show-inheritance:

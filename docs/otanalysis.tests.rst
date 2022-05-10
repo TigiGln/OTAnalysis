@@ -4,10 +4,10 @@ otanalysis.tests package
 Submodules
 ----------
 
-otanalysis.tests.test\_unitaire module
---------------------------------------
+otanalysis.tests.test\_controller module
+----------------------------------------
 
-.. automodule:: otanalysis.tests.test_unitaire
+.. automodule:: otanalysis.tests.test_controller
    :members:
    :undoc-members:
    :show-inheritance:

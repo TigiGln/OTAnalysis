@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 """
 File describing the instance class of the curved objects
 """
@@ -12,7 +14,7 @@ from scipy.optimize import curve_fit
 from scipy.signal import savgol_filter
 # from scipy.interpolate import UnivariateSpline
 # from lmfit import Model
-from otanalysis.model.class_optical_effect import OpticalEffect
+from ..model.class_optical_effect import OpticalEffect
 
 
 class Curve:
@@ -670,7 +672,21 @@ class Curve:
     @staticmethod
     def derivation(force_data, time_data, n):
         """
-        TODO
+        function allowing to return the derivative of vector transmitted according to an interval 
+        for each point (n being the point we take from n/2 before and n/2 after)
+
+        :parameters:
+            force_data: list(np.array)
+                force vector
+            time_data: list(np.array)
+                time vector
+            n: int
+                interval for each point
+
+        :return:
+            derivation: list(np.array)
+                vector of the derivative for the force data
+
         """
         derivation = []
         if n % 2 == 0:
@@ -689,7 +705,17 @@ class Curve:
 
     def search_transition_point(self, time_data, force_data):
         """
-        TODO
+        Search for the transition point when it is detectable
+
+        :parameters:
+            time_data: list(np.array)
+                vector time
+            force_data: list(np_array)
+                vector force
+
+        :return:
+            derive_smooth: list(np.array)
+                derivative of the force on the chosen interval
         """
         y_smooth = self.graphics['y_smooth_Pull']
         derive_smooth = Curve.derivation(y_smooth, time_data, 4)
@@ -807,7 +833,21 @@ class Curve:
 
     def classification(self, methods, type_curve):
         """
-        TODO
+        classification of curves not yet classified as ITU or RE 
+        - NAD if max force < max defined force (pN)
+        - AD if nb of points (force_max-return_endline) < nb of points defined in the interface 
+        and distance (force_max-return_endline) < defined distance
+        - FTU otherwise
+
+        :parameters:
+            methods: dict
+                dictionary of parameters defined in the first interface for launching the analysis
+            type_curve: str
+                classification of the curve. None by default
+
+        :return:
+            type_curve: str
+                classification given to the curve during this analysis
         """
         ########### data ############
         segment = self.dict_segments['Pull']

@@ -90,8 +90,8 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
 </section>
-<section id="module-otanalysis.tests.test_unitaire">
-<span id="otanalysis-tests-test-unitaire-module"></span><h2>otanalysis.tests.test_unitaire module<a class="headerlink" href="#module-otanalysis.tests.test_unitaire" title="Permalink to this headline"></a></h2>
+<section id="module-otanalysis.tests.test_controller">
+<span id="otanalysis-tests-test-controller-module"></span><h2>otanalysis.tests.test_controller module<a class="headerlink" href="#module-otanalysis.tests.test_controller" title="Permalink to this headline"></a></h2>
 <p>change a line in the misc.py file
 from imp import reload by from importlib import reload</p>
 <p>to eliminate this warning:
@@ -99,43 +99,56 @@ from imp import reload by from importlib import reload</p>
 <p>file path:
 ~/anaconda3/lib/python3.9/site-packages/past/builtins/misc.py</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="otanalysis.tests.test_unitaire.TestController">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">otanalysis.tests.test_unitaire.</span></span><span class="sig-name descname"><span class="pre">TestController</span></span><a class="reference internal" href="_modules/otanalysis/tests/test_unitaire.html#TestController"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_unitaire.TestController" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="otanalysis.tests.test_controller.TestController">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">otanalysis.tests.test_controller.</span></span><span class="sig-name descname"><span class="pre">TestController</span></span><a class="reference internal" href="_modules/otanalysis/tests/test_controller.html#TestController"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_controller.TestController" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>TODO</p>
+<p>Test class of the controller for the application of processing of the optical tweezers curves</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.tests.test_unitaire.TestController.setup_class">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">setup_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/tests/test_unitaire.html#TestController.setup_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_unitaire.TestController.setup_class" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.tests.test_unitaire.TestController.teardown_class">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">teardown_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/tests/test_unitaire.html#TestController.teardown_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_unitaire.TestController.teardown_class" title="Permalink to this definition"></a></dt>
-<dd><p>TODO</p>
+<dt class="sig sig-object py" id="otanalysis.tests.test_controller.TestController.setup_class">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">setup_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/tests/test_controller.html#TestController.setup_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_controller.TestController.setup_class" title="Permalink to this definition"></a></dt>
+<dd><p>This function is launched at each test to create the Controller object
+and do the repetitive tasks before launching the test</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.tests.test_unitaire.TestController.test_create_list_files">
-<span class="sig-name descname"><span class="pre">test_create_list_files</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/tests/test_unitaire.html#TestController.test_create_list_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_unitaire.TestController.test_create_list_files" title="Permalink to this definition"></a></dt>
-<dd><p>TODO</p>
+<dt class="sig sig-object py" id="otanalysis.tests.test_controller.TestController.teardown_class">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">teardown_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/tests/test_controller.html#TestController.teardown_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_controller.TestController.teardown_class" title="Permalink to this definition"></a></dt>
+<dd><p>This function is run at the end of each test to destroy
+all the elements created in the setup_class()</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.tests.test_unitaire.TestController.test_incomplete_file">
-<span class="sig-name descname"><span class="pre">test_incomplete_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/tests/test_unitaire.html#TestController.test_incomplete_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_unitaire.TestController.test_incomplete_file" title="Permalink to this definition"></a></dt>
-<dd><p>TODO</p>
+<dt class="sig sig-object py" id="otanalysis.tests.test_controller.TestController.test_create_list_files">
+<span class="sig-name descname"><span class="pre">test_create_list_files</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/tests/test_controller.html#TestController.test_create_list_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_controller.TestController.test_create_list_files" title="Permalink to this definition"></a></dt>
+<dd><p>Test that the create_list_files() function of the controller returns
+a list of files to analyze</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.tests.test_unitaire.TestController.test_length_dict_curve">
-<span class="sig-name descname"><span class="pre">test_length_dict_curve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/tests/test_unitaire.html#TestController.test_length_dict_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_unitaire.TestController.test_length_dict_curve" title="Permalink to this definition"></a></dt>
-<dd><p>TODO</p>
+<dt class="sig sig-object py" id="otanalysis.tests.test_controller.TestController.test_incomplete_file">
+<span class="sig-name descname"><span class="pre">test_incomplete_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/tests/test_controller.html#TestController.test_incomplete_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_controller.TestController.test_incomplete_file" title="Permalink to this definition"></a></dt>
+<dd><p>Test the completeness of a curve file</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.tests.test_unitaire.TestController.test_output">
-<span class="sig-name descname"><span class="pre">test_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmpdir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/tests/test_unitaire.html#TestController.test_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_unitaire.TestController.test_output" title="Permalink to this definition"></a></dt>
-<dd><p>TODO</p>
+<dt class="sig sig-object py" id="otanalysis.tests.test_controller.TestController.test_length_dict_curve">
+<span class="sig-name descname"><span class="pre">test_length_dict_curve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/tests/test_controller.html#TestController.test_length_dict_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_controller.TestController.test_length_dict_curve" title="Permalink to this definition"></a></dt>
+<dd><p>Test that the length of the dictionary of curves of the controller after
+analysis is not empty</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="otanalysis.tests.test_controller.TestController.test_output">
+<span class="sig-name descname"><span class="pre">test_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmpdir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/tests/test_controller.html#TestController.test_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_controller.TestController.test_output" title="Permalink to this definition"></a></dt>
+<dd><p>Test the output of the output file temporarily</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>tmpdir: object</dt><dd><p>allows you to create a temporary repository</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
