@@ -42,7 +42,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "m2r2",
-    'sphinx_rtd_theme',
+    "sphinx_rtd_theme",
 ]
 
 autoclass_content = "both"

@@ -7,6 +7,8 @@ import sys
 from time import sleep
 from os import sep
 import traceback
+import logging
+from setup_logger import create_logger
 from datetime import date, datetime
 from pathlib import Path
 from re import match
@@ -15,8 +17,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from PyQt5.QtWidgets import QWidget, QFileDialog, QFrame, QSpinBox, QApplication, QMenuBar, QMenu
 from PyQt5.QtWidgets import QPushButton, QRadioButton, QHBoxLayout, QVBoxLayout, QLabel, QMessageBox
-from PyQt5.QtWidgets import QLineEdit, QGridLayout, QGroupBox, QDoubleSpinBox, QButtonGroup
-from PyQt5.QtWidgets import QScrollArea, QMainWindow, QAction
+from PyQt5.QtWidgets import QLineEdit, QGridLayout, QGroupBox, QDoubleSpinBox, QButtonGroup, QComboBox
+from PyQt5.QtWidgets import QScrollArea, QMainWindow, QAction, QDialog, QCheckBox
 from PyQt5.QtCore import Qt, pyqtSignal, QEvent, QEventLoop, QTimer
 from PyQt5.QtGui import QIcon
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
@@ -80,7 +82,8 @@ class View(QMainWindow, QWidget):
             self.initialize_window()
             self.widget.setLayout(self.main_layout)
             self.setCentralWidget(self.widget)
-            # self.main_layout.addWidget(self.toogle, 0, 1, 1, 1)
+            # self.scrollarea.setStyleSheet(
+            #     "background-image: url(pictures/theme.png); background-repeat: no-repeat;")
 
     ######################################################################################
 
@@ -100,7 +103,12 @@ class View(QMainWindow, QWidget):
         self.check_distance = False
         self.count_select_plot = 0
         self.dict_fig_open = {}
+        self.nb_output = 0
+        self.directory_output = None
+        self.check_plot_bilan = False
+        self.check_cid = False
         self.clear()
+        self.create_check_logger()
         self.data_description()
         self.create_button_select_data()
         self.create_model_radio()
@@ -108,6 +116,13 @@ class View(QMainWindow, QWidget):
         self.create_alignement_incomplete_parameters()
         self.create_condition_parameters_type()
         self.create_select_correction_optical()
+
+    #######################################################################################
+    def create_check_logger(self):
+        self.check_logger = QCheckBox("Logger")
+        self.check_logger.setChecked(True)
+        self.main_layout.addWidget(
+            self.check_logger, 0, 1, 1, 1, alignment=Qt.AlignLeft)
 
     #######################################################################################
 
@@ -127,7 +142,7 @@ class View(QMainWindow, QWidget):
         self.input_condition = QLineEdit()
         self.drug = QLabel("drug/condition 2")
         self.input_drug = QLineEdit()
-        self.input_condition.setPlaceholderText('aCD3')
+        self.input_condition.setPlaceholderText('Molecule')
         layout_grid.addWidget(self.condition, 0, 0)
         layout_grid.addWidget(self.input_condition, 0, 1)
         layout_grid.addWidget(self.drug, 1, 0)
@@ -355,8 +370,9 @@ class View(QMainWindow, QWidget):
             directory = QFileDialog.getExistingDirectory(
                 self, "Open folder", ".", QFileDialog.ShowDirsOnly)
             path_directory = Path(directory)
-            self.controller.set_list_files(path_directory)
-        if files != [] or directory is not None:
+            if directory != "":
+                self.controller.manage_list_files(path_directory)
+        if files != [] or directory != "":
             self.button_select_directory.deleteLater()
             self.button_select_files.deleteLater()
             self.button_load = QPushButton('Load methods')
@@ -461,7 +477,19 @@ class View(QMainWindow, QWidget):
             condition = self.input_condition.text()
         self.methods['condition'] = condition
         self.methods['width_window_smooth'] = self.input_width_window_smooth.value()
-        self.controller.set_list_curve(self.methods)
+        if self.check_logger.isChecked():
+            create_logger()
+            self.logger = logging.getLogger('logger_otanalysis.view')
+        else:
+            self.logger = None
+        if self.controller.check_length_files:
+            self.controller.create_dict_curves(self.methods)
+        else:
+            for list_files in self.controller.files:
+                self.controller.create_dict_curves(self.methods, list_files)
+                if len(self.controller.dict_curve) != 0:
+                    self.save()
+            self.close()
         if len(self.controller.dict_curve) != 0:
             self.choices_option()
         else:
@@ -637,7 +665,7 @@ class View(QMainWindow, QWidget):
         exitApp.setStatusTip('Exit applicatiion')
         exitApp.triggered.connect(self.close)
 
-        pick_event = QAction("Pick event", self, checkable=True)
+        pick_event = QAction("Pick event", self)
         pick_event.setStatusTip("Select fit transition")
         pick_event.triggered.connect(self.check_pick_event)
         if not self.abscissa_curve and self.current_curve.features['type'] == "FTU":
@@ -658,10 +686,14 @@ class View(QMainWindow, QWidget):
         action_edit = self.menubar.addMenu("Edit")
         action_edit.addAction(pick_event)
         self.menubar.addAction(help)
-        self.menubar.setFocusPolicy(Qt.StrongFocus)
-        self.setFocus()
+        self.menubar.leaveEvent = self.retrieve_focus_window
 
         self.main_layout.addWidget(self.menubar, 0, 0, 1, 6)
+
+    ########################################################################################
+    def retrieve_focus_window(self, event):
+        if event:
+            self.setFocus()
 
     ########################################################################################
 
@@ -676,42 +708,80 @@ class View(QMainWindow, QWidget):
         view.show()
 
     ########################################################################################
-
     def check_pick_event(self):
-        """
-        Features when you check the pick event box in the Edit menu
-        """
-        sender = self.sender()
-        for graph in self.fig.axes:
-            if graph.get_title() == 'Pull segment':
-                if sender.isChecked():
-                    self.interval_fit = []
-                    for child in graph.get_children():
-                        if child.get_label() == 'smooth':
-                            child.set_picker(True)
-                            child.set_pickradius(1.0)
-                        if child.get_label() == 'fitted classification transition':
-                            child.remove()
-                            plt.draw()
-                            handles, labels = graph.get_legend_handles_labels()
-                            for label in labels:
-                                if label == 'smooth':
-                                    handles.pop(labels.index(label))
-                                    labels.pop(labels.index(label))
-                            graph.legend(handles, labels, loc="lower right")
-                            del self.current_curve.graphics['distance_fitted_classification_transition']
-                            del self.current_curve.graphics['fitted_classification_transition']
-                    self.canvas.mpl_connect(
-                        'pick_event', self.select_fit)
-                else:
-                    for child in graph.get_children():
-                        if child.get_label() == 'smooth':
-                            child.set_picker(False)
-        self.setFocus()
+        self.choices_selection = QDialog()
+        label_choices_window = QLabel("What do you want to select ?")
+        drop_down_menu = QComboBox()
+        drop_down_menu.addItem("")
+        drop_down_menu.addItem("fit_classification_transition")
+        drop_down_menu.addItem("point_transition_manual")
+        drop_down_menu.addItem("point_return_manual")
+        button_valid = QPushButton("OK")
+        button_valid.clicked.connect(
+            lambda: self.valid_pick_event(drop_down_menu))
+        vbox = QVBoxLayout()
+        vbox.addWidget(label_choices_window)
+        vbox.addWidget(drop_down_menu)
+        vbox.addWidget(button_valid)
+        self.choices_selection.setLayout(vbox)
+        self.choices_selection.exec()
+
+    #######################################################################################
+    def valid_pick_event(self, drop_down_menu):
+        choice = drop_down_menu.currentText()
+        type_choice = choice.split('_')[0]
+        if self.check_cid:
+            self.canvas.mpl_disconnect(self.cid)
+        if type_choice == "fit":
+            self.cid = self.canvas.mpl_connect(
+                'pick_event', lambda event: self.select_fit(event, choice))
+        elif type_choice == "point":
+            self.cid = self.canvas.mpl_connect(
+                'pick_event', lambda event: self.select_point(event, choice))
+        self.manage_select_graph(type_choice, choice)
+        self.choices_selection.close()
 
     ########################################################################################
 
-    def select_fit(self, event):
+    def manage_select_graph(self, type_choice, choice):
+        """
+        Features when you check the pick event box in the Edit menu
+        """
+        label = choice.replace("_", " ")
+        for graph in self.fig.axes:
+            if graph.get_title() == 'Pull segment':
+                self.interval_fit = []
+                for child in graph.get_children():
+                    if child.get_label() == 'smooth':
+                        child.set_picker(True)
+                        child.set_pickradius(1.0)
+                    if type_choice == "fit":
+                        if child.get_label() == label:
+                            child.remove()
+                            plt.draw()
+                            del self.current_curve.graphics['distance_' + choice]
+                            del self.current_curve.graphics[choice]
+                        self.check_cid = True
+                    elif type_choice == "point":
+                        origin_child = choice.split('_')[1]
+                        if str(child.get_label()).startswith(origin_child):
+                            child.set_marker("None")
+                            plt.draw()
+                        elif child.get_label() == label:
+                            child.remove()
+                            plt.draw()
+                            del self.current_curve.features[choice]
+                        self.check_cid = True
+                handles, labels = graph.get_legend_handles_labels()
+                for label in labels:
+                    if label == 'smooth':
+                        handles.pop(labels.index(label))
+                        labels.pop(labels.index(label))
+                graph.legend(handles, labels, loc="lower right")
+
+    ########################################################################################
+
+    def select_fit(self, event, name_fit):
         """
         Management of the selection of points on the graph according 
         to the distance to obtain the fit between these two points
@@ -720,13 +790,7 @@ class View(QMainWindow, QWidget):
             event: Signal
                 mouse click event on the graph
         """
-        pick_event_menu = ""
-        for child in self.menubar.children():
-            if isinstance(child, QMenu):
-                if child.title() == "Edit":
-                    for action in child.actions():
-                        if action.text() == "Pick event":
-                            pick_event_menu = action
+        label_graph = name_fit.replace("_", " ")
         if isinstance(event.artist, Line2D):
             thisline = event.artist
             xdata = thisline.get_xdata()
@@ -742,14 +806,14 @@ class View(QMainWindow, QWidget):
                                 marker='D', color='orange')
                         plt.draw()
                 if len(self.interval_fit) == 2:
-                    pick_event_menu.setChecked(False)
+                    # pick_event_menu.setChecked(False)
                     self.current_curve.fit_linear_classification(
-                        self.interval_fit[0], self.interval_fit[1], "fitted_classification_transition")
+                        self.interval_fit[0], self.interval_fit[1], name_fit)
                     for elem_graph in ax.lines:
                         if elem_graph.get_marker() == 'D':
                             elem_graph.set_marker("")
-                    ax.plot(self.current_curve.graphics['distance_fitted_classification_transition'],
-                            self.current_curve.graphics['fitted_classification_transition'], label='fitted classification transition')
+                    ax.plot(self.current_curve.graphics['distance_' + name_fit],
+                            self.current_curve.graphics[name_fit], label=label_graph)
                     plt.draw()
                     handles, labels = ax.get_legend_handles_labels()
                     for label in labels:
@@ -757,6 +821,33 @@ class View(QMainWindow, QWidget):
                             handles.pop(labels.index(label))
                             labels.pop(labels.index(label))
                     ax.legend(handles, labels, loc="lower right")
+    ########################################################################################
+
+    def select_point(self, event, name_point):
+        label_graph = name_point.replace("_", " ")
+        if isinstance(event.artist, Line2D):
+            thisline = event.artist
+            xdata = thisline.get_xdata()
+            ydata = thisline.get_ydata()
+            ind = event.ind
+            ax = ""
+            for graph in self.fig.axes:
+                if graph.get_title() == 'Pull segment':
+                    ax = graph
+                    ax.plot(xdata[ind[0]], ydata[ind[0]],
+                            marker='P', ls="None", label=label_graph)
+                    plt.draw()
+                    self.current_curve.features[name_point] = {
+                        "index": ind[0], "value": ydata[ind[0]]}
+                    handles, labels = ax.get_legend_handles_labels()
+                    for label in labels:
+                        if label == 'smooth':
+                            handles.pop(labels.index(label))
+                            labels.pop(labels.index(label))
+                    ax.legend(handles, labels, loc="lower right")
+                    for line in ax.get_children():
+                        if line.get_label() == 'smooth':
+                            line.set_picker(False)
 
     ########################################################################################
 
@@ -1233,6 +1324,15 @@ class View(QMainWindow, QWidget):
                 plt.close()
             self.setFocus()
         except Exception as error:
+            if self.logger is not None:
+                self.logger.info('###########################################')
+                self.logger.info(self.current_curve.file)
+                self.logger.error(
+                    '###########################################')
+                self.logger.error(type(error).__name__, ':')
+                self.logger.error(error)
+                self.logger.error(traceback.format_exc())
+                self.logger.info('###########################################')
             print('###########################################')
             print(type(error).__name__, ':')
             print(error)
@@ -1308,41 +1408,55 @@ class View(QMainWindow, QWidget):
         """
         Creation of the diagram window to illustrate the results of the analysis
         """
-        self.check_bilan = True
-        today = str(date.today())
-        self.graph_bilan = GraphView()
-        hbox_bilan = QHBoxLayout()
-        frame = QFrame()
-        label_day = QLabel('Date: ' + today + '\n' + 'Condition: ' + str(
-            self.methods['condition']) + '\n' + 'Drug: ' + str(self.methods['drug']))
-        nb_beads, nb_cells, nb_couples = self.controller.count_cell_bead()
-        label_nb_bead = QLabel('Nb beads: ' + str(nb_beads) + '\nNb cells: ' +
-                               str(nb_cells) + '\nNb couples: ' + str(nb_couples))
-        label_type_files = QLabel('Nb txt files: ' + str(
-            self.controller.dict_type_files['txt']) + '\nNb jpk files: ' +
-            str(self.controller.dict_type_files['jpk']))
-        hbox_bilan.addWidget(label_day)
-        # hbox_bilan.addWidget(label_condition)
-        # hbox_bilan.addWidget(label_drug)
-        hbox_bilan.addWidget(label_nb_bead)
-        hbox_bilan.addWidget(label_type_files)
-        frame.setLayout(hbox_bilan)
-        frame.setFrameStyle(QFrame.Box | QFrame.Sunken)
-        frame.setLineWidth(3)
-        frame.setMidLineWidth(3)
-        fig = Figure()
-        fig = self.controller.piechart(fig)
-        canvas = FigureCanvasQTAgg(fig)
-        toolbar = NavigationToolbar2QT(self.canvas, self)
-        self.graph_bilan.main_layout.addWidget(toolbar, 0, 0, 1, 1)
-        self.graph_bilan.main_layout.addWidget(frame, 0, 1, 1, 4)
-        self.toogle_bilan = QtToggle(
-            120, 30, '#777', '#ffffff', '#4997d0', 'Piechart', 'Scatter')
-        self.graph_bilan.main_layout.addWidget(self.toogle_bilan, 0, 5, 1, 1)
-
+        if not self.check_bilan:
+            self.check_bilan = True
+            today = str(date.today())
+            self.graph_bilan = GraphView()
+            hbox_bilan = QHBoxLayout()
+            frame = QFrame()
+            label_day = QLabel('Date: ' + today + '\n' + 'Condition: ' + str(
+                self.methods['condition']) + '\n' + 'Drug: ' + str(self.methods['drug']))
+            nb_beads, nb_cells, nb_couples = self.controller.count_cell_bead()
+            label_nb_bead = QLabel('Nb beads: ' + str(nb_beads) + '\nNb cells: ' +
+                                   str(nb_cells) + '\nNb couples: ' + str(nb_couples))
+            label_type_files = QLabel('Nb txt files: ' + str(
+                self.controller.dict_type_files['txt']) + '\nNb jpk files: ' +
+                str(self.controller.dict_type_files['jpk']))
+            self.toogle_bilan = QtToggle(
+                120, 30, '#777', '#ffffff', '#4997d0', 'Piechart', 'Scatter')
+            self.toogle_bilan.clicked.connect(self.change_toogle_bilan)
+            hbox_bilan.addWidget(label_day)
+            # hbox_bilan.addWidget(label_condition)
+            # hbox_bilan.addWidget(label_drug)
+            hbox_bilan.addWidget(label_nb_bead)
+            hbox_bilan.addWidget(label_type_files)
+            frame.setLayout(hbox_bilan)
+            frame.setFrameStyle(QFrame.Box | QFrame.Sunken)
+            frame.setLineWidth(3)
+            frame.setMidLineWidth(3)
+            self.fig_bilan = Figure()
+            toolbar = NavigationToolbar2QT(self.canvas, self)
+            self.graph_bilan.main_layout.addWidget(toolbar, 0, 0, 1, 1)
+            self.graph_bilan.main_layout.addWidget(frame, 0, 1, 1, 4)
+            self.graph_bilan.main_layout.addWidget(
+                self.toogle_bilan, 0, 5, 1, 1)
+            self.graph_bilan.showMaximized()
+        self.fig_bilan.clf()
+        if self.check_plot_bilan:
+            self.fig_bilan = self.controller.scatter_bilan(self.fig_bilan)
+        else:
+            self.fig_bilan = self.controller.piechart(self.fig_bilan)
+        canvas = FigureCanvasQTAgg(self.fig_bilan)
         self.graph_bilan.main_layout.addWidget(canvas, 1, 0, 6, 6)
 
-        self.graph_bilan.showMaximized()
+    ###################################################################################
+
+    def change_toogle_bilan(self):
+        if not self.toogle_bilan.isChecked():
+            self.check_plot_bilan = False
+        else:
+            self.check_plot_bilan = True
+        self.show_bilan()
 
     ###################################################################################
 
@@ -1363,33 +1477,37 @@ class View(QMainWindow, QWidget):
         """
         Generates the output file when Save is clicked
         """
-        directory = QFileDialog.getExistingDirectory(
-            self, "Open folder", "..", QFileDialog.ShowDirsOnly)
+        if self.nb_output == 0:
+            self.directory_output = QFileDialog.getExistingDirectory(
+                self, "Open folder", "..", QFileDialog.ShowDirsOnly)
         today = str(date.today())
         time_today = str(datetime.now().time().replace(
             microsecond=0)).replace(':', '-')
         if self.check_graph:
             self.current_curve.output['treat_supervised'] = True
-        self.controller.output_save(directory)
+        self.controller.output_save(self.directory_output)
         methods = {}
         methods['methods'] = self.methods
-        output_methods = pd.DataFrame()
-        output_methods = output_methods.from_dict(methods, orient='index')
-        list_labels_methods = ['condition', 'drug', 'bead_radius', 'model', 'eta',
-                               'pulling_length', 'threshold_align',
-                               'jump_force', 'jump_distance', 'jump_point',
-                               'factor_noise', 'width_window_smooth', 'optical']
-        output_methods = output_methods[list_labels_methods]
-        output_methods.to_csv(directory + sep + 'methods_' + today + '_' +
-                              time_today + '.tsv', sep='\t', encoding='utf-8', na_rep="NaN")
-
-        if self.check_graph or self.save_table.isChecked():
+        if self.nb_output == 0:
+            output_methods = pd.DataFrame()
+            output_methods = output_methods.from_dict(methods, orient='index')
+            list_labels_methods = ['condition', 'drug', 'bead_radius', 'model', 'eta',
+                                   'pulling_length', 'threshold_align',
+                                   'jump_force', 'jump_distance', 'jump_point',
+                                   'factor_noise', 'width_window_smooth', 'optical']
+            output_methods = output_methods[list_labels_methods]
+            output_methods.to_csv(self.directory_output + sep + 'methods_' + today + '_' +
+                                  time_today + '.tsv', sep='\t', encoding='utf-8', na_rep="NaN")
+        if not self.controller.check_length_files:
+            self.controller.dict_curve = {}
+        elif self.check_graph or self.save_table.isChecked():
             check_save_output = QMessageBox()
-            check_save_output.setText("Your exit has been registered")
+            check_save_output.setText("Your output has been registered")
             check_save_output.exec()
             self.close()
 
-        return directory
+        self.nb_output += 1
+        return self.directory_output
 
     ####################################################################################
     def save_graph(self):

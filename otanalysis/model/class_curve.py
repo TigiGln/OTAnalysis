@@ -5,6 +5,8 @@ File describing the instance class of the curved objects
 """
 import math
 import traceback
+import logging
+import setup_logger
 import numpy as np
 import pandas as pd
 
@@ -15,6 +17,8 @@ from scipy.signal import savgol_filter
 # from scipy.interpolate import UnivariateSpline
 # from lmfit import Model
 from ..model.class_optical_effect import OpticalEffect
+
+# logger = logging.getLogger('logger_otanalysis.curve')
 
 
 class Curve:
@@ -305,12 +309,12 @@ class Curve:
         data_min_approach = min(data)
         if math.isclose(force, data_min_approach, rel_tol=tolerance):
             index_data_min = data.argmin()
-        else:
-            for index_data in range(0, len(data), 1):
-                if (force - interval) > data[index_data] > (force + interval):
-                    if data[index_data] < data_min_approach:
-                        data_min_approach = data[index_data]
-                        index_data_min = index_data
+        # else:
+        #     for index_data in range(0, len(data), 1):
+        #         if (force - interval) > data[index_data] > (force + interval):
+        #             if data[index_data] < data_min_approach:
+        #                 data_min_approach = data[index_data]
+        #                 index_data_min = index_data
         self.features["force_min_press"] = {
             'index': index_data_min, 'value': data_min_approach}
         self.features['force_min_curve'] = {
@@ -787,12 +791,12 @@ class Curve:
         self.graphics['fitted_Pull'] = fitted
 
         ############## calcul return point and transition ######################
-        index_return_end_line = Curve.retrieve_retour_line_end(
+        index_return_endline = Curve.retrieve_retour_line_end(
             y_smooth, line_pos_threshold[0], type_curve)
-        if index_return_end_line is not None:
-            #index_transition = index_return_end_line - 20
+        if index_return_endline is not None:
+            #index_transition = index_return_endline - 20
             self.features['point_return_endline'] = {
-                'index': index_return_end_line, 'value': y_smooth[index_return_end_line]}
+                'index': index_return_endline, 'value': y_smooth[index_return_endline]}
             # self.features['point_transition'] = {
             #             'index': index_transition, 'value (pN)': y_smooth[index_transition]}
             derive_smooth = self.search_transition_point(time_data, force_data)
@@ -860,7 +864,7 @@ class Curve:
 
         ############ points characteristics ##################
         index_release = self.features['point_release']['index']
-        index_return_end_line = self.features['point_return_endline']['index']
+        index_return_endline = self.features['point_return_endline']['index']
 
         self.graphics = dict([(x, y) for x, y in self.graphics.items(
         ) if not x.startswith('fitted_classification')])
@@ -873,18 +877,18 @@ class Curve:
             if self.features['force_max_curve']['value'] <= methods['jump_force']:
                 type_curve = 'NAD'
             else:
-                if index_return_end_line is not None and index_return_end_line != 'NaN':
-                    # if index_release < index_return_end_line:
-                    #     index_force_max = self.graphics['y_smooth_Pull'][index_release:index_return_end_line].argmax()
-                    # elif index_release > index_return_end_line:
-                    #     index_force_max = self.graphics['y_smooth_Pull'][index_return_end_line:index_release].argmax()
+                if index_return_endline is not None and index_return_endline != 'NaN':
+                    # if index_release < index_return_endline:
+                    #     index_force_max = self.graphics['y_smooth_Pull'][index_release:index_return_endline].argmax()
+                    # elif index_release > index_return_endline:
+                    #     index_force_max = self.graphics['y_smooth_Pull'][index_return_endline:index_release].argmax()
                     # else:
                     index_force_max = self.features['force_max_curve']['index']
                     ##################### calcul jump ########################
                     jump_force_start_pull = force_data[index_force_max] - \
                         self.graphics['y_smooth_Pull'][index_release]
                     jump_nb_points_start = index_force_max - index_release
-                    jump_nb_points_end = index_return_end_line - index_force_max
+                    jump_nb_points_end = index_return_endline - index_force_max
 
                     jump_force_end_pull = force_data[index_force_max] - \
                         self.graphics['y_smooth_Pull'][index_release]
@@ -895,7 +899,7 @@ class Curve:
 
                     jump_time_start_pull = time_data[index_force_max] - \
                         time_data[index_release]
-                    jump_time_end_pull = time_data[index_return_end_line] - \
+                    jump_time_end_pull = time_data[index_return_endline] - \
                         time_data[index_release]
                     self.features['jump_time_start_pull (s)'] = jump_time_start_pull
                     self.features['jump_time_end_pull (s)'] = jump_time_end_pull
@@ -908,12 +912,12 @@ class Curve:
                             distance_data[index_release]
 
                         jump_distance_end_pull = distance_data[index_force_max] - \
-                            distance_data[index_return_end_line]
+                            distance_data[index_return_endline]
                         self.features['jump_distance_start_pull (nm)'] = jump_distance_start_pull
                         ###################### fit linear for classification #############################
                         ###### fit max ######
                         jump_nb_points_start = int(
-                            self.features['jump_nb_points_start']/3)
+                            self.features['jump_nb_points_start']//3)
                         y_smooth_pull = self.graphics['y_smooth_Pull']
                         index_start = y_smooth_pull.argmax()-jump_nb_points_start
                         index_end = y_smooth_pull.argmax()
@@ -921,12 +925,18 @@ class Curve:
                             index_start, index_end, "fitted_classification_max")
 
                         ###### fit release ######
-                        jump_nb_points_start = int(
-                            self.features['jump_nb_points_start']/3)
                         index_start = index_release
                         index_end = index_release+jump_nb_points_start
                         self.fit_linear_classification(
                             index_start, index_end, "fitted_classification_release")
+
+                        ###### fit return  endline #######
+                        jump_nb_point_end = int(
+                            self.features['jump_nb_points_end']//3)
+                        index_start = index_return_endline - jump_nb_point_end
+                        index_end = index_return_endline
+                        self.fit_linear_classification(
+                            index_start, index_end, "fitted_classification_return_endline")
                     else:
                         speed = float(segment.header_segment['segment-settings.length'])/float(
                             segment.header_segment['segment-settings.duration'])
@@ -980,6 +990,7 @@ class Curve:
         optical_state = "No_correction"
         self.detected_min_force()
         type_curve = self.compare_baseline_start_end(methods['factor_noise'])
+        error = None
         if not manual_correction:
             if methods['optical'] == "Correction":
                 try:
@@ -1006,9 +1017,10 @@ class Curve:
             self.features['type'] = type_curve
         else:
             self.features['automatic_type'] = type_curve
+        return error
 
     ###############################################################################################
-            # Methods used in the supervision of the interface
+        # Methods used in the supervision of the interface
     ###############################################################################################
 
     def retrieve_data_curve(self, type_data="data_original"):

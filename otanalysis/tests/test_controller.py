@@ -26,7 +26,8 @@ class TestController:
         This function is launched at each test to create the Controller object 
         and do the repetitive tasks before launching the test
         """
-        directory_test = 'otanalysis/tests/data_test/verif'
+        directory_test = 'otanalysis' + sep + 'tests' + \
+            sep + 'data_test' + sep + 'verif'
         cls.controller = Controller(None, directory_test)
 
     ######################################################################################
@@ -46,6 +47,7 @@ class TestController:
         analysis is not empty
         """
         print(self.controller.files)
+        print(self.controller.dict_type_files)
         assert len(self.controller.dict_curve) > 0
 
     ######################################################################################

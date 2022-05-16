@@ -10,7 +10,6 @@ from otanalysis.view.class_view import View
 from otanalysis.controller.controller import Controller
 
 
-
 def main():
     """
     Launch application for curve analyis

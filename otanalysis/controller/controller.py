@@ -3,8 +3,10 @@
 """
 Class Controller
 """
+import logging
+import setup_logger
 import traceback
-from os import sep
+from os import sep, abort
 from pathlib import Path
 import argparse
 from shutil import copy
@@ -40,20 +42,24 @@ class Controller:
             path_files: str
                 path of the folder containing the curves to be analyzed
         """
-        #self.tracker = SummaryTracker()
+        # self.tracker = SummaryTracker()
         self.view = view
         self.files = []
         self.dict_curve = {}
-        self.test = None
+        self.check_length_files = True
         self.output = pd.DataFrame(dtype='float64')
 
         if path_files is not None:
-            self.set_list_files(path_files)
-            methods = {'threshold_align': 30, 'pulling_length': 50, 'model': 'linear',
-                       'eta': 0.5, 'bead_radius': 1, 'factor_noise': 5, 'jump_force': 5,
-                       'jump_point': 200, 'jump_distance': 200, 'drug': 'NaN', 'condition':
-                       'NaN', 'optical': None}
-            self.set_list_curve(methods)
+            self.manage_list_files(path_files)
+        if self.view.check_logger.isChecked():
+            self.logger = logging.getLogger('logger_otanalysis.controller')
+        else:
+            self.logger = None
+            # methods = {'threshold_align': 30, 'pulling_length': 50, 'model': 'linear',
+            #            'eta': 0.5, 'bead_radius': 1, 'factor_noise': 5, 'jump_force': 5,
+            #            'jump_point': 200, 'jump_distance': 200, 'drug': 'NaN', 'condition':
+            #            'NaN', 'optical': None}
+            # self.create_dict_curves(methods)
 
     ##############################################################################################
 
@@ -66,12 +72,89 @@ class Controller:
                 interface object
         """
         self.view = view
+    ################################################################################################
+
+    def manage_list_files(self, path):
+        """
+        TODO
+        """
+        dict_files = {}
+        length_list_files = 0
+        dict_files = self.create_list_files(path, dict_files)
+        for list_files in dict_files.values():
+            length_list_files += len(list_files)
+        print(length_list_files)
+
+        print(len(dict_files))
+        if length_list_files > 1000:
+            self.check_length_files = False
+        self.set_list_files(dict_files)
+
+    ################################################################################################
+
+    def create_list_files(self, path, dict_files):
+        """
+        Creation of a file list based on a given directory
+
+        :parameters:
+            path: str
+                path to a study folder
+        """
+        path_repository_study = Path(path)
+        # Allows you to retrieve all the file names of the directory and store them in a list
+        if path_repository_study.is_dir():
+            for element in path_repository_study.iterdir():
+                if element.is_file():
+                    file = element.__str__()
+                    name_file = file.split(sep)[-1]
+                    dir_file = file.split(sep)[-2]
+                    regex = re.match("^b[1-9]+c[1-9]+[a-z]{0,2}-", name_file)
+                    if regex:
+                        if dir_file in dict_files:
+                            dict_files[dir_file].append(file)
+                        else:
+                            dict_files[dir_file] = [file]
+                elif element.is_dir():
+                    self.create_list_files(element, dict_files)
+        else:
+            file = path_repository_study.__str__()
+            name_file = file.split(sep)[-1]
+            dir_file = file.split(sep)[-2]
+            regex = re.match("^b[1-9]+c[1-9]+[a-z]{0,2}-", name_file)
+            if regex:
+                dict_files[dir_file] = [file]
+        return dict_files
+    ##############################################################################################
+
+    def set_list_files(self, dict_files):
+        """
+        TODO
+        """
+
+        for list_files in dict_files.values():
+            if self.check_length_files:
+                for file in list_files:
+                    self.files.append(file)
+            else:
+                self.files.append(list_files)
+        print(len(self.files))
+        # if self.check_length_files:
+        #     print("oK")
+        #     list_files = []
+        #     for index in range(0, len(self.files), 300):
+        #         list_files.append(list(self.files[index:index+300]))
+        #     print(list_files)
+        #     self.files = list_files
 
     ##############################################################################################
 
-    def set_list_curve(self, methods):
+    def create_dict_curves(self, methods, list_files=None):
         """
         creation of the curve list according to the file extension and its conformity
+
+        :parameters:
+            methods: dict
+                Set of parameters to enter in the interface to launch the analysis
         """
         self.dict_type_files = {'txt': 0, 'jpk': 0,
                                 'NC': 0, 'PB': 0, 'INC': 0, 'DP': 0}
@@ -79,19 +162,24 @@ class Controller:
         # 'NC': not in conformity, 'PB': problematic
         # 'INC': Incomplete, 'DP': Duplicate
         self.list_file_imcomplete = set()
-        for index_file in range(0, len(self.files), 1):
+        files = None
+        if list_files is None:
+            files = self.files
+        else:
+            files = list_files
+
+        for index_file in range(0, len(files), 1):
             # self.tracker.print_diff()
             new_curve = None
-            type_file = self.files[index_file].split('.')[-1]
-            name_file = self.files[index_file].split(
-                sep)[-1]
+            type_file = files[index_file].split('.')[-1]
+            name_file = files[index_file].split(sep)[-1]
             regex = re.match("^b[1-9]+c[1-9]+[a-z]{0,2}-", name_file)
             name_file = name_file.split('-')
             name_file = str(name_file[0][0:4]) + '-' + '-'.join(name_file[1:])
-            nb = str(index_file+1) + "/" + str(len(self.files))
+            nb = str(index_file+1) + "/" + str(len(files))
             print(
                 '\n===============================================================================')
-            print(self.files[index_file].split(sep)[-1])
+            print(files[index_file].split(sep)[-1])
             print(
                 '===============================================================================')
             filename = name_file.split('.')[0:-1]
@@ -101,13 +189,13 @@ class Controller:
                 try:
                     if type_file == 'txt' and regex:
                         new_curve, check_incomplete = Controller.open_file(
-                            self.files[index_file], name_file, methods['threshold_align'],
+                            files[index_file], name_file, methods['threshold_align'],
                             methods['pulling_length'])
                         if not check_incomplete:
                             self.dict_type_files['txt'] += 1
                     elif type_file == 'jpk-nt-force' and regex:
                         new_curve, check_incomplete = Controller.create_object_curve(
-                            self.files[index_file], name_file, methods['threshold_align'],
+                            files[index_file], name_file, methods['threshold_align'],
                             methods['pulling_length'])
                         if not check_incomplete:
                             self.dict_type_files['jpk'] += 1
@@ -116,47 +204,210 @@ class Controller:
                         self.dict_type_files['NC'] += 1
                 except Exception as error:
                     message = "The file curve is not conform for transformation in curve object"
-                    Controller.problematic_curve(
-                        self.files[index_file], type_file, message, error)
+                    self.problematic_curve(
+                        files[index_file], type_file, message, error)
                     self.dict_type_files['PB'] += 1
                 if check_incomplete:
                     self.list_file_imcomplete.add(
-                        self.files[index_file].split(sep)[-1])
+                        files[index_file].split(sep)[-1])
                     self.dict_type_files['INC'] += 1
                 if new_curve is not None:
                     if new_curve.check_incomplete:
                         if type_file == 'jpk-nt-force':
                             type_file = type_file.split('-')[0]
                         Controller.file_incomplete_rejected(
-                            type_file, self.files[index_file])
+                            type_file, files[index_file])
                         self.dict_type_files['INC'] += 1
                         print(type_file[0:3])
                         self.dict_type_files[type_file[0:3]] -= 1
                         self.list_file_imcomplete.add(
-                            self.files[index_file].split(sep)[-1])
+                            files[index_file].split(sep)[-1])
                     else:
                         try:
-                            new_curve.analyzed_curve(
+                            error = new_curve.analyzed_curve(
                                 methods, False)
+                            if self.logger is not None and error is not None:
+                                self.logger.info(
+                                    '###########################################')
+                                self.logger.info(
+                                    new_curve.file)
+                                self.logger.debug(
+                                    '###########################################')
+                                self.logger.error(type(error).__name__, ':')
+                                self.logger.error(error)
+                                self.logger.error(traceback.format_exc())
+                                self.logger.info(
+                                    '###########################################')
                             self.dict_curve[new_curve.file] = new_curve
                             new_curve.features['type'] = new_curve.features['automatic_type']
+                            new_curve.features['relative_path'] = files[index_file]
                         except Exception as error:
                             message = "The curve object created but problem \
                                         in analysis due to erroneous data"
-                            Controller.problematic_curve(
-                                self.files[index_file], type_file, message, error)
+                            self.problematic_curve(
+                                files[index_file], type_file, message, error)
                             self.dict_type_files['PB'] += 1
             else:
                 print('files already processed')
                 self.dict_type_files['DP'] += 1
             if self.view is not None:
-                self.view.info_processing(nb, len(self.files))
+                self.view.info_processing(nb, len(files))
             print(self.dict_type_files)
             print(len(self.dict_curve))
 
+    #############################################################################################
+
+    @ staticmethod
+    def open_file(file, name_file, threshold_align, pulling_length=50):
+        """
+        if file .txt
+        Processing of the curve file to create an object
+        with all the information necessary for its study
+
+        :parameter:
+            file: str
+                name of the curve file
+            threshold_align: int
+                percentage of maximum force for misalignment
+        :return:
+            new_curve: object
+                Curved object with 1 title, 4 dictionaries and 2 dataframes
+            check_incomplete: bool
+                takes True if the file is incomplete otherwise False
+        """
+        new_curve = None
+        header = {}
+        check_incomplete = False
+        nb_segments = 0
+        dict_segments = {}
+        title = name_file.split(sep)[-1].replace(".txt", "")
+        # file_curve = file.__str__().split(sep)[-1]  # .replace('.txt', "")
+        file_curve = name_file.split('.')[0:-1]
+        file_curve = '.'.join(file_curve)
+        check_incomplete = False
+        with open(file, 'r') as file_study:
+            lines = file_study.read()
+            file_study.seek(0)
+            header['header_global'] = Controller.parsing_generic(file_study)
+            nb_segments = int(header['header_global']
+                              ["settings.segments.size"])
+            header['calibrations'] = Controller.parsing_generic(file_study)
+            check_incomplete = Controller.check_file_incomplete(lines, header['header_global'],
+                                                                nb_segments)
+            if check_incomplete:
+                Controller.file_incomplete_rejected("txt", file)
+            else:
+                num_segment = 0
+                while num_segment < nb_segments:
+                    segment = Controller.management_data(file_study, nb_segments,
+                                                         num_segment, header['header_global'])
+                    if num_segment < nb_segments-1:
+                        settings_segment = 'settings.segment.' + \
+                            str(num_segment + 1)
+                        if header['header_global'][settings_segment + '.style'] != "motion":
+                            if float(header['header_global'][settings_segment +
+                                                             ".duration"]) == 0.0:
+                                num_segment += 1
+                    num_segment += 1
+                    dict_segments[segment.name] = segment
+                new_curve = Curve(file_curve, title, header,
+                                  dict_segments, pulling_length)
+                dict_align = Controller.alignment_curve(
+                    file, new_curve, threshold_align)
+                new_curve.features['automatic_AL'] = dict_align
+                new_curve.features['AL'] = dict_align['AL']
+
+        return new_curve, check_incomplete
+
+    ################################################################################################
+
+    @ staticmethod
+    def create_object_curve(file, name_file, threshold_align, pulling_length=50):
+        """
+        Creation of the Curve object after extraction of the data from the jpk-nt-force coded file
+
+        :parameters:
+            file: str
+                path to the jpk-nt-force folder to extract and transform into a Curve python object
+            threshold_align: int
+                percentage of maximum force for misalignment
+
+        :return:
+            new_curve: Object
+                returns our curve object ready for analysis and classification
+            check_incomplete: bool
+                takes True if the file is incomplete otherwise False
+        """
+        new_curve = None
+        new_jpk = JPKFile(file)
+        # .replace('.jpk-nt-force', '')
+        # file_curve = name_file.__str__().split(sep)[-1]
+        file_curve = name_file.split('.')[0:-1]
+        file_curve = '.'.join(file_curve)
+        check_incomplete = False
+        check_incomplete = Controller.file_troncated(new_jpk)
+        if check_incomplete:
+            Controller.file_incomplete_rejected("jpk", file)
+        else:
+            columns = []
+            dict_segments = {}
+            for key in new_jpk.segments[0].data.keys():
+                columns.append(key)
+            time_end_segment = 0
+            time_step = 0
+            list_name_segment = ["Press", "Wait", "Pull"]
+            num_segment = 0
+            for segment in new_jpk.segments:
+                name_segment = ""
+                dataframe = pd.DataFrame()
+                for index_column in range(0, len(columns), 1):
+                    if columns[index_column] == 't':
+                        data_time = segment.get_array([columns[index_column]])
+                        dataframe['time'] = data_time
+                        dataframe['seriesTime'] = dataframe['time'].add(time_end_segment
+                                                                        + time_step)
+                        if segment.index == 0:
+                            time_step = dataframe['time'][1]
+                        time_end_segment = dataframe['seriesTime'][len(
+                            dataframe['seriesTime'])-1]
+                    elif columns[index_column] == 'distance':
+                        data_distance = segment.get_array(
+                            [columns[index_column]])
+                        if len(data_distance) != 0:
+                            dataframe['distance'] = data_distance
+                    else:
+                        data_by_column = segment.get_array(
+                            [columns[index_column]])
+                        dataframe[columns[index_column]] = data_by_column[:, 0]
+                if float(new_jpk.headers["header_global"]["settings.segment."
+                                                          + str(num_segment) + ".duration"]) == 0.0:
+                    num_segment += 1
+                if segment.header['segment-settings.style'] == "motion":
+                    if num_segment in (0, 1, 2):
+                        name_segment = list_name_segment[num_segment]
+                    # else:
+                    #     name_segment = "Motion_" + str(num_segment)
+                else:
+                    if num_segment in (0, 1):
+                        name_segment = list_name_segment[num_segment]
+                    # else:
+                    #     name_segment = "Wait_" + str(num_segment)
+                num_segment += 1
+                dataframe = dataframe.apply(to_numeric)
+                new_segment = Segment(segment.header, dataframe, name_segment)
+                dict_segments[new_segment.name] = new_segment
+            title = new_jpk.headers['title']
+            new_curve = Curve(file_curve, title, new_jpk.headers,
+                              dict_segments, pulling_length)
+            dict_align = Controller.alignment_curve(
+                file, new_curve, threshold_align)
+            new_curve.features['automatic_AL'] = dict_align
+            new_curve.features['AL'] = dict_align['AL']
+        return new_curve, check_incomplete
+
     ###############################################################################################
-    @staticmethod
-    def problematic_curve(file, extension, message, error):
+
+    def problematic_curve(self, file, extension, message, error):
         """
         function allowing to put in a separate folder the curves having had
         a problem during their analysis
@@ -186,23 +437,38 @@ class Controller:
         print(traceback.format_exc())
         print(message)
         print('###########################################')
+        if self.logger is not None:
+            self.logger.info('###########################################')
+            self.logger.info(file)
+            self.logger.info('###########################################')
+            self.logger.error(type(error).__name__, ':')
+            self.logger.error(error)
+            self.logger.error(traceback.format_exc())
+            self.logger.info('###########################################')
 
-    ##############################################################################################
-    def create_list_for_graphs(self):
-        """
-        creation of the list separating the curves in list of 2 for the display
-        of the graphs sequentially
+    ############################################################################################
 
-        :return:
-            list_curves_for_graphs: list
-                list of list with the curve to analysis for display graph
+    @ staticmethod
+    def file_incomplete_rejected(extension, file):
         """
-        list_curves_for_graphs = []
-        nb_graph = 2
-        for i in range(0, len(self.dict_curve), nb_graph):
-            list_curves_for_graphs.append(
-                list(self.dict_curve.values())[i:i+nb_graph])
-        return list_curves_for_graphs
+        Allows you to copy files with incomplete segments to a folder
+
+        ;parameters:
+            extension: str
+                extension of the curve file (txt or jpk-nt-force)
+            file: str
+                name of the curve file
+        """
+        path_dir_incomplete = ""
+        if extension == "jpk":
+            path_dir_incomplete = Path(
+                '..' + sep + 'File_rejected' + sep + 'Incomplete' + sep + 'JPK')
+        else:
+            path_dir_incomplete = Path(
+                '..' + sep + 'File_rejected' + sep + 'Incomplete' + sep + 'TXT')
+        path_dir_incomplete.mkdir(parents=True, exist_ok=True)
+        copy(file, str(path_dir_incomplete))
+        print("File incomplete")
 
     ##############################################################################################
     def show_plot(self, n, abscissa_curve='time'):
@@ -290,7 +556,7 @@ class Controller:
         ax.plot(distance_data, force_data, color="#c2a5cf")
         ax.plot(distance_data, fitted_data, color="#5aae61",
                 label=curve.features['model'] + " fit")
-        #y_smooth = curve.graphics['y_smooth_' + segment.name]
+        # y_smooth = curve.graphics['y_smooth_' + segment.name]
         y_smooth = curve.smooth(
             force_data, self.view.methods['width_window_smooth'], 2)
         ax.plot(distance_data, y_smooth,
@@ -314,7 +580,7 @@ class Controller:
             index_max = curve.features["force_min_press"]['index']
             max_curve = curve.features["force_min_curve"]['value']
             ax.plot(distance_data[index_max], force_data[index_max],
-                    color='#1b7837', marker='o', label='min press')
+                    color='#1b7837', marker='o', ls='None', label='min press')
             ax.plot(distance_data[index_max], max_curve,
                     color='pink', marker='o', label='min curve', ls='None')
             ax.set_ylabel("Force (pN)")
@@ -334,35 +600,46 @@ class Controller:
             if 'distance_fitted_classification_max' in curve.graphics:
                 ax.plot(curve.graphics['distance_fitted_classification_max'],
                         curve.graphics['fitted_classification_max'], label='fit classification max')
-            if 'distance_fitted_classification_transition' in curve.graphics:
-                ax.plot(curve.graphics['distance_fitted_classification_transition'],
-                        curve.graphics['fitted_classification_transition'], label='fit classification transition')
+            if 'distance_fit_classification_transition' in curve.graphics:
+                ax.plot(curve.graphics['distance_fit_classification_transition'],
+                        curve.graphics['fit_classification_transition'], label='fit classification transition')
+            if 'distance_fitted_classification_return_endline' in curve.graphics:
+                ax.plot(curve.graphics['distance_fitted_classification_return_endline'],
+                        curve.graphics['fitted_classification_return_endline'], label='fit classification return')
             if self.view.methods['optical'] == "Correction":
                 index_x_0 = curve.features['contact_theorical_pull']['index']
             else:
                 index_x_0 = curve.features['point_release']['index']
             index_max = curve.features['force_max_curve']['index']
-            if curve.features['point_return_endline']['index'] != "NaN":
+            if 'point_return_manual' in curve.features:
+                index_return = curve.features['point_return_manual']['index']
+                ax.plot(distance_data[index_return], y_smooth[index_return],
+                        color='#50441b', marker='P', ls='None', label='point return manual')
+            elif curve.features['point_return_endline']['index'] != "NaN":
                 index_return = curve.features['point_return_endline']['index']
                 ax.plot(distance_data[index_return], y_smooth[index_return],
-                        color='#50441b', marker='o', label='return')
-            if 'transition_point' in curve.features and curve.features['transition_point']['index'] != 'NaN':
-                index_transition = curve.features['transition_point']['index']
+                        color='#50441b', marker='o', ls='None', label='return')
+            if 'point_transition_manual' in curve.features:
+                index_transition = curve.features['point_transition_manual']['index']
                 ax.plot(distance_data[index_transition], force_data[index_transition],
-                        color='#1E90FF', marker='o', label='transition')
+                        marker='P', ls='None', color='#1E90FF', label='point transition manual')
+            elif 'transition_point' in curve.features and curve.features['transition_point']['index'] != 'NaN':
+                index_trasition = curve.features['transition_point']['index']
+                ax.plot(distance_data[index_trasition], force_data[index_trasition],
+                        marker='o', ls='None', color='#1E90FF', label='transition point')
             if 'type' in curve.features:
 
                 if curve.features['type'] != 'NAD' and curve.features['type'] != 'RE':
                     ax.plot(distance_data[index_max], force_data[index_max],
-                            color='#1b7837', marker='o', label='max')
+                            color='#1b7837', marker='o', ls='None', label='max')
             else:
                 if curve.features['automatic_type'] != 'NAD' \
                         or curve.features['automatic_type'] != 'RE':
                     ax.plot(distance_data[index_max], force_data[index_max],
-                            color='#1b7837', marker='o', label='max')
+                            color='#1b7837', marker='o', ls='None', label='max')
         if index_x_0 != 0:
             ax.plot(distance_data[index_x_0], force_data[index_x_0],
-                    color='#762a83', marker='o', label='contact')
+                    color='#762a83', marker='o', ls='None', label='contact')
 
         ax.set_ylim(curve.features['force_min_curve']['value']-2,
                     curve.features['force_max_curve']['value'] + 2)
@@ -372,7 +649,7 @@ class Controller:
         return graph_position
     #############################################################################################
 
-    @staticmethod
+    @ staticmethod
     def plot_time(curve, fig, graph_position):
         """
         allows the display of graphs as a function of time on the 3 axes
@@ -412,30 +689,38 @@ class Controller:
         index_min_press = curve.features['force_min_press']['index']
         index_release = curve.features['point_release']['index']
         index_max = data_total[main_axis + 'Signal1'].argmax()
-        if 'transition_point' in curve.features and curve.features['transition_point']['index'] != 'NaN':
+        if 'point_transition_manual' in curve.features:
+            index_transition = curve.features['point_transition_manual']['index']
+            ax1.plot(time_data_pull[index_transition], force_data_pull[index_transition],
+                     marker='P', ls='None', color='black', label='point transition manual')
+        elif 'transition_point' in curve.features and curve.features['transition_point']['index'] != 'NaN':
             index_trasition = curve.features['transition_point']['index']
             ax1.plot(time_data_pull[index_trasition], force_data_pull[index_trasition],
-                     marker='o', color='#1E90FF', label='transition point')
-        if curve.features['point_return_endline']['index'] != 'NaN':
+                     marker='o', ls='None', color='#1E90FF', label='transition point')
+        if 'point_return_manual' in curve.features:
+            index_return_endline = curve.features['point_return_manual']['index']
+            ax1.plot(time_data_pull[index_return_endline], force_data_pull[index_return_endline],
+                     marker='P', ls='None', color='#50441b', label='point return manual')
+        elif curve.features['point_return_endline']['index'] != 'NaN':
             index_return_endline = curve.features['point_return_endline']['index']
             ax1.plot(time_data_pull[index_return_endline], force_data_pull[index_return_endline],
-                     marker='o', color='#50441b', label='return endline')
+                     marker='o', ls='None', color='#50441b', label='return endline')
         ax1.plot(data_total['time'][index_contact], data_total[main_axis + 'Signal1']
-                 [index_contact], marker='o', color='#762a83', label='contact point')
+                 [index_contact], marker='o', ls='None', color='#762a83', label='contact point')
         ax1.plot(data_total['time'][index_min_press], data_total[main_axis + 'Signal1']
-                 [index_min_press], marker='o', color='#8b5847', label='min press')
+                 [index_min_press], marker='o', ls='None', color='#8b5847', label='min press')
         ax1.plot(curve.features['time_min_curve']['value (s)'], curve.features['force_min_curve']
-                 ['value'], marker='o', label='min curve', color='red')
+                 ['value'], marker='o', ls='None', label='min curve', color='red')
         ax1.plot(time_data_pull[index_release], force_data_pull[index_release],
-                 marker='o', color='#762a83', label='release point')
+                 marker='o', ls='None', color='#762a83', label='release point')
         if 'type' in curve.features:
             if curve.features['type'] != 'NAD' and curve.features['type'] != 'RE':
                 ax1.plot(data_total['seriesTime'][index_max], data_total[main_axis+'Signal1'][index_max],
-                         marker='o', color='#1b7837', label='max curve')
+                         marker='o', ls='None', color='#1b7837', label='max curve')
         else:
             if curve.features['automatic_type'] != 'NAD' and curve.features['automatic_type'] != 'RE':
                 ax1.plot(data_total['seriesTime'][index_max], data_total[main_axis + 'Signal1'][index_max],
-                         marker='o', color='#1b7837', label='max curve')
+                         marker='o', ls='None', color='#1b7837', label='max curve')
         ax1.legend(loc="lower left", ncol=2)
         return graph_position
 
@@ -456,7 +741,7 @@ class Controller:
             check_distance: bool
                 presence of the distance column in the curve segment data
         """
-        #nb_graph = 1
+        # nb_graph = 1
         check_distance = False
         list_curves_for_graphs = list(self.dict_curve.values())
         fig = Figure()
@@ -576,8 +861,34 @@ class Controller:
                     num_segment += 1
         return fig, curve, check_distance
 
+    ##############################################################################################
+
+    def add_feature(self, name_curve, add_key, add_value):
+        """
+        Allows to add data to the parameter dictionary of each curve
+
+        :parameters:
+            name_curve: str
+                file name of the curve
+            add_key: str
+                key to add in the features
+            add_value: struct
+                any data structure storing important information
+        """
+        for curve in self.dict_curve.values():
+            if curve.file == name_curve:
+                curve.add_feature(add_key, add_value)
+            if add_key not in curve.features:
+                if add_key == 'type':
+                    curve.add_feature(
+                        add_key, curve.features['automatic_type'])
+                elif add_key in ('valid_fit_press', 'valid_fit_pull'):
+                    curve.add_feature(add_key, 'False')
+                elif add_key == 'AL':
+                    curve.add_feature(add_key, curve.features['AL']['AL'])
+
     ###########################################################################################################################################
-    @staticmethod
+    @ staticmethod
     def save_plot_step(fig, curve, abscissa_curve, directory_graphs):
         """
         recording of step-by-step graphics. Only the one displayed is saved as a png image
@@ -610,68 +921,11 @@ class Controller:
             name_img = 'fig_' + name_curve + '_' + str(today) + '_overview.png'
         fig.savefig(path_graphs.__str__() + sep +
                     name_img, bbox_inches='tight')
+        fig.close()
 
     ##############################################################################################
 
-    def add_feature(self, name_curve, add_key, add_value):
-        """
-        Allows to add data to the parameter dictionary of each curve
-
-        :parameters:
-            name_curve: str
-                file name of the curve
-            add_key: str
-                key to add in the features
-            add_value: struct
-                any data structure storing important information
-        """
-        for curve in self.dict_curve.values():
-            if curve.file == name_curve:
-                curve.add_feature(add_key, add_value)
-            if add_key not in curve.features:
-                if add_key == 'type':
-                    curve.add_feature(
-                        add_key, curve.features['automatic_type'])
-                elif add_key in ('valid_fit_press', 'valid_fit_pull'):
-                    curve.add_feature(add_key, 'False')
-                elif add_key == 'AL':
-                    curve.add_feature(add_key, curve.features['AL']['AL'])
-
-    ##############################################################################################
-
-    def clear(self):
-        """
-        Reset of the controller data structure
-        """
-        self.files = []
-        self.dict_curve = {}
-        self.test = None
-        self.output = pd.DataFrame()
-
-    ################################################################################################
-
-    def set_list_files(self, path):
-        """
-        Creation of a file list based on a given directory
-
-        :parameters:
-            path: str
-                path to a study folder
-        """
-        path_repository_study = Path(path)
-        # Allows you to retrieve all the file names of the directory and store them in a list
-        if path_repository_study.is_dir():
-            for element in path_repository_study.iterdir():
-                if element.is_file():
-                    self.files.append(element.__str__())
-                elif element.is_dir():
-                    self.set_list_files(element)
-        else:
-            self.files = [path_repository_study.__str__()]
-
-    ##############################################################################################
-
-    @staticmethod
+    @ staticmethod
     def parsing_generic(file):
         """
         Functioning to parse the headers of jpk_nt_force text files.
@@ -697,7 +951,7 @@ class Controller:
         return header
 
     ##############################################################################################
-    @staticmethod
+    @ staticmethod
     def parsing_data(file, endfile=False):
         """
         Function that parses the data to produce a matrix
@@ -726,7 +980,7 @@ class Controller:
         return data
 
     ##############################################################################################
-    @staticmethod
+    @ staticmethod
     def management_data(file, nb_segments, num_segment, header_global):
         """
         allows to manage the different cases of segmentation of the curves
@@ -764,7 +1018,7 @@ class Controller:
         return segment
 
     #############################################################################################
-    @staticmethod
+    @ staticmethod
     def check_file_incomplete(lines, header_global, nb_segments):
         """
         Checks the file, especially if the segments comply
@@ -797,7 +1051,7 @@ class Controller:
         return check_incomplete
 
     #############################################################################################
-    @staticmethod
+    @ staticmethod
     def file_troncated(jpk_object):
         """
         Verification of uninterrupted file during manipulation
@@ -830,183 +1084,9 @@ class Controller:
                 check_incomplete = True
         return check_incomplete
 
-    #############################################################################################
-
-    @staticmethod
-    def open_file(file, name_file, threshold_align, pulling_length=50):
-        """
-        if file .txt
-        Processing of the curve file to create an object
-        with all the information necessary for its study
-
-        :parameter:
-            file: str
-                name of the curve file
-            threshold_align: int
-                percentage of maximum force for misalignment
-        :return:
-            new_curve: object
-                Curved object with 1 title, 4 dictionaries and 2 dataframes
-            check_incomplete: bool
-                takes True if the file is incomplete otherwise False
-        """
-        new_curve = None
-        header = {}
-        check_incomplete = False
-        nb_segments = 0
-        dict_segments = {}
-        title = name_file.split(sep)[-1].replace(".txt", "")
-        # file_curve = file.__str__().split(sep)[-1]  # .replace('.txt', "")
-        file_curve = name_file.split('.')[0:-1]
-        file_curve = '.'.join(file_curve)
-        check_incomplete = False
-        with open(file, 'r') as file_study:
-            lines = file_study.read()
-            file_study.seek(0)
-            header['header_global'] = Controller.parsing_generic(file_study)
-            nb_segments = int(header['header_global']
-                              ["settings.segments.size"])
-            header['calibrations'] = Controller.parsing_generic(file_study)
-            check_incomplete = Controller.check_file_incomplete(lines, header['header_global'],
-                                                                nb_segments)
-            if check_incomplete:
-                Controller.file_incomplete_rejected("txt", file)
-            else:
-                num_segment = 0
-                while num_segment < nb_segments:
-                    segment = Controller.management_data(file_study, nb_segments,
-                                                         num_segment, header['header_global'])
-                    if num_segment < nb_segments-1:
-                        settings_segment = 'settings.segment.' + \
-                            str(num_segment + 1)
-                        if header['header_global'][settings_segment + '.style'] != "motion":
-                            if float(header['header_global'][settings_segment +
-                                                             ".duration"]) == 0.0:
-                                num_segment += 1
-                    num_segment += 1
-                    dict_segments[segment.name] = segment
-                new_curve = Curve(file_curve, title, header,
-                                  dict_segments, pulling_length)
-                dict_align = Controller.alignment_curve(
-                    file, new_curve, threshold_align)
-                new_curve.features['automatic_AL'] = dict_align
-                new_curve.features['AL'] = dict_align['AL']
-
-        return new_curve, check_incomplete
-
-    ################################################################################################
-
-    @staticmethod
-    def create_object_curve(file, name_file, threshold_align, pulling_length=50):
-        """
-        Creation of the Curve object after extraction of the data from the jpk-nt-force coded file
-
-        :parameters:
-            file: str
-                path to the jpk-nt-force folder to extract and transform into a Curve python object
-            threshold_align: int
-                percentage of maximum force for misalignment
-
-        :return:
-            new_curve: Object
-                returns our curve object ready for analysis and classification
-            check_incomplete: bool
-                takes True if the file is incomplete otherwise False
-        """
-        new_curve = None
-        new_jpk = JPKFile(file)
-        # .replace('.jpk-nt-force', '')
-        # file_curve = name_file.__str__().split(sep)[-1]
-        file_curve = name_file.split('.')[0:-1]
-        file_curve = '.'.join(file_curve)
-        check_incomplete = False
-        check_incomplete = Controller.file_troncated(new_jpk)
-        if check_incomplete:
-            Controller.file_incomplete_rejected("jpk", file)
-        else:
-            columns = []
-            dict_segments = {}
-            for key in new_jpk.segments[0].data.keys():
-                columns.append(key)
-            time_end_segment = 0
-            time_step = 0
-            list_name_segment = ["Press", "Wait", "Pull"]
-            num_segment = 0
-            for segment in new_jpk.segments:
-                name_segment = ""
-                dataframe = pd.DataFrame()
-                for index_column in range(0, len(columns), 1):
-                    if columns[index_column] == 't':
-                        data_time = segment.get_array([columns[index_column]])
-                        dataframe['time'] = data_time
-                        dataframe['seriesTime'] = dataframe['time'].add(time_end_segment
-                                                                        + time_step)
-                        if segment.index == 0:
-                            time_step = dataframe['time'][1]
-                        time_end_segment = dataframe['seriesTime'][len(
-                            dataframe['seriesTime'])-1]
-                    elif columns[index_column] == 'distance':
-                        data_distance = segment.get_array(
-                            [columns[index_column]])
-                        if len(data_distance) != 0:
-                            dataframe['distance'] = data_distance
-                    else:
-                        data_by_column = segment.get_array(
-                            [columns[index_column]])
-                        dataframe[columns[index_column]] = data_by_column[:, 0]
-                if float(new_jpk.headers["header_global"]["settings.segment."
-                                                          + str(num_segment) + ".duration"]) == 0.0:
-                    num_segment += 1
-                if segment.header['segment-settings.style'] == "motion":
-                    if num_segment in (0, 1, 2):
-                        name_segment = list_name_segment[num_segment]
-                    # else:
-                    #     name_segment = "Motion_" + str(num_segment)
-                else:
-                    if num_segment in (0, 1):
-                        name_segment = list_name_segment[num_segment]
-                    # else:
-                    #     name_segment = "Wait_" + str(num_segment)
-                num_segment += 1
-                dataframe = dataframe.apply(to_numeric)
-                new_segment = Segment(segment.header, dataframe, name_segment)
-                dict_segments[new_segment.name] = new_segment
-            title = new_jpk.headers['title']
-            new_curve = Curve(file_curve, title, new_jpk.headers,
-                              dict_segments, pulling_length)
-            dict_align = Controller.alignment_curve(
-                file, new_curve, threshold_align)
-            new_curve.features['automatic_AL'] = dict_align
-            new_curve.features['AL'] = dict_align['AL']
-        return new_curve, check_incomplete
-
     ############################################################################################
 
-    @staticmethod
-    def file_incomplete_rejected(extension, file):
-        """
-        Allows you to copy files with incomplete segments to a folder
-
-        ;parameters:
-            extension: str
-                extension of the curve file (txt or jpk-nt-force)
-            file: str
-                name of the curve file
-        """
-        path_dir_incomplete = ""
-        if extension == "jpk":
-            path_dir_incomplete = Path(
-                '..' + sep + 'File_rejected' + sep + 'Incomplete' + sep + 'JPK')
-        else:
-            path_dir_incomplete = Path(
-                '..' + sep + 'File_rejected' + sep + 'Incomplete' + sep + 'TXT')
-        path_dir_incomplete.mkdir(parents=True, exist_ok=True)
-        copy(file, str(path_dir_incomplete))
-        print("File incomplete")
-
-    ############################################################################################
-
-    @staticmethod
+    @ staticmethod
     def alignment_curve(file, new_curve, threshold_align):
         """
         Calls the result of the method of checking the curved object well aligned on the main axis.
@@ -1097,7 +1177,7 @@ class Controller:
         else:
             explode_incomplete = None
         ax_incomplete.pie(values_incomplete, explode=explode_incomplete,
-                          autopct=lambda pct: Controller.make_autopct(pct, dict_incomplete), shadow=True)
+                          autopct=lambda pct: self.make_autopct(pct, dict_incomplete), shadow=True)
         title = 'Incomplete \nTotal files: ' + \
             str(nb_files) + '\nTotal_files_curve: ' + \
             str(nb_incomplete + nb_curves)
@@ -1141,11 +1221,11 @@ class Controller:
         values_align_supervised = [
             percent_alignment_supervised, percent_conforming_supervised]
 
-        ax_alignment_auto.pie(values_align_auto, explode=explode_align, autopct=lambda pct: Controller.make_autopct(
+        ax_alignment_auto.pie(values_align_auto, explode=explode_align, autopct=lambda pct: self.make_autopct(
             pct, dict_align_auto), shadow=True, startangle=45)
         ax_alignment_auto.set_title(
             'Automatic Alignment\nTreated curves: ' + str(nb_curves))
-        ax_alignment_supervised.pie(values_align_supervised, explode=explode_align, autopct=lambda pct: Controller.make_autopct(
+        ax_alignment_supervised.pie(values_align_supervised, explode=explode_align, autopct=lambda pct: self.make_autopct(
             pct, dict_align_supervised), shadow=True, startangle=45)
         ax_alignment_supervised.set_title(
             'Supervised Alignment\nTreated curves: ' + str(nb_curves))
@@ -1170,7 +1250,7 @@ class Controller:
         values = [f"{percent_FTU_auto:.2f}", f"{percent_NAD_auto:.2f}",
                   f"{percent_RE_auto:.2f}", f"{percent_AD_auto:.2f}", f"{percent_ITU_auto:.2f}"]
         values_auto = [value for value in values if value != '0.00']
-        ax_classification_before.pie(values_auto, autopct=lambda pct: Controller.make_autopct(
+        ax_classification_before.pie(values_auto, autopct=lambda pct: self.make_autopct(
             pct, dict_classification_auto), shadow=True, startangle=45)
         ax_classification_before.set_title(
             'Classification before\nConforming curves: ' + str(nb_conforming_curves_auto))
@@ -1187,7 +1267,7 @@ class Controller:
         values = [percent_no_correction,
                   percent_auto_correction, percent_manual_correction]
         values_correction = [value for value in values if value != 0]
-        ax_correction.pie(values_correction, autopct=lambda pct: Controller.make_autopct(
+        ax_correction.pie(values_correction, autopct=lambda pct: self.make_autopct(
             pct, dict_correction_percent), shadow=True, startangle=45)
         ax_correction.set_title(
             'State Correction\nTreated curves: ' + str(nb_curves))
@@ -1213,16 +1293,16 @@ class Controller:
         values = [f"{percent_FTU_supervised:.2f}", f"{percent_NAD_supervised:.2f}",
                   f"{percent_RE_supervised:.2f}", f"{percent_AD_supervised:.2f}", f"{percent_ITU_supervised:.2f}"]
         values_supervised = [value for value in values if value != "0.00"]
-        ax_classification_after.pie(values_supervised, autopct=lambda pct: Controller.make_autopct(
+        ax_classification_after.pie(values_supervised, autopct=lambda pct: self.make_autopct(
             pct, dict_classification_supervised), shadow=True, startangle=45)
         ax_classification_after.set_title(
             'Classification after\nConforming curves: ' + str(nb_conforming_curves_supervised))
 
         return fig
+
     ##################################################################################################################################
 
-    @staticmethod
-    def make_autopct(pct, dico):
+    def make_autopct(self, pct, dico):
         """
         management of the labels of the corners of the diagram
 
@@ -1252,8 +1332,39 @@ class Controller:
             print(traceback.format_exc())
             print('value problem')
             print('###########################################')
+            if self.logger is not None:
+                self.logger.info('###########################################')
+                self.logger.error(type(error).__name__, ':')
+                self.logger.error(error)
+                self.logger.error(traceback.format_exc())
+                self.logger.info('###########################################')
         if retour != None:
             return retour
+
+    #############################################################################################################################
+
+    def scatter_bilan(self, fig):
+        ax1 = fig.add_subplot(121)
+        ax2 = fig.add_subplot(122)
+        color_dict = {'AD': 'red', 'FTU': 'green'}
+        for curve in self.dict_curve.values():
+            if curve.features['type'] in ('AD', 'FTU'):
+                ax1.plot(abs(curve.features['jump_distance_end_pull (nm)']), curve.features['jump_force_end_pull (pN)'],
+                         marker='o', color=color_dict[curve.features['type']])
+                ax2.plot(curve.features["slope_fitted_classification_return_endline"],
+                         curve.features['jump_force_end_pull (pN)'], marker='o', color=color_dict[curve.features['type']])
+        max_xlim = ax2.get_xlim()[1]
+        ax2.set_xlim(-max_xlim, max_xlim)
+        ax1.axvline(self.view.methods['jump_distance'], ls='-.')
+        ax1.axhline(self.view.methods['jump_force'], ls='-.')
+        ax2.axvline(0.025, ls='-.')
+        ax2.axvline(-0.025, ls='-.')
+        ax1.set_xlabel("jump_distance (nm)")
+        ax1.set_ylabel("jump_force (pN)")
+        ax2.set_ylabel("jump_force (pN)")
+        ax2.set_xlabel("slope_fit_max_return (pN/nm)")
+
+        return fig
     #########################################################################################################
 
     def count_cell_bead(self):
@@ -1288,6 +1399,17 @@ class Controller:
         nb_cells = len(dict_cells)
         nb_couples = len(dict_couple)
         return nb_beads, nb_cells, nb_couples
+
+    ##############################################################################################
+
+    def clear(self):
+        """
+        Reset of the controller data structure
+        """
+        self.files = []
+        self.dict_curve = {}
+        self.test = None
+        self.output = pd.DataFrame()
 
     ##############################################################################################
 
@@ -1388,7 +1510,7 @@ def parse_args():
     parser.add_argument(
         "-o", "--output", help="Name of the folder where to save the results", required=True)
     parser.add_argument("-m", "--method", type=argparse.FileType('r'),
-                        help="path to a method file (.tsv)")
+                        help="path to a method file (.tsv)", required=True)
     return parser.parse_args()
 
 
@@ -1397,6 +1519,8 @@ if __name__ == "__main__":
     args = parse_args()
     PATH_FILES = args.path
     OUTPUT_DIRECTORY = args.output
+    METHOD = args.method
     controller = Controller(None, PATH_FILES)
+    controller.create_dict_curves(METHOD)
     controller.output_save(OUTPUT_DIRECTORY)
     print("--- %s seconds ---" % (time() - START_TIME))
