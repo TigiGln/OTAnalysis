@@ -51,10 +51,8 @@ class Controller:
 
         if path_files is not None:
             self.manage_list_files(path_files)
-        if self.view.check_logger.isChecked():
-            self.logger = logging.getLogger('logger_otanalysis.controller')
-        else:
-            self.logger = None
+        if self.view.check_logger:
+            logging.getLogger('logger_otanalysis.controller')
             # methods = {'threshold_align': 30, 'pulling_length': 50, 'model': 'linear',
             #            'eta': 0.5, 'bead_radius': 1, 'factor_noise': 5, 'jump_force': 5,
             #            'jump_point': 200, 'jump_distance': 200, 'drug': 'NaN', 'condition':
@@ -226,17 +224,17 @@ class Controller:
                         try:
                             error = new_curve.analyzed_curve(
                                 methods, False)
-                            if self.logger is not None and error is not None:
-                                self.logger.info(
+                            if self.view.check_logger and error is not None:
+                                logging.info(
                                     '###########################################')
-                                self.logger.info(
+                                logging.info(
                                     new_curve.file)
-                                self.logger.debug(
+                                logging.info(
                                     '###########################################')
-                                self.logger.error(type(error).__name__, ':')
-                                self.logger.error(error)
-                                self.logger.error(traceback.format_exc())
-                                self.logger.info(
+                                logging.error(type(error).__name__, ':')
+                                logging.error(error)
+                                logging.error(traceback.format_exc())
+                                logging.info(
                                     '###########################################')
                             self.dict_curve[new_curve.file] = new_curve
                             new_curve.features['type'] = new_curve.features['automatic_type']
@@ -437,14 +435,14 @@ class Controller:
         print(traceback.format_exc())
         print(message)
         print('###########################################')
-        if self.logger is not None:
-            self.logger.info('###########################################')
-            self.logger.info(file)
-            self.logger.info('###########################################')
-            self.logger.error(type(error).__name__, ':')
-            self.logger.error(error)
-            self.logger.error(traceback.format_exc())
-            self.logger.info('###########################################')
+        if self.view.check_logger:
+            logging.info('###########################################')
+            logging.info(file)
+            logging.info('###########################################')
+            logging.error(type(error).__name__, ':')
+            logging.error(error)
+            logging.error(traceback.format_exc())
+            logging.info('###########################################')
 
     ############################################################################################
 
@@ -1332,12 +1330,12 @@ class Controller:
             print(traceback.format_exc())
             print('value problem')
             print('###########################################')
-            if self.logger is not None:
-                self.logger.info('###########################################')
-                self.logger.error(type(error).__name__, ':')
-                self.logger.error(error)
-                self.logger.error(traceback.format_exc())
-                self.logger.info('###########################################')
+            if self.view.check_logger:
+                logging.info('###########################################')
+                logging.error(type(error).__name__, ':')
+                logging.error(error)
+                logging.error(traceback.format_exc())
+                logging.info('###########################################')
         if retour != None:
             return retour
 

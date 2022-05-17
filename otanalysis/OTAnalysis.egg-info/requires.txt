@@ -6,3 +6,4 @@ PyQt5
 supyr-struct
 pathlib
 pytest
+m2r2

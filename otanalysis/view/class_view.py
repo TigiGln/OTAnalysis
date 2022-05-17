@@ -107,8 +107,9 @@ class View(QMainWindow, QWidget):
         self.directory_output = None
         self.check_plot_bilan = False
         self.check_cid = False
+        self.check_logger = False
         self.clear()
-        self.create_check_logger()
+        self.create_checkbox_logger()
         self.data_description()
         self.create_button_select_data()
         self.create_model_radio()
@@ -118,11 +119,11 @@ class View(QMainWindow, QWidget):
         self.create_select_correction_optical()
 
     #######################################################################################
-    def create_check_logger(self):
-        self.check_logger = QCheckBox("Logger")
-        self.check_logger.setChecked(True)
+    def create_checkbox_logger(self):
+        self.checkbox_logger = QCheckBox("Logger")
+        self.checkbox_logger.setChecked(True)
         self.main_layout.addWidget(
-            self.check_logger, 0, 1, 1, 1, alignment=Qt.AlignLeft)
+            self.checkbox_logger, 0, 1, 1, 1, alignment=Qt.AlignLeft)
 
     #######################################################################################
 
@@ -477,11 +478,10 @@ class View(QMainWindow, QWidget):
             condition = self.input_condition.text()
         self.methods['condition'] = condition
         self.methods['width_window_smooth'] = self.input_width_window_smooth.value()
-        if self.check_logger.isChecked():
+        if self.checkbox_logger.isChecked():
             create_logger()
-            self.logger = logging.getLogger('logger_otanalysis.view')
-        else:
-            self.logger = None
+            self.check_logger = True
+            logging.getLogger('logger_otanalysis.view')
         if self.controller.check_length_files:
             self.controller.create_dict_curves(self.methods)
         else:
@@ -807,6 +807,8 @@ class View(QMainWindow, QWidget):
                         plt.draw()
                 if len(self.interval_fit) == 2:
                     # pick_event_menu.setChecked(False)
+                    if self.interval_fit[0] > self.interval_fit[1]:
+                        self.interval_fit = [num for num in reversed(self.interval_fit)]
                     self.current_curve.fit_linear_classification(
                         self.interval_fit[0], self.interval_fit[1], name_fit)
                     for elem_graph in ax.lines:
@@ -1324,15 +1326,15 @@ class View(QMainWindow, QWidget):
                 plt.close()
             self.setFocus()
         except Exception as error:
-            if self.logger is not None:
-                self.logger.info('###########################################')
-                self.logger.info(self.current_curve.file)
-                self.logger.error(
+            if self.check_logger:
+                logging.info('###########################################')
+                logging.info(self.current_curve.file)
+                logging.info(
                     '###########################################')
-                self.logger.error(type(error).__name__, ':')
-                self.logger.error(error)
-                self.logger.error(traceback.format_exc())
-                self.logger.info('###########################################')
+                logging.error(type(error).__name__, ':')
+                logging.error(error)
+                logging.error(traceback.format_exc())
+                logging.info('###########################################')
             print('###########################################')
             print(type(error).__name__, ':')
             print(error)
@@ -1369,6 +1371,8 @@ class View(QMainWindow, QWidget):
                         marker='D', color='orange')
                 plt.draw()
                 if len(self.intreval_optical_effect) == 2:
+                    if self.intreval_optical_effect[0] > self.intreval_optical_effect[1]:
+                        self.intreval_optical_effect = [num for num in reversed(self.intreval_optical_effect)]
                     self.current_curve.correction_optical_effect_object.correction_optical_effect(
                         self.intreval_optical_effect, self.dict_fig_open[self.current_curve.file])
                     for child in self.graph_view.children():

@@ -9,15 +9,13 @@ otanalysis/OTAnalysis.egg-info/top_level.txt
 otanalysis/controller/__init__.py
 otanalysis/controller/controller.py
 otanalysis/extractor/__init__.py
-otanalysis/extractor/extractor_JPK.py
+otanalysis/extractor/jpk_extractor.py
 otanalysis/model/__init__.py
 otanalysis/model/class_curve.py
 otanalysis/model/class_optical_effect.py
 otanalysis/model/class_segment_curve.py
 otanalysis/multithread/__init__.py
 otanalysis/multithread/myThread.py
-otanalysis/tests/__init__.py
-otanalysis/tests/test_unitaire.py
 otanalysis/view/__init__.py
 otanalysis/view/class_graph_view.py
 otanalysis/view/class_info.py

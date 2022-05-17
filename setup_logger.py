@@ -18,4 +18,4 @@ def create_logger():
                         filemode="a",
                         format='%(asctime)s - %(levelname)s - %(message)s')
     logger = logging.getLogger('logger_otanalysis')
-    return logger
+    
