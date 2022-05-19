@@ -2,13 +2,13 @@
 requires = [
     'setuptools>=54',
     'wheel',
+    'recommonmark',
     'importlib-metadata; python_version<"3.8"',
     'numpy',
     'scipy',
     'pandas',
     'matplotlib',
     'PyQt5',
-    'm2r2'
 ]
 build-backend = "setuptools.build_meta"
 
