@@ -5,5 +5,10 @@ matplotlib
 PyQt5
 supyr-struct
 pathlib
+
+[dev]
 pytest
-m2r2
+pytest-cov
+sphinx
+sphinx-rtd-theme
+myst-parser
