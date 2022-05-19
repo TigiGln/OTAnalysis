@@ -6,7 +6,6 @@ requires = [
     'numpy',
     'scipy',
     'pandas',
-    'myst-parser',
     'matplotlib',
     'PyQt5',
 ]
