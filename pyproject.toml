@@ -2,7 +2,6 @@
 requires = [
     'setuptools>=54',
     'wheel',
-    'myst-parser',
     'importlib-metadata; python_version<"3.8"',
     'numpy',
     'scipy',
