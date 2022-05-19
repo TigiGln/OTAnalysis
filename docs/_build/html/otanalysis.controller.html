@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>otanalysis.controller package &mdash; OTAnalysis 1.0.0 documentation</title>
+  <title>otanalysis.controller package &mdash; OTAnalysis 0.2.71 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -95,7 +95,7 @@
 <p>Class Controller</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="otanalysis.controller.controller.Controller">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">otanalysis.controller.controller.</span></span><span class="sig-name descname"><span class="pre">Controller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">view</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">otanalysis.controller.controller.</span></span><span class="sig-name descname"><span class="pre">Controller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">view</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Instantiates “controller” objects for processing optical curves</p>
 <p>initialization of the basic attributes of the control</p>
@@ -129,7 +129,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.alignment_curve">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">alignment_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_curve</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_align</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.alignment_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.alignment_curve" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">alignment_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_curve</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_align</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.alignment_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.alignment_curve" title="Permalink to this definition"></a></dt>
 <dd><p>Calls the result of the method of checking the curved object well aligned on the main axis.
 If not then export the file to a rejected directory</p>
 <dl class="field-list simple">
@@ -155,7 +155,7 @@ If not then export the file to a rejected directory</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.check_file_incomplete">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check_file_incomplete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_global</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_segments</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.check_file_incomplete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.check_file_incomplete" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">check_file_incomplete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_global</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_segments</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.check_file_incomplete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.check_file_incomplete" title="Permalink to this definition"></a></dt>
 <dd><p>Checks the file, especially if the segments comply
 with the information present in the file header</p>
 <dl class="field-list simple">
@@ -186,6 +186,12 @@ with the information present in the file header</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.click_curve">
+<span class="sig-name descname"><span class="pre">click_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.click_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.click_curve" title="Permalink to this definition"></a></dt>
+<dd><p>TODO</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.count_cell_bead">
 <span class="sig-name descname"><span class="pre">count_cell_bead</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.count_cell_bead"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.count_cell_bead" title="Permalink to this definition"></a></dt>
 <dd><p>Calculation of the number of cells, beads and couples in each set for the bilan window</p>
@@ -205,24 +211,36 @@ with the information present in the file header</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.create_list_for_graphs">
-<span class="sig-name descname"><span class="pre">create_list_for_graphs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.create_list_for_graphs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.create_list_for_graphs" title="Permalink to this definition"></a></dt>
-<dd><p>creation of the list separating the curves in list of 2 for the display
-of the graphs sequentially</p>
+<dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.create_dict_curves">
+<span class="sig-name descname"><span class="pre">create_dict_curves</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methods</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">list_files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.create_dict_curves"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.create_dict_curves" title="Permalink to this definition"></a></dt>
+<dd><p>creation of the curve list according to the file extension and its conformity</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl class="simple">
-<dt>list_curves_for_graphs: list</dt><dd><p>list of list with the curve to analysis for display graph</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>methods: dict</dt><dd><p>Set of parameters to enter in the interface to launch the analysis</p>
 </dd>
 </dl>
-</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.create_list_files">
+<span class="sig-name descname"><span class="pre">create_list_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict_files</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.create_list_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.create_list_files" title="Permalink to this definition"></a></dt>
+<dd><p>Creation of a file list based on a given directory</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>path: str</dt><dd><p>path to a study folder</p>
+</dd>
+</dl>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.create_object_curve">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_object_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_align</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulling_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.create_object_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.create_object_curve" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">create_object_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_align</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulling_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.create_object_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.create_object_curve" title="Permalink to this definition"></a></dt>
 <dd><p>Creation of the Curve object after extraction of the data from the jpk-nt-force coded file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -246,8 +264,13 @@ of the graphs sequentially</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.display_legend">
+<span class="sig-name descname"><span class="pre">display_legend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.display_legend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.display_legend" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.file_incomplete_rejected">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">file_incomplete_rejected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extension</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.file_incomplete_rejected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.file_incomplete_rejected" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">file_incomplete_rejected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extension</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.file_incomplete_rejected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.file_incomplete_rejected" title="Permalink to this definition"></a></dt>
 <dd><p>Allows you to copy files with incomplete segments to a folder</p>
 <dl class="simple">
 <dt>;parameters:</dt><dd><dl class="simple">
@@ -262,7 +285,7 @@ of the graphs sequentially</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.file_troncated">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">file_troncated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jpk_object</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.file_troncated"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.file_troncated" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">file_troncated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jpk_object</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.file_troncated"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.file_troncated" title="Permalink to this definition"></a></dt>
 <dd><p>Verification of uninterrupted file during manipulation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -310,7 +333,7 @@ as a function of time and the main axis on the distance</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.make_autopct">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_autopct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dico</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.make_autopct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.make_autopct" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">make_autopct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dico</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.make_autopct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.make_autopct" title="Permalink to this definition"></a></dt>
 <dd><p>management of the labels of the corners of the diagram</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -324,8 +347,14 @@ val: label</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.manage_list_files">
+<span class="sig-name descname"><span class="pre">manage_list_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.manage_list_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.manage_list_files" title="Permalink to this definition"></a></dt>
+<dd><p>TODO</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.management_data">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">management_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_segments</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_segment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_global</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.management_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.management_data" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">management_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_segments</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_segment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_global</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.management_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.management_data" title="Permalink to this definition"></a></dt>
 <dd><p>allows to manage the different cases of segmentation of the curves</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameter</dt>
@@ -352,7 +381,7 @@ val: label</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.open_file">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">open_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_align</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulling_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.open_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.open_file" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">open_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_align</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulling_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.open_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.open_file" title="Permalink to this definition"></a></dt>
 <dd><p>if file .txt
 Processing of the curve file to create an object
 with all the information necessary for its study</p>
@@ -394,7 +423,7 @@ Writing of this dataframe in a csv file</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.parsing_data">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parsing_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.parsing_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.parsing_data" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">parsing_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.parsing_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.parsing_data" title="Permalink to this definition"></a></dt>
 <dd><p>Function that parses the data to produce a matrix</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameter</dt>
@@ -417,7 +446,7 @@ Writing of this dataframe in a csv file</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.parsing_generic">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parsing_generic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.parsing_generic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.parsing_generic" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">parsing_generic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.parsing_generic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.parsing_generic" title="Permalink to this definition"></a></dt>
 <dd><p>Functioning to parse the headers of jpk_nt_force text files.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameter</dt>
@@ -438,7 +467,7 @@ Writing of this dataframe in a csv file</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.piechart">
-<span class="sig-name descname"><span class="pre">piechart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.piechart"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.piechart" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">piechart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.piechart"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.piechart" title="Permalink to this definition"></a></dt>
 <dd><p>creation of pie charts for the analysis balance window</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -448,6 +477,30 @@ Writing of this dataframe in a csv file</p>
 <dd class="field-even"><p>fig: main figure completed by the different diagrams</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.piechart_alignment">
+<span class="sig-name descname"><span class="pre">piechart_alignment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_alignment</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.piechart_alignment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.piechart_alignment" title="Permalink to this definition"></a></dt>
+<dd><p>TODO</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.piechart_classification">
+<span class="sig-name descname"><span class="pre">piechart_classification</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_conforming_curves</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_classification</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.piechart_classification"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.piechart_classification" title="Permalink to this definition"></a></dt>
+<dd><p>TODO</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.piechart_incomplete">
+<span class="sig-name descname"><span class="pre">piechart_incomplete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.piechart_incomplete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.piechart_incomplete" title="Permalink to this definition"></a></dt>
+<dd><p>TODO</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.piechart_optical_correction">
+<span class="sig-name descname"><span class="pre">piechart_optical_correction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.piechart_optical_correction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.piechart_optical_correction" title="Permalink to this definition"></a></dt>
+<dd><p>TODO</p>
 </dd></dl>
 
 <dl class="py method">
@@ -479,7 +532,7 @@ Writing of this dataframe in a csv file</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.plot_time">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">plot_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curve</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph_position</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.plot_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.plot_time" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">plot_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curve</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph_position</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.plot_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.plot_time" title="Permalink to this definition"></a></dt>
 <dd><p>allows the display of graphs as a function of time on the 3 axes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -504,7 +557,7 @@ Writing of this dataframe in a csv file</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.problematic_curve">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">problematic_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.problematic_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.problematic_curve" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">problematic_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.problematic_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.problematic_curve" title="Permalink to this definition"></a></dt>
 <dd><p>function allowing to put in a separate folder the curves having had
 a problem during their analysis</p>
 <dl class="field-list simple">
@@ -539,7 +592,7 @@ a problem during their analysis</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.save_plot_step">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save_plot_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curve</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abscissa_curve</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory_graphs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.save_plot_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.save_plot_step" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">save_plot_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curve</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abscissa_curve</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory_graphs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.save_plot_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.save_plot_step" title="Permalink to this definition"></a></dt>
 <dd><p>recording of step-by-step graphics. Only the one displayed is saved as a png image</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -563,23 +616,15 @@ a problem during their analysis</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.set_list_curve">
-<span class="sig-name descname"><span class="pre">set_list_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methods</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.set_list_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.set_list_curve" title="Permalink to this definition"></a></dt>
-<dd><p>creation of the curve list according to the file extension and its conformity</p>
+<dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.scatter_bilan">
+<span class="sig-name descname"><span class="pre">scatter_bilan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.scatter_bilan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.scatter_bilan" title="Permalink to this definition"></a></dt>
+<dd><p>TODO</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="otanalysis.controller.controller.Controller.set_list_files">
-<span class="sig-name descname"><span class="pre">set_list_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.set_list_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.set_list_files" title="Permalink to this definition"></a></dt>
-<dd><p>Creation of a file list based on a given directory</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt>path: str</dt><dd><p>path to a study folder</p>
-</dd>
-</dl>
-</dd>
-</dl>
+<span class="sig-name descname"><span class="pre">set_list_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_files</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/controller/controller.html#Controller.set_list_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.controller.controller.Controller.set_list_files" title="Permalink to this definition"></a></dt>
+<dd><p>TODO</p>
 </dd></dl>
 
 <dl class="py method">

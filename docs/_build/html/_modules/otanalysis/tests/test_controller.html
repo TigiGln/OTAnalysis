@@ -1,18 +1,19 @@
 <!DOCTYPE html>
-<html class="writer-html4" lang="en" >
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>otanalysis.tests.test_controller &mdash; OTAnalysis 1.0.0 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <title>otanalysis.tests.test_controller &mdash; OTAnalysis 0.2.71 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -33,7 +34,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html">README</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules.html">OTAnalysis</a></li>
@@ -77,9 +78,9 @@
 <span class="sd">~/anaconda3/lib/python3.9/site-packages/past/builtins/misc.py</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">sep</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">sep</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">..controller.controller</span> <span class="k">import</span> <span class="n">Controller</span>
+<span class="kn">from</span> <span class="nn">..controller.controller</span> <span class="kn">import</span> <span class="n">Controller</span>
 
 
 <div class="viewcode-block" id="TestController"><a class="viewcode-back" href="../../../otanalysis.tests.html#otanalysis.tests.test_controller.TestController">[docs]</a><span class="k">class</span> <span class="nc">TestController</span><span class="p">:</span>
@@ -92,7 +93,8 @@
 <span class="sd">        This function is launched at each test to create the Controller object </span>
 <span class="sd">        and do the repetitive tasks before launching the test</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">directory_test</span> <span class="o">=</span> <span class="s1">&#39;otanalysis/tests/data_test/verif&#39;</span>
+        <span class="n">directory_test</span> <span class="o">=</span> <span class="s1">&#39;otanalysis&#39;</span> <span class="o">+</span> <span class="n">sep</span> <span class="o">+</span> <span class="s1">&#39;tests&#39;</span> <span class="o">+</span> \
+            <span class="n">sep</span> <span class="o">+</span> <span class="s1">&#39;data_test&#39;</span> <span class="o">+</span> <span class="n">sep</span> <span class="o">+</span> <span class="s1">&#39;verif&#39;</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">controller</span> <span class="o">=</span> <span class="n">Controller</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">directory_test</span><span class="p">)</span></div>
 
     <span class="c1">######################################################################################</span>
@@ -112,6 +114,7 @@
 <span class="sd">        analysis is not empty</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">controller</span><span class="o">.</span><span class="n">files</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">controller</span><span class="o">.</span><span class="n">dict_type_files</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">controller</span><span class="o">.</span><span class="n">dict_curve</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span></div>
 
     <span class="c1">######################################################################################</span>
