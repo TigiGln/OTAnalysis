@@ -1,0 +1,30 @@
+2022-05-19 11:37:57,164 - INFO - ###########################################
+2022-05-19 11:37:57,164 - INFO - /home/php/Documents/Thierry/set_etudiants/Omar RESUTATS/20170914-E6onPLL/b3c3g-2017.09.14-15.47.33.200.jpk-nt-force
+2022-05-19 11:37:57,164 - INFO - ###########################################
+2022-05-19 11:37:57,164 - ERROR - KeyError
+2022-05-19 11:37:57,164 - ERROR - 13495
+2022-05-19 11:37:57,164 - ERROR - Traceback (most recent call last):
+  File "/home/php/anaconda3/lib/python3.9/site-packages/pandas/core/indexes/range.py", line 385, in get_loc
+    return self._range.index(new_key)
+ValueError: 13495 is not in range
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 227, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1024, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 812, in curve_return_analyze
+    type_curve = self.classification(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 902, in classification
+    jump_time_start_pull = time_data[index_force_max] - time_data[index_release]
+  File "/home/php/anaconda3/lib/python3.9/site-packages/pandas/core/series.py", line 959, in __getitem__
+    return self._get_value(key)
+  File "/home/php/anaconda3/lib/python3.9/site-packages/pandas/core/series.py", line 1070, in _get_value
+    loc = self.index.get_loc(label)
+  File "/home/php/anaconda3/lib/python3.9/site-packages/pandas/core/indexes/range.py", line 387, in get_loc
+    raise KeyError(key) from err
+KeyError: 13495
+
+2022-05-19 11:37:57,164 - INFO - ###########################################

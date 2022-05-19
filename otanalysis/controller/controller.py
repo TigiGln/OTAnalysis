@@ -16,10 +16,12 @@ import re
 from math import ceil, floor
 import pandas as pd
 import numpy as np
+from math import isclose
 from pandas.core.tools.numeric import to_numeric
 from matplotlib.figure import Figure
 from matplotlib import gridspec
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 from ..model.class_curve import Curve
 from ..model.class_segment_curve import Segment
 from ..extractor.jpk_extractor import JPKFile
@@ -439,7 +441,7 @@ class Controller:
             logging.info('###########################################')
             logging.info(file)
             logging.info('###########################################')
-            logging.error(type(error).__name__, ':')
+            logging.error(type(error).__name__)
             logging.error(error)
             logging.error(traceback.format_exc())
             logging.info('###########################################')
@@ -517,11 +519,12 @@ class Controller:
                                 ax.legend(loc="lower left")
                             elif segment.name == 'Pull':
                                 handles, labels = ax.get_legend_handles_labels()
-                                for label in labels:
-                                    if label == 'smooth':
-                                        handles.pop(labels.index(label))
-                                        labels.pop(labels.index(label))
-
+                                i= len(labels)-1
+                                while i >= 0:
+                                    if labels[i] == 'smooth' or labels[i].startswith('fit'):
+                                        handles.pop(labels.index(labels[i]))
+                                        labels.pop(labels.index(labels[i]))
+                                    i -= 1
                                 ax.legend(handles, labels, loc="lower right")
 
         fig.subplots_adjust(wspace=0.3, hspace=0.5)
@@ -594,16 +597,19 @@ class Controller:
                     color='blue', alpha=0.5, ls='-.')
             if 'distance_fitted_classification_release' in curve.graphics:
                 ax.plot(curve.graphics['distance_fitted_classification_release'],
-                        curve.graphics['fitted_classification_release'], label='fit classification release')
+                        curve.graphics['fitted_classification_release'], label= 'fit classification release')
             if 'distance_fitted_classification_max' in curve.graphics:
                 ax.plot(curve.graphics['distance_fitted_classification_max'],
-                        curve.graphics['fitted_classification_max'], label='fit classification max')
-            if 'distance_fit_classification_transition' in curve.graphics:
-                ax.plot(curve.graphics['distance_fit_classification_transition'],
-                        curve.graphics['fit_classification_transition'], label='fit classification transition')
+                        curve.graphics['fitted_classification_max'], label= 'fit classification max')
             if 'distance_fitted_classification_return_endline' in curve.graphics:
                 ax.plot(curve.graphics['distance_fitted_classification_return_endline'],
-                        curve.graphics['fitted_classification_return_endline'], label='fit classification return')
+                        curve.graphics['fitted_classification_return_endline'], label= 'fit classification return')
+            if 'distance_fit_classification_transition' in curve.graphics:
+                ax.plot(curve.graphics['distance_fit_classification_transition'],
+                        curve.graphics['fit_classification_transition'], label= 'fit classification transition')
+            elif 'distance_fitted_classification_max_transition' in curve.graphics:
+                ax.plot(curve.graphics['distance_fitted_classification_max_transition'],
+                        curve.graphics['fitted_classification_max_transition'], label= 'fit classification transition')
             if self.view.methods['optical'] == "Correction":
                 index_x_0 = curve.features['contact_theorical_pull']['index']
             else:
@@ -721,6 +727,15 @@ class Controller:
                          marker='o', ls='None', color='#1b7837', label='max curve')
         ax1.legend(loc="lower left", ncol=2)
         return graph_position
+    #################################################################################################################
+    def display_legend(self, fig):
+        for ax in fig.axes:
+            if ax.get_legend():
+                if not self.view.display_legend.isChecked():
+                    ax.get_legend().set_visible(False)   
+                else:
+                    ax.get_legend().set_visible(True)
+        fig.canvas.draw_idle()
 
     ###########################################################################################################################################
     def global_plot(self, n):
@@ -1140,7 +1155,7 @@ class Controller:
 
     ##############################################################################################
 
-    def piechart(self, fig):
+    def piechart(self, fig, gs):
         """
         creation of pie charts for the analysis balance window
 
@@ -1151,11 +1166,74 @@ class Controller:
             fig: main figure completed by the different diagrams
         """
         # pie chart incomplete curves
-        ax_incomplete = fig.add_subplot(231)
+        #gs[line_time_min:line_time_max, 0:4]
+        ax_incomplete = fig.add_subplot(gs[0, 0])
+        ax_incomplete = self.piechart_incomplete(ax_incomplete)
+        title = 'Incomplete \nTotal files: ' + \
+            str(len(self.files)) + '\nTotal_files_curve: ' + \
+            str(len(self.list_file_imcomplete) + len(self.dict_curve))
+        ax_incomplete.set_title(title)
+        
+        # piechart auto alignment
+        ax_alignment_auto = fig.add_subplot(gs[0, 1])
+        ax_alignment_auto, nb_conform_auto = self.piechart_alignment(ax_alignment_auto, 'auto')
+        ax_alignment_auto.set_title('Automatic Alignment\nTreated curves: ' + str(len(self.dict_curve)))
+        # piechart supervised alignment
+        ax_alignment_supervised = fig.add_subplot(gs[0, 2])
+        ax_alignment_supervised, nb_conform_supervised = self.piechart_alignment(ax_alignment_supervised, 'supervised')
+        ax_alignment_supervised.set_title('Supervised Alignment\nTreated curves: ' + str(len(self.dict_curve)))
+
+        #piechart optical correction
+        ax_correction = fig.add_subplot(gs[1, 0])
+        ax_correction = self.piechart_optical_correction(ax_correction)
+        ax_correction.set_title(
+            'State Correction\nTreated curves: ' + str(len(self.dict_curve)))
+        
+        # piechart auto classification
+        ax_classification_before = fig.add_subplot(gs[1, 1])
+        ax_classification_before = self.piechart_classification(ax_classification_before, nb_conform_auto, "automatic_type")
+        ax_classification_before.set_title(
+                'Classification before\nConforming curves: ' + str(nb_conform_auto))
+
+        # piechart manual classification
+        ax_classification_after = fig.add_subplot(gs[1, 2])
+        ax_classification_after = self.piechart_classification(ax_classification_after, nb_conform_supervised, "type")
+        ax_classification_after.set_title(
+            'Classification after\nConforming curves: ' + str(nb_conform_supervised))
+
+        return fig
+    ###########################################################################################################
+    def piechart_alignment(self, ax, name_alignment):
+        """
+        TODO
+        """
+        nb_curves = len(self.dict_curve)
+        nb_alignment = 0
+        for curve in self.dict_curve.values():
+            if name_alignment == 'auto':
+                if curve.features['automatic_AL']['AL'] == 'No':
+                    nb_alignment += 1
+            elif name_alignment == 'supervised':
+                if curve.features['AL'] == 'No':
+                    nb_alignment += 1
+        nb_conforming_curves = nb_curves - nb_alignment
+        percent_alignment = nb_alignment/nb_curves * 100
+        percent_conforming = nb_conforming_curves/nb_curves * 100
+        dict_align_auto = {'AL': f"{percent_alignment:.2f}",
+                           'CONF': f"{percent_conforming:.2f}"}
+        explode_align = (0.1, 0)
+        values_align_auto = [percent_alignment, percent_conforming]
+        ax.pie(values_align_auto, explode=explode_align, autopct=lambda pct: self.make_autopct(
+            pct, dict_align_auto), shadow=True, startangle=45)
+        return ax, nb_conforming_curves
+
+    ######################################################################################################################
+    def piechart_incomplete(self, ax):
+        """
+        TODO
+        """
         nb_curves = len(self.dict_curve)
         nb_files = len(self.files)
-        dict_type_auto = {'NAD': 0, 'AD': 0, 'FTU': 0, 'ITU': 0, 'RE': 0}
-        dict_type_supervised = {'NAD': 0, 'AD': 0, 'FTU': 0, 'ITU': 0, 'RE': 0}
         nb_incomplete = len(self.list_file_imcomplete)
         percent_treat = nb_curves/nb_files * 100
         percent_incomplete = nb_incomplete/nb_files * 100
@@ -1174,86 +1252,61 @@ class Controller:
             explode_incomplete = (0, 0.1)
         else:
             explode_incomplete = None
-        ax_incomplete.pie(values_incomplete, explode=explode_incomplete,
+        ax.pie(values_incomplete, explode=explode_incomplete,
                           autopct=lambda pct: self.make_autopct(pct, dict_incomplete), shadow=True)
-        title = 'Incomplete \nTotal files: ' + \
-            str(nb_files) + '\nTotal_files_curve: ' + \
-            str(nb_incomplete + nb_curves)
-        ax_incomplete.set_title(title)
-        ax_alignment_auto = fig.add_subplot(232)
-        ax_alignment_supervised = fig.add_subplot(233)
-        ax_classification_before = fig.add_subplot(235)
-        ax_classification_after = fig.add_subplot(236)
-        nb_alignment_auto = 0
-        nb_alignment_supervised = 0
-        dict_correction = {'No_correction': 0,
-                           'Auto_correction': 0, 'Manual_correction': 0}
+
+        return ax
+    #######################################################################################################################
+    def piechart_classification(self, ax, nb_conforming_curves, name_classification):
+        """
+        TODO
+        """
+        dict_type = {'NAD': 0, 'AD': 0, 'FTU': 0, 'ITU': 0, 'RE': 0}
         for curve in self.dict_curve.values():
-            if curve.features['automatic_AL']['AL'] == 'No':
-                nb_alignment_auto += 1
-            elif curve.features['automatic_AL']['AL'] == 'Yes':
-                if curve.features['automatic_type'] in dict_type_auto:
-                    dict_type_auto[curve.features['automatic_type']] += 1
-            if curve.features['AL'] == 'No':
-                nb_alignment_supervised += 1
+            if curve.features['automatic_AL']['AL'] == curve.features['AL']:
+                if curve.features['automatic_AL']['AL'] == 'Yes':
+                    if curve.features[name_classification] in dict_type:
+                        dict_type[curve.features[name_classification]] += 1
             else:
-                if 'type' in curve.features:
-                    if curve.features['type'] in dict_type_supervised:
-                        dict_type_supervised[curve.features['type']] += 1
-            dict_correction[curve.features['optical_state']] += 1
-        nb_conforming_curves_auto = nb_curves - nb_alignment_auto
-        percent_alignment_auto = nb_alignment_auto/nb_curves * 100
-        percent_conforming_auto = nb_conforming_curves_auto/nb_curves * 100
-        dict_align_auto = {'AL': f"{percent_alignment_auto:.2f}",
-                           'CONF': f"{percent_conforming_auto:.2f}"}
+                if curve.features['AL'] == 'Yes':
+                    if curve.features[name_classification] in dict_type:
+                        dict_type[curve.features[name_classification]] += 1
 
-        percent_alignment_supervised = nb_alignment_supervised/nb_curves * 100
-        nb_conforming_curves_supervised = nb_curves - nb_alignment_supervised
-        percent_conforming_supervised = nb_conforming_curves_supervised/nb_curves * 100
-        dict_align_supervised = {
-            'AL': f"{percent_alignment_supervised:.2f}", 'CONF': f"{percent_conforming_supervised:.2f}"}
-
-        explode_align = (0.1, 0)
-
-        values_align_auto = [percent_alignment_auto, percent_conforming_auto]
-        values_align_supervised = [
-            percent_alignment_supervised, percent_conforming_supervised]
-
-        ax_alignment_auto.pie(values_align_auto, explode=explode_align, autopct=lambda pct: self.make_autopct(
-            pct, dict_align_auto), shadow=True, startangle=45)
-        ax_alignment_auto.set_title(
-            'Automatic Alignment\nTreated curves: ' + str(nb_curves))
-        ax_alignment_supervised.pie(values_align_supervised, explode=explode_align, autopct=lambda pct: self.make_autopct(
-            pct, dict_align_supervised), shadow=True, startangle=45)
-        ax_alignment_supervised.set_title(
-            'Supervised Alignment\nTreated curves: ' + str(nb_curves))
         percent_NAD_auto = 0
         percent_AD_auto = 0
         percent_FTU_auto = 0
         percent_ITU_auto = 0
         percent_RE_auto = 0
-        if nb_conforming_curves_auto != 0:
+        if nb_conforming_curves != 0:
             percent_NAD_auto = (
-                dict_type_auto['NAD']/nb_conforming_curves_auto * 100)
+                dict_type['NAD']/nb_conforming_curves * 100)
             percent_AD_auto = (
-                dict_type_auto['AD']/nb_conforming_curves_auto * 100)
+                dict_type['AD']/nb_conforming_curves * 100)
             percent_FTU_auto = (
-                dict_type_auto['FTU']/nb_conforming_curves_auto * 100)
+                dict_type['FTU']/nb_conforming_curves * 100)
             percent_ITU_auto = (
-                dict_type_auto['ITU']/nb_conforming_curves_auto * 100)
+                dict_type['ITU']/nb_conforming_curves * 100)
             percent_RE_auto = (
-                dict_type_auto['RE']/nb_conforming_curves_auto*100)
-        dict_classification_auto = {'NAD': f"{percent_NAD_auto:.2f}", 'AD': f"{percent_AD_auto:.2f}",
-                                    'FTU': f"{percent_FTU_auto:.2f}", 'ITU': f"{percent_ITU_auto:.2f}", 'RE': f"{percent_RE_auto:.2f}"}
-        values = [f"{percent_FTU_auto:.2f}", f"{percent_NAD_auto:.2f}",
-                  f"{percent_RE_auto:.2f}", f"{percent_AD_auto:.2f}", f"{percent_ITU_auto:.2f}"]
-        values_auto = [value for value in values if value != '0.00']
-        ax_classification_before.pie(values_auto, autopct=lambda pct: self.make_autopct(
-            pct, dict_classification_auto), shadow=True, startangle=45)
-        ax_classification_before.set_title(
-            'Classification before\nConforming curves: ' + str(nb_conforming_curves_auto))
+                dict_type['RE']/nb_conforming_curves*100)
+            dict_classification_auto = {'NAD': f"{percent_NAD_auto:.2f}", 'AD': f"{percent_AD_auto:.2f}",
+                                        'FTU': f"{percent_FTU_auto:.2f}", 'ITU': f"{percent_ITU_auto:.2f}", 'RE': f"{percent_RE_auto:.2f}"}
+            values = [f"{percent_FTU_auto:.2f}", f"{percent_NAD_auto:.2f}",
+                    f"{percent_RE_auto:.2f}", f"{percent_AD_auto:.2f}", f"{percent_ITU_auto:.2f}"]
+            values_auto = [value for value in values if value != '0.00']
+            ax.pie(values_auto, autopct=lambda pct: self.make_autopct(
+                pct, dict_classification_auto), shadow=True, startangle=45)
+        return ax
 
-        ax_correction = fig.add_subplot(234)
+    ####################################################################################################################################
+    def piechart_optical_correction(self, ax):
+        """
+        TODO
+        """
+        nb_curves = len(self.dict_curve)
+        dict_correction = {'No_correction': 0,
+                           'Auto_correction': 0, 'Manual_correction': 0}
+        for curve in self.dict_curve.values():
+            dict_correction[curve.features['optical_state']] += 1
         percent_no_correction = (
             dict_correction['No_correction']/nb_curves * 100)
         percent_auto_correction = (
@@ -1265,38 +1318,9 @@ class Controller:
         values = [percent_no_correction,
                   percent_auto_correction, percent_manual_correction]
         values_correction = [value for value in values if value != 0]
-        ax_correction.pie(values_correction, autopct=lambda pct: self.make_autopct(
+        ax.pie(values_correction, autopct=lambda pct: self.make_autopct(
             pct, dict_correction_percent), shadow=True, startangle=45)
-        ax_correction.set_title(
-            'State Correction\nTreated curves: ' + str(nb_curves))
-        percent_NAD_supervised = 0
-        percent_AD_supervised = 0
-        percent_FTU_supervised = 0
-        percent_ITU_supervised = 0
-        percent_RE_supervised = 0
-        if nb_conforming_curves_supervised != 0:
-            percent_NAD_supervised = (
-                dict_type_supervised['NAD']/nb_conforming_curves_supervised * 100)
-            percent_AD_supervised = (
-                dict_type_supervised['AD']/nb_conforming_curves_supervised * 100)
-            percent_FTU_supervised = (
-                dict_type_supervised['FTU']/nb_conforming_curves_supervised * 100)
-            percent_ITU_supervised = (
-                dict_type_supervised['ITU']/nb_conforming_curves_supervised * 100)
-            percent_RE_supervised = (
-                dict_type_supervised['RE']/nb_conforming_curves_supervised*100)
-        dict_classification_supervised = {'NAD': f"{percent_NAD_supervised:.2f}", 'AD': f"{percent_AD_supervised:.2f}",
-                                          'FTU': f"{percent_FTU_supervised:.2f}", 'ITU': f"{percent_ITU_supervised:.2f}",
-                                          'RE': f"{percent_RE_supervised:.2f}"}
-        values = [f"{percent_FTU_supervised:.2f}", f"{percent_NAD_supervised:.2f}",
-                  f"{percent_RE_supervised:.2f}", f"{percent_AD_supervised:.2f}", f"{percent_ITU_supervised:.2f}"]
-        values_supervised = [value for value in values if value != "0.00"]
-        ax_classification_after.pie(values_supervised, autopct=lambda pct: self.make_autopct(
-            pct, dict_classification_supervised), shadow=True, startangle=45)
-        ax_classification_after.set_title(
-            'Classification after\nConforming curves: ' + str(nb_conforming_curves_supervised))
-
-        return fig
+        return ax
 
     ##################################################################################################################################
 
@@ -1341,16 +1365,30 @@ class Controller:
 
     #############################################################################################################################
 
-    def scatter_bilan(self, fig):
-        ax1 = fig.add_subplot(121)
-        ax2 = fig.add_subplot(122)
+    def scatter_bilan(self, fig, gs):
+        """
+        TODO
+        """
+        self.check_annot = False
+        annotations_ax1 = []
+        annotations_ax2 = []
+        ax1 = fig.add_subplot(gs[0, 0])
+        ax2 = fig.add_subplot(gs[0, 1])
         color_dict = {'AD': 'red', 'FTU': 'green'}
         for curve in self.dict_curve.values():
             if curve.features['type'] in ('AD', 'FTU'):
-                ax1.plot(abs(curve.features['jump_distance_end_pull (nm)']), curve.features['jump_force_end_pull (pN)'],
-                         marker='o', color=color_dict[curve.features['type']])
-                ax2.plot(curve.features["slope_fitted_classification_return_endline"],
-                         curve.features['jump_force_end_pull (pN)'], marker='o', color=color_dict[curve.features['type']])
+                ax1.plot(curve.features['jump_distance_end_pull (nm)'], curve.features['jump_force_end_pull (pN)'],
+                         marker='o', color=color_dict[curve.features['type']], picker=True, label=curve.file)
+                annotations_ax1.append(ax1.annotate(curve.file, xy=(curve.features['jump_distance_end_pull (nm)'], 
+                                            curve.features['jump_force_end_pull (pN)']), xytext=(-50,10), 
+                                            textcoords="offset points", bbox=dict(boxstyle="round", fc="w"), visible=False))
+                if 'slope_fitted_classification_max_transition' in curve.features:
+                    ax2.plot(curve.features["slope_fitted_classification_max_transition"],
+                            curve.features['jump_force_end_pull (pN)'], marker='o', color=color_dict[curve.features['type']],
+                            picker=True, label=curve.file)
+                    annotations_ax2.append(ax2.annotate(curve.file, xy=(curve.features["slope_fitted_classification_max_transition"], 
+                                            curve.features['jump_force_end_pull (pN)']), xytext=(-50,10), 
+                                            textcoords="offset points", bbox=dict(boxstyle="round", fc="w"), visible=False))
         max_xlim = ax2.get_xlim()[1]
         ax2.set_xlim(-max_xlim, max_xlim)
         ax1.axvline(self.view.methods['jump_distance'], ls='-.')
@@ -1361,8 +1399,31 @@ class Controller:
         ax1.set_ylabel("jump_force (pN)")
         ax2.set_ylabel("jump_force (pN)")
         ax2.set_xlabel("slope_fit_max_return (pN/nm)")
-
+        fig.canvas.mpl_connect("pick_event", lambda event: self.click_curve(event, ax1, fig, annotations_ax1))
+        fig.canvas.mpl_connect("pick_event", lambda event: self.click_curve(event, ax2, fig, annotations_ax2))
+        fig.subplots_adjust(wspace=0.5)
         return fig
+
+    #########################################################################################################
+    def click_curve(self, event, ax, fig, annotations):
+        """
+        TODO
+        """
+        check_annot = False
+        for point in ax.get_lines():
+            if point.get_marker() == 'o': 
+                for annot in annotations:
+                    if isclose(event.mouseevent.xdata, point.get_xdata(), abs_tol=15) and isclose(event.mouseevent.ydata, point.get_ydata(), abs_tol=15):
+                        if point.get_label() == annot.get_text():
+                            if not annot.get_visible() and not check_annot:
+                                annot.set_visible(True)
+                                fig.canvas.draw_idle()
+                                check_annot = True
+                            else:
+                                annot.set_visible(False)
+                                fig.canvas.draw_idle()
+
+
     #########################################################################################################
 
     def count_cell_bead(self):

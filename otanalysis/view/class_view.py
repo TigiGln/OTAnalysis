@@ -15,16 +15,16 @@ from re import match
 import webbrowser
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib import gridspec
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT
+from matplotlib.lines import Line2D
 from PyQt5.QtWidgets import QWidget, QFileDialog, QFrame, QSpinBox, QApplication, QMenuBar, QMenu
 from PyQt5.QtWidgets import QPushButton, QRadioButton, QHBoxLayout, QVBoxLayout, QLabel, QMessageBox
 from PyQt5.QtWidgets import QLineEdit, QGridLayout, QGroupBox, QDoubleSpinBox, QButtonGroup, QComboBox
 from PyQt5.QtWidgets import QScrollArea, QMainWindow, QAction, QDialog, QCheckBox
 from PyQt5.QtCore import Qt, pyqtSignal, QEvent, QEventLoop, QTimer
 from PyQt5.QtGui import QIcon
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT
-from matplotlib.figure import Figure
-from matplotlib.lines import Line2D
 from ..view.class_info import Infowindow
 from ..view.class_toggle import QtToggle
 from ..view.class_graph_view import GraphView
@@ -120,6 +120,9 @@ class View(QMainWindow, QWidget):
 
     #######################################################################################
     def create_checkbox_logger(self):
+        """
+        Creation of the checkbox to record the logging
+        """
         self.checkbox_logger = QCheckBox("Logger")
         self.checkbox_logger.setChecked(True)
         self.main_layout.addWidget(
@@ -667,11 +670,17 @@ class View(QMainWindow, QWidget):
 
         pick_event = QAction("Pick event", self)
         pick_event.setStatusTip("Select fit transition")
-        pick_event.triggered.connect(self.check_pick_event)
+        pick_event.triggered.connect(self.click_pick_event)
         if not self.abscissa_curve and self.current_curve.features['type'] == "FTU":
             pick_event.setDisabled(False)
         else:
             pick_event.setDisabled(True)
+
+        self.display_legend = QAction("Delete legend graphs", self, checkable=True)
+        self.display_legend.setStatusTip("Delete legend all graph")
+        self.display_legend.triggered.connect(lambda: self.controller.display_legend(self.fig))
+        self.display_legend.setChecked(True)
+
 
         help = QAction("Help", self)
         help.setStatusTip("Ask help")
@@ -685,6 +694,7 @@ class View(QMainWindow, QWidget):
 
         action_edit = self.menubar.addMenu("Edit")
         action_edit.addAction(pick_event)
+        action_edit.addAction(self.display_legend)
         self.menubar.addAction(help)
         self.menubar.leaveEvent = self.retrieve_focus_window
 
@@ -708,7 +718,12 @@ class View(QMainWindow, QWidget):
         view.show()
 
     ########################################################################################
-    def check_pick_event(self):
+    def click_pick_event(self):
+        """
+        Action when clicking in the Edit menu of pick event
+        Creation of a dialog box with a drop-down list to choose 
+        the characteristic to select on the graph
+        """
         self.choices_selection = QDialog()
         label_choices_window = QLabel("What do you want to select ?")
         drop_down_menu = QComboBox()
@@ -728,6 +743,15 @@ class View(QMainWindow, QWidget):
 
     #######################################################################################
     def valid_pick_event(self, drop_down_menu):
+        """
+        Action when you have made a choice in the drop-down list and you press the "OK" button
+        Depending on whether we choose a fit or the selection of a characteristic point 
+        the action on the graph is different
+
+        :parameters:
+            drop_down_menu: object
+                the drop-down list widget to retrieve the user's choice
+        """
         choice = drop_down_menu.currentText()
         type_choice = choice.split('_')[0]
         if self.check_cid:
@@ -738,14 +762,24 @@ class View(QMainWindow, QWidget):
         elif type_choice == "point":
             self.cid = self.canvas.mpl_connect(
                 'pick_event', lambda event: self.select_point(event, choice))
-        self.manage_select_graph(type_choice, choice)
-        self.choices_selection.close()
+        if choice == "":
+            self.click_pick_event()
+        else:
+            self.manage_select_graph(type_choice, choice)
+            self.choices_selection.close()
 
     ########################################################################################
 
     def manage_select_graph(self, type_choice, choice):
         """
-        Features when you check the pick event box in the Edit menu
+        management of the display when choosing an element already on 
+        the graph and thus avoid duplication
+
+        :parameters:
+            type_choice: str
+                corresponds to the type of action to perform for clicks on the graph (fit or point)
+            choice: str
+                precision on the characteristic element to recover and modify
         """
         label = choice.replace("_", " ")
         for graph in self.fig.axes:
@@ -759,8 +793,10 @@ class View(QMainWindow, QWidget):
                         if child.get_label() == label:
                             child.remove()
                             plt.draw()
-                            del self.current_curve.graphics['distance_' + choice]
-                            del self.current_curve.graphics[choice]
+                            if 'distance_' + choice in self.current_curve.graphics:
+                                del self.current_curve.graphics['distance_' + choice]
+                            if choice in self.current_curve.graphics:
+                                del self.current_curve.graphics[choice]
                         self.check_cid = True
                     elif type_choice == "point":
                         origin_child = choice.split('_')[1]
@@ -789,6 +825,8 @@ class View(QMainWindow, QWidget):
         :parameters:
             event: Signal
                 mouse click event on the graph
+            name_fit: str
+                name of the fit to modify
         """
         label_graph = name_fit.replace("_", " ")
         if isinstance(event.artist, Line2D):
@@ -826,6 +864,15 @@ class View(QMainWindow, QWidget):
     ########################################################################################
 
     def select_point(self, event, name_point):
+        """
+        management of the click on the graph to select the corresponding point
+
+        :parameters:
+            event: Signal object
+                mouse click event on the graph
+            name_point: str
+                name of the point to modify
+        """
         label_graph = name_point.replace("_", " ")
         if isinstance(event.artist, Line2D):
             thisline = event.artist
@@ -1321,7 +1368,7 @@ class View(QMainWindow, QWidget):
                         self.cancel_correction)
                     button_accept_correction.hide()
                     self.graph_view.showMaximized()
-                    self.graph_view.closeEvent = self.close_window_optical
+                    self.graph_view.closeEvent = lambda event: self.close_window_second(event, 'optical')
             else:
                 plt.close()
             self.setFocus()
@@ -1438,24 +1485,32 @@ class View(QMainWindow, QWidget):
             frame.setFrameStyle(QFrame.Box | QFrame.Sunken)
             frame.setLineWidth(3)
             frame.setMidLineWidth(3)
-            self.fig_bilan = Figure()
-            toolbar = NavigationToolbar2QT(self.canvas, self)
-            self.graph_bilan.main_layout.addWidget(toolbar, 0, 0, 1, 1)
-            self.graph_bilan.main_layout.addWidget(frame, 0, 1, 1, 4)
+            self.fig_bilan = plt.figure()
+            self.canvas_bilan = FigureCanvasQTAgg(self.fig_bilan)
+            toolbar_bilan = NavigationToolbar2QT(self.canvas_bilan, self.graph_bilan)
+            self.graph_bilan.main_layout.addWidget(self.canvas_bilan, 1, 0, 2, 3)
+            self.graph_bilan.main_layout.addWidget(toolbar_bilan, 0, 0, 1, 1,  alignment=Qt.AlignLeft)
+            self.graph_bilan.main_layout.addWidget(frame, 0, 1, 1, 1,  alignment=Qt.AlignCenter)
             self.graph_bilan.main_layout.addWidget(
-                self.toogle_bilan, 0, 5, 1, 1)
+                self.toogle_bilan, 0, 2, 1, 1,  alignment=Qt.AlignRight)
             self.graph_bilan.showMaximized()
-        self.fig_bilan.clf()
-        if self.check_plot_bilan:
-            self.fig_bilan = self.controller.scatter_bilan(self.fig_bilan)
         else:
-            self.fig_bilan = self.controller.piechart(self.fig_bilan)
-        canvas = FigureCanvasQTAgg(self.fig_bilan)
-        self.graph_bilan.main_layout.addWidget(canvas, 1, 0, 6, 6)
-
+            self.fig_bilan.clf()
+        if self.check_plot_bilan:
+            gs = gridspec.GridSpec(1, 2)
+            self.fig_bilan = self.controller.scatter_bilan(self.fig_bilan, gs)    
+        else:
+            gs = gridspec.GridSpec(2, 3)
+            self.controller.piechart(self.fig_bilan, gs)
+        self.fig_bilan.canvas.draw_idle()
+        self.graph_bilan.closeEvent = lambda event: self.close_window_second(event, 'bilan')
+        
     ###################################################################################
 
     def change_toogle_bilan(self):
+        """
+        TODO
+        """
         if not self.toogle_bilan.isChecked():
             self.check_plot_bilan = False
         else:
@@ -1463,18 +1518,21 @@ class View(QMainWindow, QWidget):
         self.show_bilan()
 
     ###################################################################################
-
-    def close_window_optical(self, event):
+    def close_window_second(self, event, window):
         """
-        Management of the closing of the window of manual optical correction
-        """
-        # self.setFocus()
+        Management of the closing of the window of manual optical correction or bilan window
+        """ 
         if event:
-            if self.check_toggle:
-                if self.graph_view:
-                    self.toggle.setChecked(False)
-                    self.check_toggle = False
-                    del self.dict_fig_open[self.current_curve.file]
+            if window == 'optical':
+                if self.check_toggle:
+                    if self.graph_view:
+                        self.toggle.setChecked(False)
+                        self.check_toggle = False
+                        del self.dict_fig_open[self.current_curve.file]
+            elif window == 'bilan':
+                self.check_bilan = False
+                self.check_plot_bilan = False
+            self.setFocus()
 
     ##################################################################################
     def save(self):

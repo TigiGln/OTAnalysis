@@ -1,0 +1,400 @@
+2022-05-17 15:15:36,377 - INFO - ###########################################
+2022-05-17 15:15:36,377 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/verif/b1c1-2021.06.02-11.46.00.099.jpk-nt-force
+2022-05-17 15:15:36,377 - INFO - ###########################################
+2022-05-17 15:15:36,378 - ERROR - slice indices must be integers or None or have an __index__ method
+2022-05-17 15:15:36,378 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1009, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 794, in curve_return_analyze
+    index_return_endline = Curve.retrieve_retour_line_end(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 641, in retrieve_retour_line_end
+    list_data_return_endline = data_analyze[curve_object.features['force_max_curve']:][(
+TypeError: slice indices must be integers or None or have an __index__ method
+
+2022-05-17 15:15:36,378 - INFO - ###########################################
+2022-05-17 15:15:36,529 - INFO - ###########################################
+2022-05-17 15:15:36,530 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/test/b3c3-2021.06.07-14.50.58.217.jpk-nt-force
+2022-05-17 15:15:36,530 - INFO - ###########################################
+2022-05-17 15:15:36,530 - ERROR - slice indices must be integers or None or have an __index__ method
+2022-05-17 15:15:36,530 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1009, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 794, in curve_return_analyze
+    index_return_endline = Curve.retrieve_retour_line_end(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 641, in retrieve_retour_line_end
+    list_data_return_endline = data_analyze[curve_object.features['force_max_curve']:][(
+TypeError: slice indices must be integers or None or have an __index__ method
+
+2022-05-17 15:15:36,530 - INFO - ###########################################
+2022-05-17 15:15:36,944 - INFO - ###########################################
+2022-05-17 15:15:36,944 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/test/b3c3-2021.06.07-14.58.15.777.jpk-nt-force
+2022-05-17 15:15:36,944 - INFO - ###########################################
+2022-05-17 15:15:36,945 - ERROR - slice indices must be integers or None or have an __index__ method
+2022-05-17 15:15:36,945 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1009, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 794, in curve_return_analyze
+    index_return_endline = Curve.retrieve_retour_line_end(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 641, in retrieve_retour_line_end
+    list_data_return_endline = data_analyze[curve_object.features['force_max_curve']:][(
+TypeError: slice indices must be integers or None or have an __index__ method
+
+2022-05-17 15:15:36,945 - INFO - ###########################################
+2022-05-17 15:15:37,194 - INFO - ###########################################
+2022-05-17 15:15:37,194 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/test/b3c3-2021.06.07-14.52.58.631.jpk-nt-force
+2022-05-17 15:15:37,194 - INFO - ###########################################
+2022-05-17 15:15:37,194 - ERROR - slice indices must be integers or None or have an __index__ method
+2022-05-17 15:15:37,195 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1009, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 794, in curve_return_analyze
+    index_return_endline = Curve.retrieve_retour_line_end(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 641, in retrieve_retour_line_end
+    list_data_return_endline = data_analyze[curve_object.features['force_max_curve']:][(
+TypeError: slice indices must be integers or None or have an __index__ method
+
+2022-05-17 15:15:37,195 - INFO - ###########################################
+2022-05-17 15:15:37,397 - INFO - ###########################################
+2022-05-17 15:15:37,397 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/test/b7c7-2021.06.07-15.31.44.019.jpk-nt-force
+2022-05-17 15:15:37,398 - INFO - ###########################################
+2022-05-17 15:15:37,398 - ERROR - slice indices must be integers or None or have an __index__ method
+2022-05-17 15:15:37,398 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1009, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 794, in curve_return_analyze
+    index_return_endline = Curve.retrieve_retour_line_end(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 641, in retrieve_retour_line_end
+    list_data_return_endline = data_analyze[curve_object.features['force_max_curve']:][(
+TypeError: slice indices must be integers or None or have an __index__ method
+
+2022-05-17 15:15:37,398 - INFO - ###########################################
+2022-05-17 15:15:37,566 - INFO - ###########################################
+2022-05-17 15:15:37,566 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/test/b3c3-2021.06.07-14.57.55.683.jpk-nt-force
+2022-05-17 15:15:37,566 - INFO - ###########################################
+2022-05-17 15:15:37,566 - ERROR - slice indices must be integers or None or have an __index__ method
+2022-05-17 15:15:37,566 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1009, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 794, in curve_return_analyze
+    index_return_endline = Curve.retrieve_retour_line_end(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 641, in retrieve_retour_line_end
+    list_data_return_endline = data_analyze[curve_object.features['force_max_curve']:][(
+TypeError: slice indices must be integers or None or have an __index__ method
+
+2022-05-17 15:15:37,567 - INFO - ###########################################
+2022-05-17 15:15:37,957 - INFO - ###########################################
+2022-05-17 15:15:37,957 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/test/b1c1gg-2021.06.02-15.30.30.294.txt
+2022-05-17 15:15:37,957 - INFO - ###########################################
+2022-05-17 15:15:37,957 - ERROR - slice indices must be integers or None or have an __index__ method
+2022-05-17 15:15:37,957 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1009, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 794, in curve_return_analyze
+    index_return_endline = Curve.retrieve_retour_line_end(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 641, in retrieve_retour_line_end
+    list_data_return_endline = data_analyze[curve_object.features['force_max_curve']:][(
+TypeError: slice indices must be integers or None or have an __index__ method
+
+2022-05-17 15:15:37,958 - INFO - ###########################################
+2022-05-17 15:15:38,150 - INFO - ###########################################
+2022-05-17 15:15:38,151 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/test/b3c3-2021.06.07-14.58.55.908.jpk-nt-force
+2022-05-17 15:15:38,151 - INFO - ###########################################
+2022-05-17 15:15:38,151 - ERROR - slice indices must be integers or None or have an __index__ method
+2022-05-17 15:15:38,151 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1009, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 794, in curve_return_analyze
+    index_return_endline = Curve.retrieve_retour_line_end(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 641, in retrieve_retour_line_end
+    list_data_return_endline = data_analyze[curve_object.features['force_max_curve']:][(
+TypeError: slice indices must be integers or None or have an __index__ method
+
+2022-05-17 15:15:38,151 - INFO - ###########################################
+2022-05-17 15:15:38,276 - INFO - ###########################################
+2022-05-17 15:15:38,276 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/test/b1c1-2021.06.02-15.30.30.294.jpk-nt-force
+2022-05-17 15:15:38,276 - INFO - ###########################################
+2022-05-17 15:15:38,277 - ERROR - slice indices must be integers or None or have an __index__ method
+2022-05-17 15:15:38,277 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1009, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 794, in curve_return_analyze
+    index_return_endline = Curve.retrieve_retour_line_end(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 641, in retrieve_retour_line_end
+    list_data_return_endline = data_analyze[curve_object.features['force_max_curve']:][(
+TypeError: slice indices must be integers or None or have an __index__ method
+
+2022-05-17 15:15:38,277 - INFO - ###########################################
+2022-05-17 15:15:38,445 - INFO - ###########################################
+2022-05-17 15:15:38,445 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/test/b4c4-2021.06.07-15.05.45.485.jpk-nt-force
+2022-05-17 15:15:38,445 - INFO - ###########################################
+2022-05-17 15:15:38,446 - ERROR - slice indices must be integers or None or have an __index__ method
+2022-05-17 15:15:38,446 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1009, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 794, in curve_return_analyze
+    index_return_endline = Curve.retrieve_retour_line_end(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 641, in retrieve_retour_line_end
+    list_data_return_endline = data_analyze[curve_object.features['force_max_curve']:][(
+TypeError: slice indices must be integers or None or have an __index__ method
+
+2022-05-17 15:15:38,446 - INFO - ###########################################
+2022-05-17 15:15:38,577 - INFO - ###########################################
+2022-05-17 15:15:38,577 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/test/b2c2-2021.06.07-14.37.36.051.jpk-nt-force
+2022-05-17 15:15:38,577 - INFO - ###########################################
+2022-05-17 15:15:38,577 - ERROR - slice indices must be integers or None or have an __index__ method
+2022-05-17 15:15:38,577 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1009, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 794, in curve_return_analyze
+    index_return_endline = Curve.retrieve_retour_line_end(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 641, in retrieve_retour_line_end
+    list_data_return_endline = data_analyze[curve_object.features['force_max_curve']:][(
+TypeError: slice indices must be integers or None or have an __index__ method
+
+2022-05-17 15:15:38,578 - INFO - ###########################################
+2022-05-17 15:15:38,929 - INFO - ###########################################
+2022-05-17 15:15:38,929 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/test/b3c3-2021.06.07-14.52.38.561.jpk-nt-force
+2022-05-17 15:15:38,929 - INFO - ###########################################
+2022-05-17 15:15:38,930 - ERROR - slice indices must be integers or None or have an __index__ method
+2022-05-17 15:15:38,930 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1009, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 794, in curve_return_analyze
+    index_return_endline = Curve.retrieve_retour_line_end(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 641, in retrieve_retour_line_end
+    list_data_return_endline = data_analyze[curve_object.features['force_max_curve']:][(
+TypeError: slice indices must be integers or None or have an __index__ method
+
+2022-05-17 15:15:38,930 - INFO - ###########################################
+2022-05-17 15:15:39,138 - INFO - ###########################################
+2022-05-17 15:15:39,139 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/test/b1c1-2021.06.07-14.28.30.039.jpk-nt-force
+2022-05-17 15:15:39,139 - INFO - ###########################################
+2022-05-17 15:15:39,139 - ERROR - slice indices must be integers or None or have an __index__ method
+2022-05-17 15:15:39,139 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1009, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 794, in curve_return_analyze
+    index_return_endline = Curve.retrieve_retour_line_end(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 641, in retrieve_retour_line_end
+    list_data_return_endline = data_analyze[curve_object.features['force_max_curve']:][(
+TypeError: slice indices must be integers or None or have an __index__ method
+
+2022-05-17 15:15:39,139 - INFO - ###########################################
+2022-05-17 15:15:39,288 - INFO - ###########################################
+2022-05-17 15:15:39,288 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/test/b3c3-2021.06.07-15.00.15.683.jpk-nt-force
+2022-05-17 15:15:39,288 - INFO - ###########################################
+2022-05-17 15:15:39,288 - ERROR - slice indices must be integers or None or have an __index__ method
+2022-05-17 15:15:39,288 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1009, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 794, in curve_return_analyze
+    index_return_endline = Curve.retrieve_retour_line_end(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 641, in retrieve_retour_line_end
+    list_data_return_endline = data_analyze[curve_object.features['force_max_curve']:][(
+TypeError: slice indices must be integers or None or have an __index__ method
+
+2022-05-17 15:15:39,289 - INFO - ###########################################
+2022-05-17 15:15:39,457 - INFO - ###########################################
+2022-05-17 15:15:39,457 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/test/b6c6-2021.06.07-15.20.55.095.jpk-nt-force
+2022-05-17 15:15:39,457 - INFO - ###########################################
+2022-05-17 15:15:39,457 - ERROR - slice indices must be integers or None or have an __index__ method
+2022-05-17 15:15:39,457 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1009, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 794, in curve_return_analyze
+    index_return_endline = Curve.retrieve_retour_line_end(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 641, in retrieve_retour_line_end
+    list_data_return_endline = data_analyze[curve_object.features['force_max_curve']:][(
+TypeError: slice indices must be integers or None or have an __index__ method
+
+2022-05-17 15:15:39,457 - INFO - ###########################################
+2022-05-17 15:15:39,617 - INFO - ###########################################
+2022-05-17 15:15:39,617 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/test/b7c7-2021.06.07-15.32.44.493.jpk-nt-force
+2022-05-17 15:15:39,618 - INFO - ###########################################
+2022-05-17 15:15:39,618 - ERROR - slice indices must be integers or None or have an __index__ method
+2022-05-17 15:15:39,618 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1009, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 794, in curve_return_analyze
+    index_return_endline = Curve.retrieve_retour_line_end(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 641, in retrieve_retour_line_end
+    list_data_return_endline = data_analyze[curve_object.features['force_max_curve']:][(
+TypeError: slice indices must be integers or None or have an __index__ method
+
+2022-05-17 15:15:39,618 - INFO - ###########################################
+2022-05-17 15:15:39,773 - INFO - ###########################################
+2022-05-17 15:15:39,773 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/test/b3c3-2021.06.07-14.56.40.932.jpk-nt-force
+2022-05-17 15:15:39,773 - INFO - ###########################################
+2022-05-17 15:15:39,773 - ERROR - slice indices must be integers or None or have an __index__ method
+2022-05-17 15:15:39,773 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1009, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 794, in curve_return_analyze
+    index_return_endline = Curve.retrieve_retour_line_end(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 641, in retrieve_retour_line_end
+    list_data_return_endline = data_analyze[curve_object.features['force_max_curve']:][(
+TypeError: slice indices must be integers or None or have an __index__ method
+
+2022-05-17 15:15:39,773 - INFO - ###########################################
+2022-05-17 15:15:40,139 - INFO - ###########################################
+2022-05-17 15:15:40,139 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/test/b3c3-2021.06.07-15.00.35.722.jpk-nt-force
+2022-05-17 15:15:40,139 - INFO - ###########################################
+2022-05-17 15:15:40,139 - ERROR - slice indices must be integers or None or have an __index__ method
+2022-05-17 15:15:40,139 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1009, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 794, in curve_return_analyze
+    index_return_endline = Curve.retrieve_retour_line_end(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 641, in retrieve_retour_line_end
+    list_data_return_endline = data_analyze[curve_object.features['force_max_curve']:][(
+TypeError: slice indices must be integers or None or have an __index__ method
+
+2022-05-17 15:15:40,139 - INFO - ###########################################
+2022-05-17 15:15:40,298 - INFO - ###########################################
+2022-05-17 15:15:40,298 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/test/b7c7-2021.06.07-15.33.44.786.jpk-nt-force
+2022-05-17 15:15:40,298 - INFO - ###########################################
+2022-05-17 15:15:40,299 - ERROR - slice indices must be integers or None or have an __index__ method
+2022-05-17 15:15:40,299 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1009, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 794, in curve_return_analyze
+    index_return_endline = Curve.retrieve_retour_line_end(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 641, in retrieve_retour_line_end
+    list_data_return_endline = data_analyze[curve_object.features['force_max_curve']:][(
+TypeError: slice indices must be integers or None or have an __index__ method
+
+2022-05-17 15:15:40,299 - INFO - ###########################################
+2022-05-17 15:15:40,458 - INFO - ###########################################
+2022-05-17 15:15:40,458 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/test/b3c3-2021.06.07-14.58.35.877.jpk-nt-force
+2022-05-17 15:15:40,458 - INFO - ###########################################
+2022-05-17 15:15:40,458 - ERROR - slice indices must be integers or None or have an __index__ method
+2022-05-17 15:15:40,458 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1009, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 794, in curve_return_analyze
+    index_return_endline = Curve.retrieve_retour_line_end(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 641, in retrieve_retour_line_end
+    list_data_return_endline = data_analyze[curve_object.features['force_max_curve']:][(
+TypeError: slice indices must be integers or None or have an __index__ method
+
+2022-05-17 15:15:40,459 - INFO - ###########################################
+2022-05-17 15:15:40,633 - INFO - ###########################################
+2022-05-17 15:15:40,633 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/jpk_nt_force/b3c3-2021.06.07-14.50.58.217.jpk-nt-force
+2022-05-17 15:15:40,633 - INFO - ###########################################
+2022-05-17 15:15:40,633 - ERROR - slice indices must be integers or None or have an __index__ method
+2022-05-17 15:15:40,633 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1009, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 794, in curve_return_analyze
+    index_return_endline = Curve.retrieve_retour_line_end(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 641, in retrieve_retour_line_end
+    list_data_return_endline = data_analyze[curve_object.features['force_max_curve']:][(
+TypeError: slice indices must be integers or None or have an __index__ method
+
+2022-05-17 15:15:40,633 - INFO - ###########################################
+2022-05-17 15:15:40,875 - INFO - ###########################################
+2022-05-17 15:15:40,875 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/txt/b2c2g-2021.06.04-15.26.42.925.txt
+2022-05-17 15:15:40,875 - INFO - ###########################################
+2022-05-17 15:15:40,875 - ERROR - slice indices must be integers or None or have an __index__ method
+2022-05-17 15:15:40,875 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1009, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 794, in curve_return_analyze
+    index_return_endline = Curve.retrieve_retour_line_end(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 641, in retrieve_retour_line_end
+    list_data_return_endline = data_analyze[curve_object.features['force_max_curve']:][(
+TypeError: slice indices must be integers or None or have an __index__ method
+
+2022-05-17 15:15:40,875 - INFO - ###########################################
+2022-05-17 15:15:41,146 - INFO - ###########################################
+2022-05-17 15:15:41,146 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/txt/b1c1gg-2021.06.02-15.34.26.234.txt
+2022-05-17 15:15:41,146 - INFO - ###########################################
+2022-05-17 15:15:41,147 - ERROR - slice indices must be integers or None or have an __index__ method
+2022-05-17 15:15:41,147 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1009, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 794, in curve_return_analyze
+    index_return_endline = Curve.retrieve_retour_line_end(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 641, in retrieve_retour_line_end
+    list_data_return_endline = data_analyze[curve_object.features['force_max_curve']:][(
+TypeError: slice indices must be integers or None or have an __index__ method
+
+2022-05-17 15:15:41,147 - INFO - ###########################################
+2022-05-17 15:15:41,383 - INFO - ###########################################
+2022-05-17 15:15:41,383 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/txt/b1c1gg-2021.06.02-15.32.23.111.txt
+2022-05-17 15:15:41,383 - INFO - ###########################################
+2022-05-17 15:15:41,383 - ERROR - slice indices must be integers or None or have an __index__ method
+2022-05-17 15:15:41,383 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1009, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 794, in curve_return_analyze
+    index_return_endline = Curve.retrieve_retour_line_end(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 641, in retrieve_retour_line_end
+    list_data_return_endline = data_analyze[curve_object.features['force_max_curve']:][(
+TypeError: slice indices must be integers or None or have an __index__ method
+
+2022-05-17 15:15:41,383 - INFO - ###########################################
+2022-05-17 15:15:41,645 - INFO - ###########################################
+2022-05-17 15:15:41,645 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/txt/b1c1gg-2021.06.02-15.34.06.018.txt
+2022-05-17 15:15:41,645 - INFO - ###########################################
+2022-05-17 15:15:41,645 - ERROR - slice indices must be integers or None or have an __index__ method
+2022-05-17 15:15:41,645 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1009, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 794, in curve_return_analyze
+    index_return_endline = Curve.retrieve_retour_line_end(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 641, in retrieve_retour_line_end
+    list_data_return_endline = data_analyze[curve_object.features['force_max_curve']:][(
+TypeError: slice indices must be integers or None or have an __index__ method
+
+2022-05-17 15:15:41,645 - INFO - ###########################################

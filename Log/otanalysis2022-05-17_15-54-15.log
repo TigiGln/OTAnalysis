@@ -1,0 +1,56 @@
+2022-05-17 15:54:20,082 - INFO - ###########################################
+2022-05-17 15:54:20,082 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/test/b3c3-2021.06.07-15.00.15.683.jpk-nt-force
+2022-05-17 15:54:20,082 - INFO - ###########################################
+2022-05-17 15:54:20,084 - ERROR - cannot do slice indexing on RangeIndex with these indexers [NaN] of type str
+2022-05-17 15:54:20,084 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1023, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 812, in curve_return_analyze
+    type_curve = self.classification(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 941, in classification
+    self.fit_linear_classification(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 830, in fit_linear_classification
+    Curve.linear_fit, distance_data[index_start:index_end], y_smooth_pull[index_start:index_end])
+  File "/home/php/anaconda3/lib/python3.9/site-packages/pandas/core/series.py", line 985, in __getitem__
+    return self._get_with(key)
+  File "/home/php/anaconda3/lib/python3.9/site-packages/pandas/core/series.py", line 992, in _get_with
+    slobj = self.index._convert_slice_indexer(key, kind="getitem")
+  File "/home/php/anaconda3/lib/python3.9/site-packages/pandas/core/indexes/numeric.py", line 279, in _convert_slice_indexer
+    return super()._convert_slice_indexer(key, kind=kind)
+  File "/home/php/anaconda3/lib/python3.9/site-packages/pandas/core/indexes/base.py", line 4042, in _convert_slice_indexer
+    self._validate_indexer("slice", key.stop, "getitem")
+  File "/home/php/anaconda3/lib/python3.9/site-packages/pandas/core/indexes/base.py", line 6308, in _validate_indexer
+    raise self._invalid_indexer(form, key)
+TypeError: cannot do slice indexing on RangeIndex with these indexers [NaN] of type str
+
+2022-05-17 15:54:20,084 - INFO - ###########################################
+2022-05-17 15:54:23,099 - INFO - ###########################################
+2022-05-17 15:54:23,099 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/txt/b1c1gg-2021.06.02-15.32.23.111.txt
+2022-05-17 15:54:23,099 - INFO - ###########################################
+2022-05-17 15:54:23,100 - ERROR - cannot do slice indexing on RangeIndex with these indexers [NaN] of type str
+2022-05-17 15:54:23,100 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1023, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 812, in curve_return_analyze
+    type_curve = self.classification(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 941, in classification
+    self.fit_linear_classification(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 830, in fit_linear_classification
+    Curve.linear_fit, distance_data[index_start:index_end], y_smooth_pull[index_start:index_end])
+  File "/home/php/anaconda3/lib/python3.9/site-packages/pandas/core/series.py", line 985, in __getitem__
+    return self._get_with(key)
+  File "/home/php/anaconda3/lib/python3.9/site-packages/pandas/core/series.py", line 992, in _get_with
+    slobj = self.index._convert_slice_indexer(key, kind="getitem")
+  File "/home/php/anaconda3/lib/python3.9/site-packages/pandas/core/indexes/numeric.py", line 279, in _convert_slice_indexer
+    return super()._convert_slice_indexer(key, kind=kind)
+  File "/home/php/anaconda3/lib/python3.9/site-packages/pandas/core/indexes/base.py", line 4042, in _convert_slice_indexer
+    self._validate_indexer("slice", key.stop, "getitem")
+  File "/home/php/anaconda3/lib/python3.9/site-packages/pandas/core/indexes/base.py", line 6308, in _validate_indexer
+    raise self._invalid_indexer(form, key)
+TypeError: cannot do slice indexing on RangeIndex with these indexers [NaN] of type str
+
+2022-05-17 15:54:23,100 - INFO - ###########################################

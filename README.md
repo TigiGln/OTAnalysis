@@ -81,6 +81,7 @@ pip install m2r2
 
 ## Install package
 You can install napari-openlabframe via <a href="https://pypi.org/project/pip/" rel="opener">pip</a>:
+
 ```
 pip install OTAnalysis
 ```

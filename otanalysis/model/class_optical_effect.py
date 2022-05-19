@@ -81,13 +81,17 @@ class OpticalEffect:
             coor_y_contact_point_extrapolated = f_param[0][0] * \
                 coor_x_contact_point_extrapolated + f_param[0][1]
             value_contact_point_theorical = self.time_data_press[self.time_data_press >=
-                                                                 coor_x_contact_point_extrapolated].reset_index(drop=True)
+                                                                 coor_x_contact_point_extrapolated]
             if len(value_contact_point_theorical) > 0:
-                value_contact_point_theorical = value_contact_point_theorical[0]
-            index_contact_point_theorical = np.where(
-                self.time_data_press == value_contact_point_theorical)[0][0]
-            self.curve.graphics['contact_theorical_press'] = {
-                'index': index_contact_point_theorical, 'value': self.force_data_press[index_contact_point_theorical]}
+                list_index = value_contact_point_theorical.index
+                index_contact_point_theorical = list_index[0]
+            # value_contact_point_theorical = value_contact_point_theorical.reset_index(drop=True)
+            # if len(value_contact_point_theorical) > 0:
+            #     value_contact_point_theorical = value_contact_point_theorical[0]
+            # index_contact_point_theorical = np.where(self.time_data_press == value_contact_point_theorical)[0][0]
+            # print(index_contact_point_theorical)
+                self.curve.graphics['contact_theorical_press'] = {
+                    'index': index_contact_point_theorical, 'value': self.force_data_press[index_contact_point_theorical]}
 
         elif segment == 'Pull':
             start_point = 0
@@ -156,8 +160,12 @@ class OpticalEffect:
         ax1.plot(self.time_data_press[-length_stop_press:], fitted_press)
         ax1.plot(coor_x_contact_point_extrapolated_press, coor_y_contact_point_extrapolated_press,
                  marker='D', color='yellow', label='contact point extrapolated')
-        ax1.plot(self.time_data_press[self.curve.graphics['contact_theorical_press']['index']], force_data_press_copy[
-            self.curve.graphics['contact_theorical_press']['index']], marker='o', color='brown', label='contact_theorical')
+        if 'contact_theorical_press' in self.curve.graphics:
+            ax1.plot(self.time_data_press[self.curve.graphics['contact_theorical_press']['index']], force_data_press_copy[
+                self.curve.graphics['contact_theorical_press']['index']], marker='o', color='brown', label='contact_theorical')
+        else:
+            ax1.plot(self.time_data_press[self.curve.features['contact_point']['index']], force_data_press_copy[
+                self.curve.features['contact_point']['index']], marker='o', color='brown', label='contact_theorical')
         ax1.set_ylabel('force (pN')
         ax1.set_xlabel('time (s)')
 
@@ -226,8 +234,10 @@ class OpticalEffect:
                 the figure to be modified for the visualization of the modification 
         """
         force_data_pull_copy = self.force_data_pull_copy.copy()
-        #index_contact_point_press = self.curve.features['contact_point']['index']
-        index_contact_point_press = self.curve.graphics['contact_theorical_press']['index']
+        if 'contact_theorical_press' in self.curve.graphics:
+            index_contact_point_press = self.curve.graphics['contact_theorical_press']['index']
+        else:
+            index_contact_point_press = self.curve.features['contact_point']['index']
         index_contact_point_pull = self.curve.graphics['contact_theorical_pull']['index']
         force_smooth = pd.Series(self.force_smooth_press_copy)
         data_range_press = force_smooth.loc[list_ind_correction[0]:list_ind_correction[1]]

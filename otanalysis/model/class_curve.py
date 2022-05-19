@@ -614,7 +614,7 @@ class Curve:
     ################################################################################################
 
     @staticmethod
-    def retrieve_retour_line_end(data_analyze, line_pos_threshold, type_curve):
+    def retrieve_retour_line_end(curve_object, data_analyze, line_pos_threshold, type_curve):
         """
         Determining the point of return to the baseline in the "Pull" segment
 
@@ -636,10 +636,12 @@ class Curve:
         index_return_endline = None
         if type_curve is None:
             list_data_return_endline = []
-            data_analyze = np.array(data_analyze)
-            data_analyze_reverse = np.flip(data_analyze)
-            list_data_return_endline = data_analyze_reverse[(
-                data_analyze_reverse > line_pos_threshold)]
+            data = data_analyze[data_analyze.argmax():]
+            data = np.array(data)
+            # data_analyze_reverse = np.flip(
+            # data_analyze)
+            list_data_return_endline = data[(
+                data < line_pos_threshold)]
             if list_data_return_endline.size != 0:
                 index_return_endline = np.where(
                     data_analyze == list_data_return_endline[0])[0][0] + 1
@@ -792,7 +794,7 @@ class Curve:
 
         ############## calcul return point and transition ######################
         index_return_endline = Curve.retrieve_retour_line_end(
-            y_smooth, line_pos_threshold[0], type_curve)
+            self, y_smooth, line_pos_threshold[0], type_curve)
         if index_return_endline is not None:
             #index_transition = index_return_endline - 20
             self.features['point_return_endline'] = {
@@ -885,22 +887,20 @@ class Curve:
                     # else:
                     index_force_max = self.features['force_max_curve']['index']
                     ##################### calcul jump ########################
-                    jump_force_start_pull = force_data[index_force_max] - \
+                    jump_force_start_pull = self.graphics['y_smooth_Pull'].argmax() - \
                         self.graphics['y_smooth_Pull'][index_release]
                     jump_nb_points_start = index_force_max - index_release
                     jump_nb_points_end = index_return_endline - index_force_max
 
-                    jump_force_end_pull = force_data[index_force_max] - \
-                        self.graphics['y_smooth_Pull'][index_release]
+                    jump_force_end_pull = self.graphics['y_smooth_Pull'].argmax() - \
+                        self.graphics['y_smooth_Pull'][index_return_endline]
                     self.features['jump_force_start_pull (pN)'] = jump_force_start_pull
                     self.features['jump_force_end_pull (pN)'] = jump_force_end_pull
                     self.features['jump_nb_points_start'] = jump_nb_points_start
                     self.features['jump_nb_points_end'] = jump_nb_points_end
 
-                    jump_time_start_pull = time_data[index_force_max] - \
-                        time_data[index_release]
-                    jump_time_end_pull = time_data[index_return_endline] - \
-                        time_data[index_release]
+                    jump_time_start_pull = time_data[index_force_max] - time_data[index_release]
+                    jump_time_end_pull = time_data[index_return_endline] - time_data[index_force_max]
                     self.features['jump_time_start_pull (s)'] = jump_time_start_pull
                     self.features['jump_time_end_pull (s)'] = jump_time_end_pull
 
@@ -911,8 +911,8 @@ class Curve:
                         jump_distance_start_pull = distance_data[index_force_max] - \
                             distance_data[index_release]
 
-                        jump_distance_end_pull = distance_data[index_force_max] - \
-                            distance_data[index_return_endline]
+                        jump_distance_end_pull = distance_data[index_return_endline] - distance_data[index_force_max]
+                            
                         self.features['jump_distance_start_pull (nm)'] = jump_distance_start_pull
                         ###################### fit linear for classification #############################
                         ###### fit max ######
@@ -929,6 +929,16 @@ class Curve:
                         index_end = index_release+jump_nb_points_start
                         self.fit_linear_classification(
                             index_start, index_end, "fitted_classification_release")
+                        
+                        ####### fit max transition ####
+                        if self.features['transition_point']['index'] != 'NaN':
+                            print(y_smooth_pull.argmax())
+                            print(self.features['transition_point']['index'])
+                            index_start = y_smooth_pull.argmax() + 2
+                            index_end = self.features['transition_point']['index']
+                            if index_start < index_end:
+                                self.fit_linear_classification(
+                                    index_start, index_end, "fitted_classification_max_transition")
 
                         ###### fit return  endline #######
                         jump_nb_point_end = int(
@@ -936,7 +946,10 @@ class Curve:
                         index_start = index_return_endline - jump_nb_point_end
                         index_end = index_return_endline
                         self.fit_linear_classification(
-                            index_start, index_end, "fitted_classification_return_endline")
+                                index_start, index_end, "fitted_classification_return_endline")
+                         
+                        
+
                     else:
                         speed = float(segment.header_segment['segment-settings.length'])/float(
                             segment.header_segment['segment-settings.duration'])
@@ -949,10 +962,12 @@ class Curve:
                         type_curve = 'AD'
                     else:
                         type_curve = 'FTU'
+
         else:
             index_force_max = force_data.argmax()
         self.features['force_max_pull'] = {
             'index': index_force_max, 'value': force_data[index_force_max]}
+        
 
         return type_curve
 
@@ -1017,6 +1032,9 @@ class Curve:
             self.features['type'] = type_curve
         else:
             self.features['automatic_type'] = type_curve
+        if type_curve == "NAD":
+            self.features['point_return_endline'] = {'index': 'NaN', 'value': 'NaN'}
+            self.features['transition_point'] = {'index': 'NaN', 'value': 'NaN'}
         return error
 
     ###############################################################################################

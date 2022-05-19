@@ -1,0 +1,98 @@
+2022-05-17 15:48:45,721 - INFO - ###########################################
+2022-05-17 15:48:45,721 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/test/b3c3-2021.06.07-14.57.55.683.jpk-nt-force
+2022-05-17 15:48:45,721 - INFO - ###########################################
+2022-05-17 15:48:45,722 - ERROR - `ydata` must not be empty!
+2022-05-17 15:48:45,722 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1021, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 812, in curve_return_analyze
+    type_curve = self.classification(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 939, in classification
+    self.fit_linear_classification(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 829, in fit_linear_classification
+    f_parameters = curve_fit(
+  File "/home/php/anaconda3/lib/python3.9/site-packages/scipy/optimize/minpack.py", line 748, in curve_fit
+    raise ValueError("`ydata` must not be empty!")
+ValueError: `ydata` must not be empty!
+
+2022-05-17 15:48:45,722 - INFO - ###########################################
+2022-05-17 15:48:47,740 - INFO - ###########################################
+2022-05-17 15:48:47,740 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/test/b1c1-2021.06.07-14.28.30.039.jpk-nt-force
+2022-05-17 15:48:47,740 - INFO - ###########################################
+2022-05-17 15:48:47,740 - ERROR - Improper input: func input vector length N=2 must not exceed func output vector length M=1
+2022-05-17 15:48:47,740 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1021, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 812, in curve_return_analyze
+    type_curve = self.classification(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 939, in classification
+    self.fit_linear_classification(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 829, in fit_linear_classification
+    f_parameters = curve_fit(
+  File "/home/php/anaconda3/lib/python3.9/site-packages/scipy/optimize/minpack.py", line 789, in curve_fit
+    res = leastsq(func, p0, Dfun=jac, full_output=1, **kwargs)
+  File "/home/php/anaconda3/lib/python3.9/site-packages/scipy/optimize/minpack.py", line 414, in leastsq
+    raise TypeError(f"Improper input: func input vector length N={n} must"
+TypeError: Improper input: func input vector length N=2 must not exceed func output vector length M=1
+
+2022-05-17 15:48:47,740 - INFO - ###########################################
+2022-05-17 15:48:48,009 - INFO - ###########################################
+2022-05-17 15:48:48,009 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/test/b3c3-2021.06.07-15.00.15.683.jpk-nt-force
+2022-05-17 15:48:48,009 - INFO - ###########################################
+2022-05-17 15:48:48,009 - ERROR - cannot do slice indexing on RangeIndex with these indexers [NaN] of type str
+2022-05-17 15:48:48,009 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1021, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 812, in curve_return_analyze
+    type_curve = self.classification(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 939, in classification
+    self.fit_linear_classification(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 830, in fit_linear_classification
+    Curve.linear_fit, distance_data[index_start:index_end], y_smooth_pull[index_start:index_end])
+  File "/home/php/anaconda3/lib/python3.9/site-packages/pandas/core/series.py", line 985, in __getitem__
+    return self._get_with(key)
+  File "/home/php/anaconda3/lib/python3.9/site-packages/pandas/core/series.py", line 992, in _get_with
+    slobj = self.index._convert_slice_indexer(key, kind="getitem")
+  File "/home/php/anaconda3/lib/python3.9/site-packages/pandas/core/indexes/numeric.py", line 279, in _convert_slice_indexer
+    return super()._convert_slice_indexer(key, kind=kind)
+  File "/home/php/anaconda3/lib/python3.9/site-packages/pandas/core/indexes/base.py", line 4042, in _convert_slice_indexer
+    self._validate_indexer("slice", key.stop, "getitem")
+  File "/home/php/anaconda3/lib/python3.9/site-packages/pandas/core/indexes/base.py", line 6308, in _validate_indexer
+    raise self._invalid_indexer(form, key)
+TypeError: cannot do slice indexing on RangeIndex with these indexers [NaN] of type str
+
+2022-05-17 15:48:48,009 - INFO - ###########################################
+2022-05-17 15:48:50,925 - INFO - ###########################################
+2022-05-17 15:48:50,925 - INFO - /home/php/Documents/Thierry/OTAnalysis/data_test/txt/b1c1gg-2021.06.02-15.32.23.111.txt
+2022-05-17 15:48:50,925 - INFO - ###########################################
+2022-05-17 15:48:50,926 - ERROR - cannot do slice indexing on RangeIndex with these indexers [NaN] of type str
+2022-05-17 15:48:50,926 - ERROR - Traceback (most recent call last):
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/controller/controller.py", line 226, in create_dict_curves
+    error = new_curve.analyzed_curve(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 1021, in analyzed_curve
+    type_curve = self.curve_return_analyze(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 812, in curve_return_analyze
+    type_curve = self.classification(methods, type_curve)
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 939, in classification
+    self.fit_linear_classification(
+  File "/home/php/Documents/Thierry/OTAnalysis/otanalysis/model/class_curve.py", line 830, in fit_linear_classification
+    Curve.linear_fit, distance_data[index_start:index_end], y_smooth_pull[index_start:index_end])
+  File "/home/php/anaconda3/lib/python3.9/site-packages/pandas/core/series.py", line 985, in __getitem__
+    return self._get_with(key)
+  File "/home/php/anaconda3/lib/python3.9/site-packages/pandas/core/series.py", line 992, in _get_with
+    slobj = self.index._convert_slice_indexer(key, kind="getitem")
+  File "/home/php/anaconda3/lib/python3.9/site-packages/pandas/core/indexes/numeric.py", line 279, in _convert_slice_indexer
+    return super()._convert_slice_indexer(key, kind=kind)
+  File "/home/php/anaconda3/lib/python3.9/site-packages/pandas/core/indexes/base.py", line 4042, in _convert_slice_indexer
+    self._validate_indexer("slice", key.stop, "getitem")
+  File "/home/php/anaconda3/lib/python3.9/site-packages/pandas/core/indexes/base.py", line 6308, in _validate_indexer
+    raise self._invalid_indexer(form, key)
+TypeError: cannot do slice indexing on RangeIndex with these indexers [NaN] of type str
+
+2022-05-17 15:48:50,926 - INFO - ###########################################
