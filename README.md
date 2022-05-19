@@ -1,5 +1,7 @@
 ![Python 3.8.5](https://img.shields.io/badge/Python-3.8.5-blue.svg)
 
+# OTAnalysis
+
 ## Tool for managing the results of optical tweezers
 Tool for extracting, analyzing and classifying optical tweezer data curves
 

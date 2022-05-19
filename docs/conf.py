@@ -41,11 +41,12 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
-    "recommonmark",
+    "myst_parser",
     "sphinx_rtd_theme",
 ]
 
 autoclass_content = "both"
+
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
