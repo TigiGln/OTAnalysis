@@ -1,30 +1,31 @@
 ![Python 3.8.5](https://img.shields.io/badge/Python-3.8.5-blue.svg)
 
-# OTAnalysis
+OTAnalysis
+==========
 
-## Tool for managing the results of optical tweezers
+# Tool for managing the results of optical tweezers
 Tool for extracting, analyzing and classifying optical tweezer data curves
 
-### Flow of the use process
+## Flow of the use process
 Launch on an interface allowing to select the parameters for a file analysis in back-end
 
-#### Condition of the experience
+### Condition of the experience
 - condition: Name of the antibody present on the beads during the experiment
 - drug: name of the drug used for the analysis if present
 
-#### Fitting management
+### Fitting management
 Selection of the curve files to be analyzed either by selecting a directory or with the multiple selection of files
 - model: The model used to fit the "Press" curves (linear or sphere)
 If selected sphere, appearance of the physical parameters menu for the calculation of the Young's modulus
 - eta: Poisson's ratio
 - bead rdius: diameter of the ball used during the experiment
 
-#### Management of curve anomalies 
+### Management of curve anomalies 
 Curve management parameters Incomplete (no analysis possible) or misaligned (analysis but warning)
 - pulling length min : minimum percentage of the length of the "Pull" segment to determine if the curve is rejected despite the presence of all the segments indicated in the header
 - Fmax epsilon: percentage of max force on the major axis to determine misalignment of the curve on the minor axes
 
-#### Classification condition
+### Classification condition
 - NAD if jump is < (PN): force condition to classify non-adhesive curves < pN
 - AD if position is < (nm): distance condition to separate the membership from the tubes
 - AD if slope is < (pts): condition number of points to separate the membership of the tubes
@@ -33,17 +34,17 @@ Curve management parameters Incomplete (no analysis possible) or misaligned (ana
 
 Appearance of a method loading button after loading data to redo a past analysis.
 
-### Menu after launching the analysis
+## Menu after launching the analysis
 Three possible options:
 - Supervised: Allows you to switch to a new window with the display of curves and a supervisory menu
 - Unsupervised: Allows you to retrieve the output file of the automatic analysis
 - ...with graphs: Allows you to retrieve the output file of the automatic analysis completed with all the graphs
 
 If we choose supervised:
-### Graphic display window with supervision
+## Graphic display window with supervision
 Visualization of all curves as a function of time on the 3 axes and as a function of distance on the main_axis
 
-#### Supervision menu
+### Supervision menu
 - Close supervision Panel: Possibility to close this menu for a more important visualization of the curves
 - Buttons to navigate between the curves. Can be operated with the left/right arrow keys
 - Button to save the displayed graphic
@@ -57,7 +58,7 @@ Visualization of all curves as a function of time on the 3 axes and as a functio
 - correction of the type of curve classification (type defined checked)
 - Pagination to determine our position in the whole analysis. Possibility to move with the 'Enter' key and the number of the curve
 
-## Install MiniConda && Create conda environment
+# Install MiniConda && Create conda environment
 ```
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 chmod +x Miniconda3-latest-Linux-x86_64.sh
@@ -66,7 +67,7 @@ conda create -n newenv
 conda activate newenv
 
 ```
-## Dependencies
+# Dependencies
 ```
 conda install numpy
 conda install pandas
@@ -81,34 +82,34 @@ pip install m2r2
 
 ```
 
-## Install package
+# Install package
 You can install napari-openlabframe via <a href="https://pypi.org/project/pip/" rel="opener">pip</a>:
 
 ```
 pip install OTAnalysis
 ```
 
-## Launch project
+# Launch project
 ```
 python -m main
 ```
 
-## Documentation
+# Documentation
 
-### Update
+## Update
 ```
 make html
 ```
 
-### Visualization
+## Visualization
 ```
 firefox docs/_build/html/index.html
 ```
 
-### Explanation output file
+## Explanation output file
 output file in the form of a table of 48 columns on the number of curves of the analysis (1 curve per line)
 columns
-#### Important data from the analysis for post-processing
+### Important data from the analysis for post-processing
 - treat_supervised: bool
     True if curve visualized otherwise False
 - automatic_type: str
@@ -125,7 +126,7 @@ columns
     optical correction applied (No_correction, Auto_correction, Manual_correction)
 
 
-#### Data of the analysis parameters
+### Data of the analysis parameters
 - model: str
     model for the fit on "Press" segment chosen by the user for the analysis
 - Date: str
@@ -145,7 +146,7 @@ columns
 - couple: str
     couple ball number and cell number
 
-#### Theoretical data present in the headers of the files
+### Theoretical data present in the headers of the files
 - main_axis: str
     main axis of the experiment and the direction of approach of the cell with respect to the ball:
         +X: the cell approaches from the right 
@@ -172,7 +173,7 @@ columns
     theoretical frequency of the "Pull" segment
 
 
-#### Data calculated during the analysis
+### Data calculated during the analysis
 - baseline_origin_press (N): float
     average of the first 1000 points of the "Press" segment on the data without correction
 - baseline_corrected_press (pN): float
@@ -212,7 +213,7 @@ columns
 - Pente (pN/nm): float
     coefficient of the contact loss slope between the ball and the cell due to the retraction effect of the cell with respect to the ball
 
-#### Data calculated if type of curves different from non-adhesive, infinite tube or rejected
+### Data calculated if type of curves different from non-adhesive, infinite tube or rejected
 - point_transition_index: int
     index of the break point of the tube (called transition point)
 - point_transition_value (pN): float
@@ -238,7 +239,7 @@ columns
 - jump_distance_end_pull (nm): float
     distance between the maximum force of the curve and the point of return to the baseline
 
-#### Boolean validation of the fits 
+### Boolean validation of the fits 
 - valid_fit_press : bool
     validation of the fit on the "Press" segment. False by default because not validated
 
