@@ -1,47 +1,10 @@
-autopep8 @ file:///tmp/build/80754af9/autopep8_1620866417880/work
 conda==4.11.0
 conda-build==3.21.5
-docstring-parser @ file:///home/conda/feedstock_root/build_artifacts/docstring_parser_1637172560671/work
-docutils @ file:///tmp/build/80754af9/docutils_1620827980776/work
-html5lib @ file:///Users/ktietz/demo/mc3/conda-bld/html5lib_1629144453894/work
-importlib-metadata @ file:///tmp/build/80754af9/importlib-metadata_1631916692253/work
-lmfit==1.0.3
 m2r2==0.3.2
-markdown-it-py==2.1.0
-matplotlib @ file:///tmp/build/80754af9/matplotlib-suite_1634667019719/work
-matplotlib-inline @ file:///tmp/build/80754af9/matplotlib-inline_1628242447089/work
-mypy-extensions==0.4.3
 myst-parser==0.17.2
-numpy @ file:///tmp/build/80754af9/numpy_and_numpy_base_1626264704411/work
-numpydoc @ file:///tmp/build/80754af9/numpydoc_1605117425582/work
-packaging @ file:///tmp/build/80754af9/packaging_1625611678980/work
 pandas==1.4.0
-path @ file:///tmp/build/80754af9/path_1623603407737/work
-pathlib2 @ file:///tmp/build/80754af9/pathlib2_1625585682511/work
-pathspec==0.7.0
-patsy==0.5.2
-pep517==0.12.0
-pep8==1.7.1
-py @ file:///tmp/build/80754af9/py_1607971587848/work
-pycurl==7.44.1
 pytest==6.2.4
-PyYAML==6.0
-QtPy @ file:///tmp/build/80754af9/qtpy_1629397026935/work
-qtwidgets==0.18
-readme-renderer==35.0
-scipy @ file:///tmp/build/80754af9/scipy_1630606796912/work
-seaborn @ file:///tmp/build/80754af9/seaborn_1629307859561/work
 Sphinx==4.2.0
 sphinx-rtd-theme==1.0.0
-sphinxcontrib-applehelp @ file:///home/ktietz/src/ci/sphinxcontrib-applehelp_1611920841464/work
-sphinxcontrib-devhelp @ file:///home/ktietz/src/ci/sphinxcontrib-devhelp_1611920923094/work
-sphinxcontrib-htmlhelp @ file:///tmp/build/80754af9/sphinxcontrib-htmlhelp_1623945626792/work
-sphinxcontrib-jsmath @ file:///home/ktietz/src/ci/sphinxcontrib-jsmath_1611920942228/work
-sphinxcontrib-qthelp @ file:///home/ktietz/src/ci/sphinxcontrib-qthelp_1611921055322/work
-sphinxcontrib-serializinghtml @ file:///tmp/build/80754af9/sphinxcontrib-serializinghtml_1624451540180/work
-sphinxcontrib-websupport @ file:///tmp/build/80754af9/sphinxcontrib-websupport_1597081412696/work
-toml @ file:///tmp/build/80754af9/toml_1616166611790/work
-tomli==2.0.1
-twine==4.0.0
-urllib3==1.26.7
+
 
