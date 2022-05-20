@@ -41,7 +41,7 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
-    "myst_parser",
+    "m2r2",
     "sphinx_rtd_theme",
 ]
 

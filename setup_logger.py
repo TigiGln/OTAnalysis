@@ -9,7 +9,7 @@ def create_logger():
     today = str(date.today())
     time_today = str(datetime.now().time().replace(
         microsecond=0)).replace(':', '-')
-    path_log = Path("Log")
+    path_log = Path("../Log")
     path_log.mkdir(parents=True, exist_ok=True)
 
     logging.basicConfig(level=logging.INFO,
@@ -18,4 +18,3 @@ def create_logger():
                         filemode="a",
                         format='%(asctime)s - %(levelname)s - %(message)s')
     logger = logging.getLogger('logger_otanalysis')
-    
