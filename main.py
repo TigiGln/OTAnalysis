@@ -1,5 +1,5 @@
 """
-TODO
+main module to launch the optical tweezers curve analysis and classification tool
 """
 import os
 import sys
