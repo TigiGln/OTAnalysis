@@ -11,7 +11,8 @@ Welcome to OTAnalysis's documentation!
    :caption: Contents:
 
    readme_link
-   modules
+   main
+   otanalysis
 
 Indices and tables
 ==================
