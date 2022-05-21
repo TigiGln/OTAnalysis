@@ -103,7 +103,7 @@ make html
 
 ## Visualization
 ```
-firefox docs/_build/html/index.html
+firefox https://otanalysis.readthedocs.io/en/latest/index.html
 ```
 
 ## Explanation output file

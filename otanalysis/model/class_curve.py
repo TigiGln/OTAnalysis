@@ -6,7 +6,6 @@ File describing the instance class of the curved objects
 import math
 import traceback
 import logging
-import setup_logger
 import numpy as np
 import pandas as pd
 
@@ -899,8 +898,10 @@ class Curve:
                     self.features['jump_nb_points_start'] = jump_nb_points_start
                     self.features['jump_nb_points_end'] = jump_nb_points_end
 
-                    jump_time_start_pull = time_data[index_force_max] - time_data[index_release]
-                    jump_time_end_pull = time_data[index_return_endline] - time_data[index_force_max]
+                    jump_time_start_pull = time_data[index_force_max] - \
+                        time_data[index_release]
+                    jump_time_end_pull = time_data[index_return_endline] - \
+                        time_data[index_force_max]
                     self.features['jump_time_start_pull (s)'] = jump_time_start_pull
                     self.features['jump_time_end_pull (s)'] = jump_time_end_pull
 
@@ -911,8 +912,9 @@ class Curve:
                         jump_distance_start_pull = distance_data[index_force_max] - \
                             distance_data[index_release]
 
-                        jump_distance_end_pull = distance_data[index_return_endline] - distance_data[index_force_max]
-                            
+                        jump_distance_end_pull = distance_data[index_return_endline] - \
+                            distance_data[index_force_max]
+
                         self.features['jump_distance_start_pull (nm)'] = jump_distance_start_pull
                         ###################### fit linear for classification #############################
                         ###### fit max ######
@@ -929,7 +931,7 @@ class Curve:
                         index_end = index_release+jump_nb_points_start
                         self.fit_linear_classification(
                             index_start, index_end, "fitted_classification_release")
-                        
+
                         ####### fit max transition ####
                         if self.features['transition_point']['index'] != 'NaN':
                             print(y_smooth_pull.argmax())
@@ -946,9 +948,7 @@ class Curve:
                         index_start = index_return_endline - jump_nb_point_end
                         index_end = index_return_endline
                         self.fit_linear_classification(
-                                index_start, index_end, "fitted_classification_return_endline")
-                         
-                        
+                            index_start, index_end, "fitted_classification_return_endline")
 
                     else:
                         speed = float(segment.header_segment['segment-settings.length'])/float(
@@ -967,7 +967,6 @@ class Curve:
             index_force_max = force_data.argmax()
         self.features['force_max_pull'] = {
             'index': index_force_max, 'value': force_data[index_force_max]}
-        
 
         return type_curve
 
@@ -1033,8 +1032,10 @@ class Curve:
         else:
             self.features['automatic_type'] = type_curve
         if type_curve == "NAD":
-            self.features['point_return_endline'] = {'index': 'NaN', 'value': 'NaN'}
-            self.features['transition_point'] = {'index': 'NaN', 'value': 'NaN'}
+            self.features['point_return_endline'] = {
+                'index': 'NaN', 'value': 'NaN'}
+            self.features['transition_point'] = {
+                'index': 'NaN', 'value': 'NaN'}
         return error
 
     ###############################################################################################

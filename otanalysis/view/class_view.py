@@ -30,6 +30,8 @@ from ..view.class_toggle import QtToggle
 from ..view.class_graph_view import GraphView
 from ..controller.controller import Controller
 
+logger = ""
+
 
 class View(QMainWindow, QWidget):
     """
@@ -162,7 +164,7 @@ class View(QMainWindow, QWidget):
 
     ###################################################################################
 
-    def ask_help(self, event):
+    def ask_help(self, event=None):
         """
         Allows you to redirect to the sphinx project documentation
 
@@ -171,7 +173,8 @@ class View(QMainWindow, QWidget):
             corresponds to the mouse click
         """
 
-        webbrowser.open("docs/_build/html/index.html")
+        webbrowser.open(
+            "https://otanalysis.readthedocs.io/en/latest/index.html")
 
     ###################################################################################
 
@@ -484,7 +487,7 @@ class View(QMainWindow, QWidget):
         if self.checkbox_logger.isChecked():
             create_logger()
             self.check_logger = True
-            logging.getLogger('logger_otanalysis.view')
+            self.logger = logging.getLogger('logger_otanalysis.view')
         if self.controller.check_length_files:
             self.controller.create_dict_curves(self.methods)
         else:
@@ -676,11 +679,12 @@ class View(QMainWindow, QWidget):
         else:
             pick_event.setDisabled(True)
 
-        self.display_legend = QAction("Delete legend graphs", self, checkable=True)
+        self.display_legend = QAction(
+            "Delete legend graphs", self, checkable=True)
         self.display_legend.setStatusTip("Delete legend all graph")
-        self.display_legend.triggered.connect(lambda: self.controller.display_legend(self.fig))
+        self.display_legend.triggered.connect(
+            lambda: self.controller.display_legend(self.fig))
         self.display_legend.setChecked(True)
-
 
         help = QAction("Help", self)
         help.setStatusTip("Ask help")
@@ -846,7 +850,8 @@ class View(QMainWindow, QWidget):
                 if len(self.interval_fit) == 2:
                     # pick_event_menu.setChecked(False)
                     if self.interval_fit[0] > self.interval_fit[1]:
-                        self.interval_fit = [num for num in reversed(self.interval_fit)]
+                        self.interval_fit = [
+                            num for num in reversed(self.interval_fit)]
                     self.current_curve.fit_linear_classification(
                         self.interval_fit[0], self.interval_fit[1], name_fit)
                     for elem_graph in ax.lines:
@@ -1368,20 +1373,24 @@ class View(QMainWindow, QWidget):
                         self.cancel_correction)
                     button_accept_correction.hide()
                     self.graph_view.showMaximized()
-                    self.graph_view.closeEvent = lambda event: self.close_window_second(event, 'optical')
+                    self.graph_view.closeEvent = lambda event: self.close_window_second(
+                        event, 'optical')
             else:
                 plt.close()
             self.setFocus()
         except Exception as error:
             if self.check_logger:
-                logging.info('###########################################')
-                logging.info(self.current_curve.file)
-                logging.info(
+                self.logger.info(
                     '###########################################')
-                logging.error(type(error).__name__, ':')
-                logging.error(error)
-                logging.error(traceback.format_exc())
-                logging.info('###########################################')
+
+                self.logger .info(self.current_curve.file)
+                self.logger.info(
+                    '###########################################')
+                self.logger.error(type(error).__name__)
+                self.logger.error(error)
+                self.logger.error(traceback.format_exc())
+                self.logger.info(
+                    '###########################################\n\n')
             print('###########################################')
             print(type(error).__name__, ':')
             print(error)
@@ -1398,39 +1407,54 @@ class View(QMainWindow, QWidget):
         :parameters:
             event: click event to select the indexes of the data range
         """
-        if isinstance(event.artist, Line2D):
-            thisline = event.artist
-            xdata = thisline.get_xdata()
-            ydata = thisline.get_ydata()
-            ind = event.ind
-            self.intreval_optical_effect.append(ind[0])
-            if len(self.intreval_optical_effect) > 2:
-                self.dict_fig_open[self.current_curve.file].clear()
-                self.dict_fig_open[self.current_curve.file] = self.current_curve.correction_optical_effect_object.manual_correction(
-                    self.dict_fig_open[self.current_curve.file], self.methods['factor_noise'])
-                for child in self.graph_view.children():
-                    if isinstance(child, QPushButton):
-                        child.hide()
-                self.toggle.setChecked(True)
-            if len(self.intreval_optical_effect) <= 2:
-                ax = self.dict_fig_open[self.current_curve.file].axes[0]
-                ax.plot(xdata[ind[0]], ydata[ind[0]],
-                        marker='D', color='orange')
-                plt.draw()
-                if len(self.intreval_optical_effect) == 2:
-                    if self.intreval_optical_effect[0] > self.intreval_optical_effect[1]:
-                        self.intreval_optical_effect = [num for num in reversed(self.intreval_optical_effect)]
-                    self.current_curve.correction_optical_effect_object.correction_optical_effect(
-                        self.intreval_optical_effect, self.dict_fig_open[self.current_curve.file])
+        try:
+            if isinstance(event.artist, Line2D):
+                thisline = event.artist
+                xdata = thisline.get_xdata()
+                ydata = thisline.get_ydata()
+                ind = event.ind
+                self.intreval_optical_effect.append(ind[0])
+                if len(self.intreval_optical_effect) > 2:
+                    self.dict_fig_open[self.current_curve.file].clear()
+                    self.dict_fig_open[self.current_curve.file] = self.current_curve.correction_optical_effect_object.manual_correction(
+                        self.dict_fig_open[self.current_curve.file], self.methods['factor_noise'])
                     for child in self.graph_view.children():
                         if isinstance(child, QPushButton):
-                            child.show()
-            if len(self.intreval_optical_effect) > 2:
-                self.intreval_optical_effect = []
-            canvas = FigureCanvasQTAgg(
-                self.dict_fig_open[self.current_curve.file])
-            self.graph_view.main_layout.addWidget(canvas, 1, 0, 4, 2)
-            self.graph_view.showMaximized()
+                            child.hide()
+                    self.toggle.setChecked(True)
+                if len(self.intreval_optical_effect) <= 2:
+                    ax = self.dict_fig_open[self.current_curve.file].axes[0]
+                    ax.plot(xdata[ind[0]], ydata[ind[0]],
+                            marker='D', color='orange')
+                    plt.draw()
+                    if len(self.intreval_optical_effect) == 2:
+                        if self.intreval_optical_effect[0] > self.intreval_optical_effect[1]:
+                            self.intreval_optical_effect = [
+                                num for num in reversed(self.intreval_optical_effect)]
+                        self.current_curve.correction_optical_effect_object.correction_optical_effect(
+                            self.intreval_optical_effect, self.dict_fig_open[self.current_curve.file])
+                        for child in self.graph_view.children():
+                            if isinstance(child, QPushButton):
+                                child.show()
+                if len(self.intreval_optical_effect) > 2:
+                    self.intreval_optical_effect = []
+                canvas = FigureCanvasQTAgg(
+                    self.dict_fig_open[self.current_curve.file])
+                self.graph_view.main_layout.addWidget(canvas, 1, 0, 4, 2)
+                self.graph_view.showMaximized()
+        except Exception as error:
+            if self.check_logger:
+                self.logger.info(
+                    '###########################################')
+
+                self.logger .info(self.current_curve.file)
+                self.logger.info(
+                    '###########################################')
+                self.logger.error(type(error).__name__)
+                self.logger.error(error)
+                self.logger.error(traceback.format_exc())
+                self.logger.info(
+                    '###########################################\n\n')
 
     ###############################################################################################
 
@@ -1487,10 +1511,14 @@ class View(QMainWindow, QWidget):
             frame.setMidLineWidth(3)
             self.fig_bilan = plt.figure()
             self.canvas_bilan = FigureCanvasQTAgg(self.fig_bilan)
-            toolbar_bilan = NavigationToolbar2QT(self.canvas_bilan, self.graph_bilan)
-            self.graph_bilan.main_layout.addWidget(self.canvas_bilan, 1, 0, 2, 3)
-            self.graph_bilan.main_layout.addWidget(toolbar_bilan, 0, 0, 1, 1,  alignment=Qt.AlignLeft)
-            self.graph_bilan.main_layout.addWidget(frame, 0, 1, 1, 1,  alignment=Qt.AlignCenter)
+            toolbar_bilan = NavigationToolbar2QT(
+                self.canvas_bilan, self.graph_bilan)
+            self.graph_bilan.main_layout.addWidget(
+                self.canvas_bilan, 1, 0, 2, 3)
+            self.graph_bilan.main_layout.addWidget(
+                toolbar_bilan, 0, 0, 1, 1,  alignment=Qt.AlignLeft)
+            self.graph_bilan.main_layout.addWidget(
+                frame, 0, 1, 1, 1,  alignment=Qt.AlignCenter)
             self.graph_bilan.main_layout.addWidget(
                 self.toogle_bilan, 0, 2, 1, 1,  alignment=Qt.AlignRight)
             self.graph_bilan.showMaximized()
@@ -1498,18 +1526,19 @@ class View(QMainWindow, QWidget):
             self.fig_bilan.clf()
         if self.check_plot_bilan:
             gs = gridspec.GridSpec(1, 2)
-            self.fig_bilan = self.controller.scatter_bilan(self.fig_bilan, gs)    
+            self.fig_bilan = self.controller.scatter_bilan(self.fig_bilan, gs)
         else:
             gs = gridspec.GridSpec(2, 3)
             self.controller.piechart(self.fig_bilan, gs)
         self.fig_bilan.canvas.draw_idle()
-        self.graph_bilan.closeEvent = lambda event: self.close_window_second(event, 'bilan')
-        
+        self.graph_bilan.closeEvent = lambda event: self.close_window_second(
+            event, 'bilan')
+
     ###################################################################################
 
     def change_toogle_bilan(self):
         """
-        TODO
+        Action of the toggle button in the balance window to switch from piecharts to scatter plots
         """
         if not self.toogle_bilan.isChecked():
             self.check_plot_bilan = False
@@ -1521,7 +1550,7 @@ class View(QMainWindow, QWidget):
     def close_window_second(self, event, window):
         """
         Management of the closing of the window of manual optical correction or bilan window
-        """ 
+        """
         if event:
             if window == 'optical':
                 if self.check_toggle:

@@ -3,6 +3,9 @@ main module to launch the optical tweezers curve analysis and classification too
 """
 import os
 import sys
+import logging
+from time import time
+from datetime import date, datetime
 from time import time
 from pathlib import Path
 from PyQt5.QtWidgets import QApplication
@@ -14,8 +17,7 @@ def main():
     """
     Launch application for curve analyis
     """
-    my_os = sys.platform
-    print(my_os)
+    # my_os = sys.platform
 
     app = QApplication.instance()
     if not app:

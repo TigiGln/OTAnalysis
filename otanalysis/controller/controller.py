@@ -26,8 +26,6 @@ from ..model.class_curve import Curve
 from ..model.class_segment_curve import Segment
 from ..extractor.jpk_extractor import JPKFile
 
-# from pympler.tracker import SummaryTracker
-
 
 class Controller:
     """
@@ -53,13 +51,11 @@ class Controller:
 
         if path_files is not None:
             self.manage_list_files(path_files)
-        if self.view.check_logger:
-            logging.getLogger('logger_otanalysis.controller')
-            # methods = {'threshold_align': 30, 'pulling_length': 50, 'model': 'linear',
-            #            'eta': 0.5, 'bead_radius': 1, 'factor_noise': 5, 'jump_force': 5,
-            #            'jump_point': 200, 'jump_distance': 200, 'drug': 'NaN', 'condition':
-            #            'NaN', 'optical': None}
-            # self.create_dict_curves(methods)
+        # methods = {'threshold_align': 30, 'pulling_length': 50, 'model': 'linear',
+        #            'eta': 0.5, 'bead_radius': 1, 'factor_noise': 5, 'jump_force': 5,
+        #            'jump_point': 200, 'jump_distance': 200, 'drug': 'NaN', 'condition':
+        #            'NaN', 'optical': None}
+        # self.create_dict_curves(methods)
 
     ##############################################################################################
 
@@ -76,19 +72,26 @@ class Controller:
 
     def manage_list_files(self, path):
         """
-        TODO
+        management of the number of files given as input. 
+        If greater than 1000 no supervision
+
+        :parameters:
+            path: str
+                path of the directory to be processed recursively
         """
         dict_files = {}
         length_list_files = 0
         dict_files = self.create_list_files(path, dict_files)
         for list_files in dict_files.values():
             length_list_files += len(list_files)
-        print(length_list_files)
-
-        print(len(dict_files))
         if length_list_files > 1000:
             self.check_length_files = False
-        self.set_list_files(dict_files)
+        for list_files in dict_files.values():
+            if self.check_length_files:
+                for file in list_files:
+                    self.files.append(file)
+            else:
+                self.files.append(list_files)
 
     ################################################################################################
 
@@ -124,27 +127,6 @@ class Controller:
             if regex:
                 dict_files[dir_file] = [file]
         return dict_files
-    ##############################################################################################
-
-    def set_list_files(self, dict_files):
-        """
-        TODO
-        """
-
-        for list_files in dict_files.values():
-            if self.check_length_files:
-                for file in list_files:
-                    self.files.append(file)
-            else:
-                self.files.append(list_files)
-        print(len(self.files))
-        # if self.check_length_files:
-        #     print("oK")
-        #     list_files = []
-        #     for index in range(0, len(self.files), 300):
-        #         list_files.append(list(self.files[index:index+300]))
-        #     print(list_files)
-        #     self.files = list_files
 
     ##############################################################################################
 
@@ -156,6 +138,9 @@ class Controller:
             methods: dict
                 Set of parameters to enter in the interface to launch the analysis
         """
+        if self.view.check_logger:
+            self.logger = logging.getLogger('logger_otanalysis.controller')
+        print(self.view.check_logger)
         self.dict_type_files = {'txt': 0, 'jpk': 0,
                                 'NC': 0, 'PB': 0, 'INC': 0, 'DP': 0}
         # 'txt': fichier .txt, 'jpk':fichier .jpk-nt-force,
@@ -227,17 +212,18 @@ class Controller:
                             error = new_curve.analyzed_curve(
                                 methods, False)
                             if self.view.check_logger and error is not None:
-                                logging.info(
+                                self.logger.info(
                                     '###########################################')
-                                logging.info(
+                                self.logger.info(
                                     new_curve.file)
-                                logging.info(
+                                self.logger.info(
                                     '###########################################')
-                                logging.error(type(error).__name__, ':')
-                                logging.error(error)
-                                logging.error(traceback.format_exc())
-                                logging.info(
-                                    '###########################################')
+                                self.logger.error(
+                                    type(error).__name__)
+                                self.logger.error(error)
+                                self.logger.error(traceback.format_exc())
+                                self.logger.info(
+                                    '###########################################\n\n')
                             self.dict_curve[new_curve.file] = new_curve
                             new_curve.features['type'] = new_curve.features['automatic_type']
                             new_curve.features['relative_path'] = files[index_file]
@@ -281,7 +267,6 @@ class Controller:
         nb_segments = 0
         dict_segments = {}
         title = name_file.split(sep)[-1].replace(".txt", "")
-        # file_curve = file.__str__().split(sep)[-1]  # .replace('.txt', "")
         file_curve = name_file.split('.')[0:-1]
         file_curve = '.'.join(file_curve)
         check_incomplete = False
@@ -438,13 +423,16 @@ class Controller:
         print(message)
         print('###########################################')
         if self.view.check_logger:
-            logging.info('###########################################')
-            logging.info(file)
-            logging.info('###########################################')
-            logging.error(type(error).__name__)
-            logging.error(error)
-            logging.error(traceback.format_exc())
-            logging.info('###########################################')
+            self.logger.info(
+                '###########################################')
+            self.logger.info(file)
+            self.logger.info(
+                '###########################################')
+            self.logger.error(type(error).__name__)
+            self.logger.error(error)
+            self.logger.error(traceback.format_exc())
+            self.logger.info(
+                '###########################################\n\n')
 
     ############################################################################################
 
@@ -519,7 +507,7 @@ class Controller:
                                 ax.legend(loc="lower left")
                             elif segment.name == 'Pull':
                                 handles, labels = ax.get_legend_handles_labels()
-                                i= len(labels)-1
+                                i = len(labels)-1
                                 while i >= 0:
                                     if labels[i] == 'smooth' or labels[i].startswith('fit'):
                                         handles.pop(labels.index(labels[i]))
@@ -597,19 +585,19 @@ class Controller:
                     color='blue', alpha=0.5, ls='-.')
             if 'distance_fitted_classification_release' in curve.graphics:
                 ax.plot(curve.graphics['distance_fitted_classification_release'],
-                        curve.graphics['fitted_classification_release'], label= 'fit classification release')
+                        curve.graphics['fitted_classification_release'], label='fit classification release')
             if 'distance_fitted_classification_max' in curve.graphics:
                 ax.plot(curve.graphics['distance_fitted_classification_max'],
-                        curve.graphics['fitted_classification_max'], label= 'fit classification max')
+                        curve.graphics['fitted_classification_max'], label='fit classification max')
             if 'distance_fitted_classification_return_endline' in curve.graphics:
                 ax.plot(curve.graphics['distance_fitted_classification_return_endline'],
-                        curve.graphics['fitted_classification_return_endline'], label= 'fit classification return')
+                        curve.graphics['fitted_classification_return_endline'], label='fit classification return')
             if 'distance_fit_classification_transition' in curve.graphics:
                 ax.plot(curve.graphics['distance_fit_classification_transition'],
-                        curve.graphics['fit_classification_transition'], label= 'fit classification transition')
+                        curve.graphics['fit_classification_transition'], label='fit classification transition')
             elif 'distance_fitted_classification_max_transition' in curve.graphics:
                 ax.plot(curve.graphics['distance_fitted_classification_max_transition'],
-                        curve.graphics['fitted_classification_max_transition'], label= 'fit classification transition')
+                        curve.graphics['fitted_classification_max_transition'], label='fit classification transition')
             if self.view.methods['optical'] == "Correction":
                 index_x_0 = curve.features['contact_theorical_pull']['index']
             else:
@@ -728,11 +716,12 @@ class Controller:
         ax1.legend(loc="lower left", ncol=2)
         return graph_position
     #################################################################################################################
+
     def display_legend(self, fig):
         for ax in fig.axes:
             if ax.get_legend():
                 if not self.view.display_legend.isChecked():
-                    ax.get_legend().set_visible(False)   
+                    ax.get_legend().set_visible(False)
                 else:
                     ax.get_legend().set_visible(True)
         fig.canvas.draw_idle()
@@ -1173,39 +1162,57 @@ class Controller:
             str(len(self.files)) + '\nTotal_files_curve: ' + \
             str(len(self.list_file_imcomplete) + len(self.dict_curve))
         ax_incomplete.set_title(title)
-        
+
         # piechart auto alignment
         ax_alignment_auto = fig.add_subplot(gs[0, 1])
-        ax_alignment_auto, nb_conform_auto = self.piechart_alignment(ax_alignment_auto, 'auto')
-        ax_alignment_auto.set_title('Automatic Alignment\nTreated curves: ' + str(len(self.dict_curve)))
+        ax_alignment_auto, nb_conform_auto = self.piechart_alignment(
+            ax_alignment_auto, 'auto')
+        ax_alignment_auto.set_title(
+            'Automatic Alignment\nTreated curves: ' + str(len(self.dict_curve)))
         # piechart supervised alignment
         ax_alignment_supervised = fig.add_subplot(gs[0, 2])
-        ax_alignment_supervised, nb_conform_supervised = self.piechart_alignment(ax_alignment_supervised, 'supervised')
-        ax_alignment_supervised.set_title('Supervised Alignment\nTreated curves: ' + str(len(self.dict_curve)))
+        ax_alignment_supervised, nb_conform_supervised = self.piechart_alignment(
+            ax_alignment_supervised, 'supervised')
+        ax_alignment_supervised.set_title(
+            'Supervised Alignment\nTreated curves: ' + str(len(self.dict_curve)))
 
-        #piechart optical correction
+        # piechart optical correction
         ax_correction = fig.add_subplot(gs[1, 0])
         ax_correction = self.piechart_optical_correction(ax_correction)
         ax_correction.set_title(
             'State Correction\nTreated curves: ' + str(len(self.dict_curve)))
-        
+
         # piechart auto classification
         ax_classification_before = fig.add_subplot(gs[1, 1])
-        ax_classification_before = self.piechart_classification(ax_classification_before, nb_conform_auto, "automatic_type")
+        ax_classification_before = self.piechart_classification(
+            ax_classification_before, nb_conform_auto, "automatic_type")
         ax_classification_before.set_title(
-                'Classification before\nConforming curves: ' + str(nb_conform_auto))
+            'Classification before\nConforming curves: ' + str(nb_conform_auto))
 
         # piechart manual classification
         ax_classification_after = fig.add_subplot(gs[1, 2])
-        ax_classification_after = self.piechart_classification(ax_classification_after, nb_conform_supervised, "type")
+        ax_classification_after = self.piechart_classification(
+            ax_classification_after, nb_conform_supervised, "type")
         ax_classification_after.set_title(
             'Classification after\nConforming curves: ' + str(nb_conform_supervised))
 
         return fig
     ###########################################################################################################
+
     def piechart_alignment(self, ax, name_alignment):
         """
-        TODO
+        Creation of the piechart to identify the proportion of misaligned curves 
+        compared to those that can be analyzed
+
+        :parameters:
+            ax: object
+               the axis to modify for piechart display
+            name_alignment: str
+                management of the alignment before and after supervision
+
+        :return:
+            ax: object
+                the axis containing the generated piechart
         """
         nb_curves = len(self.dict_curve)
         nb_alignment = 0
@@ -1230,7 +1237,16 @@ class Controller:
     ######################################################################################################################
     def piechart_incomplete(self, ax):
         """
-        TODO
+        Creation of the piechart to determine the proportion of non-compliant 
+        or incomplete files compared to the original set
+
+        :parameters:
+            ax: object
+               the axis to modify for piechart display
+
+        :return:
+            ax: object
+                the axis containing the generated piechart
         """
         nb_curves = len(self.dict_curve)
         nb_files = len(self.files)
@@ -1253,13 +1269,27 @@ class Controller:
         else:
             explode_incomplete = None
         ax.pie(values_incomplete, explode=explode_incomplete,
-                          autopct=lambda pct: self.make_autopct(pct, dict_incomplete), shadow=True)
+               autopct=lambda pct: self.make_autopct(pct, dict_incomplete), shadow=True)
 
         return ax
     #######################################################################################################################
+
     def piechart_classification(self, ax, nb_conforming_curves, name_classification):
         """
-        TODO
+        Function allowing the creation of classification charts before and after supervision
+        This classification is only for well aligned curves and therefore conforms
+
+        :parameters:
+            ax: object
+               the axis to modify for piechart display
+            nb_conforming_curves: int
+                Number of curves meeting compliance criteria
+            name_classification: str
+                name of the classification to be done (before or after supervision) 
+
+        :return:
+            ax: object
+                the axis containing the generated piechart
         """
         dict_type = {'NAD': 0, 'AD': 0, 'FTU': 0, 'ITU': 0, 'RE': 0}
         for curve in self.dict_curve.values():
@@ -1291,7 +1321,7 @@ class Controller:
             dict_classification_auto = {'NAD': f"{percent_NAD_auto:.2f}", 'AD': f"{percent_AD_auto:.2f}",
                                         'FTU': f"{percent_FTU_auto:.2f}", 'ITU': f"{percent_ITU_auto:.2f}", 'RE': f"{percent_RE_auto:.2f}"}
             values = [f"{percent_FTU_auto:.2f}", f"{percent_NAD_auto:.2f}",
-                    f"{percent_RE_auto:.2f}", f"{percent_AD_auto:.2f}", f"{percent_ITU_auto:.2f}"]
+                      f"{percent_RE_auto:.2f}", f"{percent_AD_auto:.2f}", f"{percent_ITU_auto:.2f}"]
             values_auto = [value for value in values if value != '0.00']
             ax.pie(values_auto, autopct=lambda pct: self.make_autopct(
                 pct, dict_classification_auto), shadow=True, startangle=45)
@@ -1300,7 +1330,16 @@ class Controller:
     ####################################################################################################################################
     def piechart_optical_correction(self, ax):
         """
-        TODO
+        creation of a pie chart to display the proportion of optical correction according to the chosen mode 
+        (None, Auto, Manual)
+
+        :parameters:
+            ax: object
+                the axis to modify for piechart display
+
+        :return:
+            ax: object
+                the axis containing the generated piechart
         """
         nb_curves = len(self.dict_curve)
         dict_correction = {'No_correction': 0,
@@ -1355,11 +1394,13 @@ class Controller:
             print('value problem')
             print('###########################################')
             if self.view.check_logger:
-                logging.info('###########################################')
-                logging.error(type(error).__name__, ':')
-                logging.error(error)
-                logging.error(traceback.format_exc())
-                logging.info('###########################################')
+                self.logger.info(
+                    '###########################################')
+                self.logger.error(type(error).__name__)
+                self.logger.error(error)
+                self.logger.error(traceback.format_exc())
+                self.logger.info(
+                    '###########################################\n\n')
         if retour != None:
             return retour
 
@@ -1367,7 +1408,13 @@ class Controller:
 
     def scatter_bilan(self, fig, gs):
         """
-        TODO
+        scatter plot for a general verification of the classification results thanks to the characteristic points
+
+        :parameters:
+            fig: object
+                figure matplotlib to be modified to display scatters instead of piecharts
+            gs: object
+                grid for the placement of the axes on the figure
         """
         self.check_annot = False
         annotations_ax1 = []
@@ -1379,16 +1426,16 @@ class Controller:
             if curve.features['type'] in ('AD', 'FTU'):
                 ax1.plot(curve.features['jump_distance_end_pull (nm)'], curve.features['jump_force_end_pull (pN)'],
                          marker='o', color=color_dict[curve.features['type']], picker=True, label=curve.file)
-                annotations_ax1.append(ax1.annotate(curve.file, xy=(curve.features['jump_distance_end_pull (nm)'], 
-                                            curve.features['jump_force_end_pull (pN)']), xytext=(-50,10), 
-                                            textcoords="offset points", bbox=dict(boxstyle="round", fc="w"), visible=False))
+                annotations_ax1.append(ax1.annotate(curve.file, xy=(curve.features['jump_distance_end_pull (nm)'],
+                                                                    curve.features['jump_force_end_pull (pN)']), xytext=(-50, 10),
+                                                    textcoords="offset points", bbox=dict(boxstyle="round", fc="w"), visible=False))
                 if 'slope_fitted_classification_max_transition' in curve.features:
                     ax2.plot(curve.features["slope_fitted_classification_max_transition"],
-                            curve.features['jump_force_end_pull (pN)'], marker='o', color=color_dict[curve.features['type']],
-                            picker=True, label=curve.file)
-                    annotations_ax2.append(ax2.annotate(curve.file, xy=(curve.features["slope_fitted_classification_max_transition"], 
-                                            curve.features['jump_force_end_pull (pN)']), xytext=(-50,10), 
-                                            textcoords="offset points", bbox=dict(boxstyle="round", fc="w"), visible=False))
+                             curve.features['jump_force_end_pull (pN)'], marker='o', color=color_dict[curve.features['type']],
+                             picker=True, label=curve.file)
+                    annotations_ax2.append(ax2.annotate(curve.file, xy=(curve.features["slope_fitted_classification_max_transition"],
+                                                                        curve.features['jump_force_end_pull (pN)']), xytext=(-50, 10),
+                                                        textcoords="offset points", bbox=dict(boxstyle="round", fc="w"), visible=False))
         max_xlim = ax2.get_xlim()[1]
         ax2.set_xlim(-max_xlim, max_xlim)
         ax1.axvline(self.view.methods['jump_distance'], ls='-.')
@@ -1399,30 +1446,46 @@ class Controller:
         ax1.set_ylabel("jump_force (pN)")
         ax2.set_ylabel("jump_force (pN)")
         ax2.set_xlabel("slope_fit_max_return (pN/nm)")
-        fig.canvas.mpl_connect("pick_event", lambda event: self.click_curve(event, ax1, fig, annotations_ax1))
-        fig.canvas.mpl_connect("pick_event", lambda event: self.click_curve(event, ax2, fig, annotations_ax2))
+        fig.canvas.mpl_connect("pick_event", lambda event: self.click_curve(
+            event, ax1, fig, annotations_ax1, 30, 50))
+        fig.canvas.mpl_connect("pick_event", lambda event: self.click_curve(
+            event, ax2, fig, annotations_ax2, 0.005, 30))
         fig.subplots_adjust(wspace=0.5)
         return fig
 
     #########################################################################################################
-    def click_curve(self, event, ax, fig, annotations):
+    def click_curve(self, event, ax, fig, annotations, tolerance_x, tolerance_y):
         """
-        TODO
+        click on the scatters plot to display the name of the corresponding curve
+
+        :parameters:
+            event: signal object
+                mouse click event
+            ax: object
+                matplotlib object to work on the chosen axis
+            fig: object
+                fig matplotlib to refresh the figure at each click
+            annotations: list
+                list of annotations for each point on the axis
+            tolerance_x: float
+                tolerance on the x-axis to check that the click is at the position of an existing point
+            tolerance_y: float
+                idem on the ordinate axis
         """
         check_annot = False
         for point in ax.get_lines():
-            if point.get_marker() == 'o': 
+            if point.get_marker() == 'o':
                 for annot in annotations:
-                    if isclose(event.mouseevent.xdata, point.get_xdata(), abs_tol=15) and isclose(event.mouseevent.ydata, point.get_ydata(), abs_tol=15):
-                        if point.get_label() == annot.get_text():
-                            if not annot.get_visible() and not check_annot:
-                                annot.set_visible(True)
-                                fig.canvas.draw_idle()
-                                check_annot = True
-                            else:
-                                annot.set_visible(False)
-                                fig.canvas.draw_idle()
-
+                    if event.mouseevent.xdata is not None and event.mouseevent.ydata is not None:
+                        if isclose(event.mouseevent.xdata, point.get_xdata(), abs_tol=tolerance_x) and isclose(event.mouseevent.ydata, point.get_ydata(), abs_tol=tolerance_y):
+                            if point.get_label() == annot.get_text():
+                                if not annot.get_visible() and not check_annot:
+                                    annot.set_visible(True)
+                                    fig.canvas.draw_idle()
+                                    check_annot = True
+                                else:
+                                    annot.set_visible(False)
+                                    fig.canvas.draw_idle()
 
     #########################################################################################################
 

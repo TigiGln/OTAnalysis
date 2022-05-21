@@ -6,6 +6,9 @@ from pathlib import Path
 
 
 def create_logger():
+    """
+    Creation of the log file with the desired configurations
+    """
     today = str(date.today())
     time_today = str(datetime.now().time().replace(
         microsecond=0)).replace(':', '-')
