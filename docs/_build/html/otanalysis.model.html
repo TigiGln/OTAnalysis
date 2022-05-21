@@ -40,21 +40,32 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="readme_link.html">README</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">OTAnalysis</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="main.html">main module</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="otanalysis.html">otanalysis package</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="otanalysis.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="otanalysis.controller.html">otanalysis.controller package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="otanalysis.extractor.html">otanalysis.extractor package</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">otanalysis.model package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="otanalysis.multithread.html">otanalysis.multithread package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="otanalysis.tests.html">otanalysis.tests package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="otanalysis.view.html">otanalysis.view package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readme_link.html#otanalysis">OTAnalysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readme_link.html#tool-for-managing-the-results-of-optical-tweezers">Tool for managing the results of optical tweezers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readme_link.html#install-miniconda-create-conda-environment">Install MiniConda &amp;&amp; Create conda environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readme_link.html#dependencies">Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readme_link.html#install-package">Install package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readme_link.html#launch-project">Launch project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readme_link.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">main</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="otanalysis.html">otanalysis package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="otanalysis.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="otanalysis.controller.html">otanalysis.controller package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="otanalysis.extractor.html">otanalysis.extractor package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">otanalysis.model package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-otanalysis.model.class_curve">otanalysis.model.class_curve module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-otanalysis.model.class_optical_effect">otanalysis.model.class_optical_effect module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-otanalysis.model.class_segment_curve">otanalysis.model.class_segment_curve module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-otanalysis.model">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="otanalysis.html#module-otanalysis">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="otanalysis.multithread.html">otanalysis.multithread package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="otanalysis.tests.html">otanalysis.tests package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="otanalysis.view.html">otanalysis.view package</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="otanalysis.html#module-otanalysis">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -73,7 +84,6 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="modules.html">OTAnalysis</a> &raquo;</li>
           <li><a href="otanalysis.html">otanalysis package</a> &raquo;</li>
       <li>otanalysis.model package</li>
       <li class="wy-breadcrumbs-aside">
@@ -95,7 +105,7 @@
 <p>File describing the instance class of the curved objects</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="otanalysis.model.class_curve.Curve">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">otanalysis.model.class_curve.</span></span><span class="sig-name descname"><span class="pre">Curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict_segments</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulling_length</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/model/class_curve.html#Curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.model.class_curve.Curve" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">otanalysis.model.class_curve.</span></span><span class="sig-name descname"><span class="pre">Curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict_segments</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulling_length</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/model/class_curve.html#Curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.model.class_curve.Curve" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class that instantiates curved objects</p>
 <p>Initialization attributes of the object and launch the functions</p>
@@ -306,7 +316,7 @@ Recovery and transformations of the dataframe “features” of the curve</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="otanalysis.model.class_curve.Curve.derivation">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">derivation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">force_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/model/class_curve.html#Curve.derivation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.model.class_curve.Curve.derivation" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">derivation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">force_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/model/class_curve.html#Curve.derivation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.model.class_curve.Curve.derivation" title="Permalink to this definition"></a></dt>
 <dd><p>function allowing to return the derivative of vector transmitted according to an interval
 for each point (n being the point we take from n/2 before and n/2 after)</p>
 <dl class="field-list simple">
@@ -356,7 +366,7 @@ if the contact between the ball and the cell has been correctly executed</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="otanalysis.model.class_curve.Curve.determine_young_modulus">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">determine_young_modulus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bead_ray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/model/class_curve.html#Curve.determine_young_modulus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.model.class_curve.Curve.determine_young_modulus" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">determine_young_modulus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bead_ray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/model/class_curve.html#Curve.determine_young_modulus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.model.class_curve.Curve.determine_young_modulus" title="Permalink to this definition"></a></dt>
 <dd><p>Young modulus calculation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -424,7 +434,7 @@ fitted: force data corresponding to the model</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="otanalysis.model.class_curve.Curve.fit_model_retraction">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">fit_model_retraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_release</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endline</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/model/class_curve.html#Curve.fit_model_retraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.model.class_curve.Curve.fit_model_retraction" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fit_model_retraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_release</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endline</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/model/class_curve.html#Curve.fit_model_retraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.model.class_curve.Curve.fit_model_retraction" title="Permalink to this definition"></a></dt>
 <dd><p>function to model the fitting of the “Pull” segment</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -471,7 +481,7 @@ The ball is immobile, it is the cell that we approach the ball along an axis:
 
 <dl class="py method">
 <dt class="sig sig-object py" id="otanalysis.model.class_curve.Curve.linear_fit">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">linear_fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slope</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/model/class_curve.html#Curve.linear_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.model.class_curve.Curve.linear_fit" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">linear_fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slope</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/model/class_curve.html#Curve.linear_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.model.class_curve.Curve.linear_fit" title="Permalink to this definition"></a></dt>
 <dd><p>Fit model to determine the slope between the maximum point of the curve and the transition point</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -524,7 +534,7 @@ The ball is immobile, it is the cell that we approach the ball along an axis:
 
 <dl class="py method">
 <dt class="sig sig-object py" id="otanalysis.model.class_curve.Curve.retrieve_retour_line_end">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">retrieve_retour_line_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curve_object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_analyze</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_pos_threshold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_curve</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/model/class_curve.html#Curve.retrieve_retour_line_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.model.class_curve.Curve.retrieve_retour_line_end" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">retrieve_retour_line_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curve_object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_analyze</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_pos_threshold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_curve</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/model/class_curve.html#Curve.retrieve_retour_line_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.model.class_curve.Curve.retrieve_retour_line_end" title="Permalink to this definition"></a></dt>
 <dd><p>Determining the point of return to the baseline in the “Pull” segment</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -586,7 +596,7 @@ The ball is immobile, it is the cell that we approach the ball along an axis:
 
 <dl class="py method">
 <dt class="sig sig-object py" id="otanalysis.model.class_curve.Curve.smooth">
-<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">smooth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">force_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">51</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_polynome</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/model/class_curve.html#Curve.smooth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.model.class_curve.Curve.smooth" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">smooth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">force_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">51</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_polynome</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/model/class_curve.html#Curve.smooth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.model.class_curve.Curve.smooth" title="Permalink to this definition"></a></dt>
 <dd><p>Allows to reduce the noise on the whole curve</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -611,7 +621,7 @@ The ball is immobile, it is the cell that we approach the ball along an axis:
 <p>File describing the instance class of the optical effect objects</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="otanalysis.model.class_optical_effect.OpticalEffect">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">otanalysis.model.class_optical_effect.</span></span><span class="sig-name descname"><span class="pre">OpticalEffect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curve</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/model/class_optical_effect.html#OpticalEffect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.model.class_optical_effect.OpticalEffect" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">otanalysis.model.class_optical_effect.</span></span><span class="sig-name descname"><span class="pre">OpticalEffect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curve</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/model/class_optical_effect.html#OpticalEffect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.model.class_optical_effect.OpticalEffect" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Construction plan of an optical effect correction on a curved object</p>
 <dl class="py method">
@@ -745,7 +755,7 @@ on the data between the beginning and the contact point</p>
 <p>File describing the instance class of the segment objects</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="otanalysis.model.class_segment_curve.Segment">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">otanalysis.model.class_segment_curve.</span></span><span class="sig-name descname"><span class="pre">Segment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header_segment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/model/class_segment_curve.html#Segment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.model.class_segment_curve.Segment" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">otanalysis.model.class_segment_curve.</span></span><span class="sig-name descname"><span class="pre">Segment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header_segment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/model/class_segment_curve.html#Segment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.model.class_segment_curve.Segment" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class instantiating curve segment objects</p>
 <p>Initialization parameters of segment</p>

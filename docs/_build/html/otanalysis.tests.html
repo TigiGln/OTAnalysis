@@ -40,21 +40,30 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="readme_link.html">README</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">OTAnalysis</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="main.html">main module</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="otanalysis.html">otanalysis package</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="otanalysis.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="otanalysis.controller.html">otanalysis.controller package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="otanalysis.extractor.html">otanalysis.extractor package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="otanalysis.model.html">otanalysis.model package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="otanalysis.multithread.html">otanalysis.multithread package</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">otanalysis.tests package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="otanalysis.view.html">otanalysis.view package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readme_link.html#otanalysis">OTAnalysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readme_link.html#tool-for-managing-the-results-of-optical-tweezers">Tool for managing the results of optical tweezers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readme_link.html#install-miniconda-create-conda-environment">Install MiniConda &amp;&amp; Create conda environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readme_link.html#dependencies">Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readme_link.html#install-package">Install package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readme_link.html#launch-project">Launch project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readme_link.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">main</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="otanalysis.html">otanalysis package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="otanalysis.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="otanalysis.controller.html">otanalysis.controller package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="otanalysis.extractor.html">otanalysis.extractor package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="otanalysis.model.html">otanalysis.model package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="otanalysis.multithread.html">otanalysis.multithread package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">otanalysis.tests package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-otanalysis.tests.test_controller">otanalysis.tests.test_controller module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-otanalysis.tests">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="otanalysis.html#module-otanalysis">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="otanalysis.view.html">otanalysis.view package</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="otanalysis.html#module-otanalysis">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -73,7 +82,6 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="modules.html">OTAnalysis</a> &raquo;</li>
           <li><a href="otanalysis.html">otanalysis package</a> &raquo;</li>
       <li>otanalysis.tests package</li>
       <li class="wy-breadcrumbs-aside">
@@ -100,19 +108,19 @@ from imp import reload by from importlib import reload</p>
 ~/anaconda3/lib/python3.9/site-packages/past/builtins/misc.py</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="otanalysis.tests.test_controller.TestController">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">otanalysis.tests.test_controller.</span></span><span class="sig-name descname"><span class="pre">TestController</span></span><a class="reference internal" href="_modules/otanalysis/tests/test_controller.html#TestController"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_controller.TestController" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">otanalysis.tests.test_controller.</span></span><span class="sig-name descname"><span class="pre">TestController</span></span><a class="reference internal" href="_modules/otanalysis/tests/test_controller.html#TestController"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_controller.TestController" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Test class of the controller for the application of processing of the optical tweezers curves</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="otanalysis.tests.test_controller.TestController.setup_class">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">setup_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/tests/test_controller.html#TestController.setup_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_controller.TestController.setup_class" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">setup_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/tests/test_controller.html#TestController.setup_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_controller.TestController.setup_class" title="Permalink to this definition"></a></dt>
 <dd><p>This function is launched at each test to create the Controller object
 and do the repetitive tasks before launching the test</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="otanalysis.tests.test_controller.TestController.teardown_class">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">teardown_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/tests/test_controller.html#TestController.teardown_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_controller.TestController.teardown_class" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">teardown_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/tests/test_controller.html#TestController.teardown_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_controller.TestController.teardown_class" title="Permalink to this definition"></a></dt>
 <dd><p>This function is run at the end of each test to destroy
 all the elements created in the setup_class()</p>
 </dd></dl>

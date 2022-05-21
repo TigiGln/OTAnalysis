@@ -10,7 +10,6 @@ Subpackages
    otanalysis.controller
    otanalysis.extractor
    otanalysis.model
-   otanalysis.multithread
    otanalysis.tests
    otanalysis.view
 

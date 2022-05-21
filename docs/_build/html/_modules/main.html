@@ -37,7 +37,15 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../readme_link.html">README</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../modules.html">OTAnalysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme_link.html#otanalysis">OTAnalysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme_link.html#tool-for-managing-the-results-of-optical-tweezers">Tool for managing the results of optical tweezers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme_link.html#install-miniconda-create-conda-environment">Install MiniConda &amp;&amp; Create conda environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme_link.html#dependencies">Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme_link.html#install-package">Install package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme_link.html#launch-project">Launch project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme_link.html#documentation">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">main</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../otanalysis.html">otanalysis package</a></li>
 </ul>
 
         </div>
@@ -66,10 +74,13 @@
              
   <h1>Source code for main</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">TODO</span>
+<span class="sd">main module to launch the optical tweezers curve analysis and classification tool</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span><span class="p">,</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="kn">import</span> <span class="n">QApplication</span>
@@ -81,8 +92,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Launch application for curve analyis</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">my_os</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">my_os</span><span class="p">)</span>
+    <span class="c1"># my_os = sys.platform</span>
 
     <span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">app</span><span class="p">:</span>
