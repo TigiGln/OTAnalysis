@@ -1,8 +1,3 @@
-import mock
-MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'matplotlib.pyplot', 'scipy.interpolate']
-for mod_name in MOCK_MODULES:
-    sys.modules[mod_name] = mock.Mock()
-
 # Configuration file for the Sphinx documentation builder.
 #
 # This file only contains a selection of the most common options. For a full
@@ -16,11 +11,14 @@ for mod_name in MOCK_MODULES:
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 
-
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../'))
 import otanalysis
+import mock
+MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'matplotlib.pyplot', 'scipy.interpolate']
+for mod_name in MOCK_MODULES:
+    sys.modules[mod_name] = mock.Mock()
 # -- Project information -----------------------------------------------------
 
 project = 'OTAnalysis'
