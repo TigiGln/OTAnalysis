@@ -6,7 +6,7 @@ Class Controller
 import logging
 import setup_logger
 import traceback
-from os import sep, abort
+from os import sep
 from pathlib import Path
 import argparse
 from shutil import copy

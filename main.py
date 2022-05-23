@@ -3,7 +3,6 @@ main module to launch the optical tweezers curve analysis and classification too
 """
 import os
 import sys
-import logging
 from time import time
 from datetime import date, datetime
 from time import time

@@ -5,7 +5,6 @@ File describing the instance class of the curved objects
 """
 import math
 import traceback
-import logging
 import numpy as np
 import pandas as pd
 
