@@ -1,11 +1,7 @@
 import mock
-<font></font>
-<font></font>
 MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'matplotlib.pyplot', 'scipy.interpolate']
-<font></font>
 for mod_name in MOCK_MODULES:
-    <font></font>
-sys.modules[mod_name] = mock.Mock()
+    sys.modules[mod_name] = mock.Mock()
 
 # Configuration file for the Sphinx documentation builder.
 #
