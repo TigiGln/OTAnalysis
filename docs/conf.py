@@ -1,8 +1,11 @@
-<font style="vertical-align: inherit;"><font style="vertical-align: inherit;">importer une maquette</font></font><font></font>
-<font></font><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
-MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'matplotlib.pyplot', 'scipy.interpolate']</font></font><font></font><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
-pour mod_name dans MOCK_MODULES :</font></font><font></font><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
-sys.modules[mod_name] = mock.Mock()</font></font>
+import mock
+<font></font>
+<font></font>
+MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'matplotlib.pyplot', 'scipy.interpolate']
+<font></font>
+for mod_name in MOCK_MODULES:
+    <font></font>
+sys.modules[mod_name] = mock.Mock()
 
 # Configuration file for the Sphinx documentation builder.
 #
