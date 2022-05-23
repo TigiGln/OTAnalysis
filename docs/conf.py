@@ -1,3 +1,9 @@
+<font style="vertical-align: inherit;"><font style="vertical-align: inherit;">importer une maquette</font></font><font></font>
+<font></font><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'matplotlib.pyplot', 'scipy.interpolate']</font></font><font></font><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+pour mod_name dans MOCK_MODULES :</font></font><font></font><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+sys.modules[mod_name] = mock.Mock()</font></font>
+
 # Configuration file for the Sphinx documentation builder.
 #
 # This file only contains a selection of the most common options. For a full
@@ -10,11 +16,6 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-<font style="vertical-align: inherit;"><font style="vertical-align: inherit;">importer une maquette</font></font><font></font>
-<font></font><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
-MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'matplotlib.pyplot', 'scipy.interpolate']</font></font><font></font><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
-pour mod_name dans MOCK_MODULES :</font></font><font></font><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
-sys.modules[mod_name] = mock.Mock()</font></font>
 
 
 import os
