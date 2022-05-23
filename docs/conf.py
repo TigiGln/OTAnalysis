@@ -10,12 +10,16 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-
+<font style="vertical-align: inherit;"><font style="vertical-align: inherit;">importer une maquette</font></font><font></font>
+<font></font><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'matplotlib.pyplot', 'scipy.interpolate']</font></font><font></font><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+pour mod_name dans MOCK_MODULES :</font></font><font></font><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+sys.modules[mod_name] = mock.Mock()</font></font>
 
 
 import os
 import sys
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../'))
 import otanalysis
 # -- Project information -----------------------------------------------------
 
