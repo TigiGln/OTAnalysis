@@ -13,10 +13,8 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
-import otanalysis
-
 autodoc_mock_imports = ['sip', 'PyQt5', 'PyQt5.QtGui', 'PyQt5.QtCore', 'PyQt5.QtWidgets']
-napoleon_mock_imports = ['sip', 'PyQt5', 'PyQt5.QtGui', 'PyQt5.QtCore', 'PyQt5.QtWidgets']
+import otanalysis
 from main import main
 import setup_logger
 # -- Project information -----------------------------------------------------
