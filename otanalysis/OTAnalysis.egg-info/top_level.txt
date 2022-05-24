@@ -1,4 +1,0 @@
-controller
-extractor
-model
-view
