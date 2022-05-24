@@ -24,9 +24,9 @@ from PyQt5.QtWidgets import QLineEdit, QGridLayout, QGroupBox, QDoubleSpinBox, Q
 from PyQt5.QtWidgets import QScrollArea, QMainWindow, QAction, QDialog, QCheckBox
 from PyQt5.QtCore import Qt, pyqtSignal, QEvent, QEventLoop, QTimer
 from PyQt5.QtGui import QIcon
-from ..view.class_info import Infowindow
-from ..view.class_toggle import QtToggle
-from ..view.class_graph_view import GraphView
+from .info import Infowindow
+from .toggle import QtToggle
+from .graph_view import GraphView
 from ..controller.controller import Controller
 
 logger = ""

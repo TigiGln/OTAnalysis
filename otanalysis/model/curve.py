@@ -14,7 +14,7 @@ from scipy.optimize import curve_fit
 from scipy.signal import savgol_filter
 # from scipy.interpolate import UnivariateSpline
 # from lmfit import Model
-from ..model.class_optical_effect import OpticalEffect
+from .optical_effect import OpticalEffect
 
 # logger = logging.getLogger('logger_otanalysis.curve')
 

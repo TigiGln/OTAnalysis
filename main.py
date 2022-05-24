@@ -4,11 +4,9 @@ main module to launch the optical tweezers curve analysis and classification too
 import os
 import sys
 from time import time
-from datetime import date, datetime
-from time import time
 from pathlib import Path
 from PyQt5.QtWidgets import QApplication
-from otanalysis.view.class_view import View
+from otanalysis.view.view import View
 from otanalysis.controller.controller import Controller
 
 

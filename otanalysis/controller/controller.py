@@ -20,8 +20,8 @@ from pandas.core.tools.numeric import to_numeric
 from matplotlib.figure import Figure
 from matplotlib import gridspec
 import matplotlib.pyplot as plt
-from ..model.class_curve import Curve
-from ..model.class_segment_curve import Segment
+from ..model.curve import Curve
+from ..model.segment_curve import Segment
 from ..extractor.jpk_extractor import JPKFile
 
 
