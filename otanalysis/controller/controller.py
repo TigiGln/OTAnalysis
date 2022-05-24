@@ -4,7 +4,6 @@
 Class Controller
 """
 import logging
-import setup_logger
 import traceback
 from os import sep
 from pathlib import Path
@@ -21,7 +20,6 @@ from pandas.core.tools.numeric import to_numeric
 from matplotlib.figure import Figure
 from matplotlib import gridspec
 import matplotlib.pyplot as plt
-from matplotlib.lines import Line2D
 from ..model.class_curve import Curve
 from ..model.class_segment_curve import Segment
 from ..extractor.jpk_extractor import JPKFile
@@ -718,6 +716,13 @@ class Controller:
     #################################################################################################################
 
     def display_legend(self, fig):
+        """
+        management of the display of the legend on the graphs thanks to an option in the Edit menu
+
+        :parameters:
+            fig: object
+                matplotlib figure on which to remove the legend
+        """
         for ax in fig.axes:
             if ax.get_legend():
                 if not self.view.display_legend.isChecked():

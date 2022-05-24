@@ -16,7 +16,13 @@ import sys
 sys.path.insert(0, os.path.abspath('../'))
 import otanalysis
 import mock
-MOCK_MODULES = ['traceback', 'argparse', 'shutil.copy', 'webbrowser', 'pandas', 'pandas.core.tools.numeric', 'numpy', 'scipy', 'scipy.interpolate', 'scipy.optimize', 'scipy.signal', 'matplotlib', 'matplotlib.pyplot', 'matplotlib.figure', 'matplotlib.lines', 'gridspec', 'PyQt5', 'PyQt5.QtWidgets', 'PyQt5.QtCore', 'PyQt5.QtGui', 'FigureCanvasQTAgg', 'NavigationToolbar2QT', 'struct.unpack_from', 'ZipFile']
+MOCK_MODULES = ['traceback', 'argparse', 'shutil.copy', 'webbrowser', 'pandas', 'pandas.core.tools.numeric', 'numpy', 'scipy', 
+'scipy.interpolate', 'scipy.optimize', 'scipy.signal', 'matplotlib', 'matplotlib.pyplot', 'matplotlib.figure', 'matplotlib.lines', 
+'gridspec', 'PyQt5', 'PyQt5.QtWidgets', 'PyQt5.QtCore', 'PyQt5.QtGui', 'FigureCanvasQTAgg', 'NavigationToolbar2QT', 'Line2D',
+'struct.unpack_from', 'ZipFile', 'QWidget', 'QFileDialog', 'QFrame', 'QSpinBox', 'QApplication', 'QMenuBar',
+'QPushButton', 'QRadioButton', 'QHBoxLayout', 'QVBoxLayout', 'QLabel', 'QMessageBox', 'QLineEdit', 'QGridLayout',
+'QGroupBox', 'QDoubleSpinBox', 'QButtonGroup', 'QComboBox', 'QScrollArea', 'QMainWindow', 'QAction', 'QDialog', 'QCheckBox',
+'Qt', 'pyqtSignal', 'QEvent', 'QEventLoop', 'QTimer', 'QIcon']
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = mock.Mock()
 # -- Project information -----------------------------------------------------

@@ -3,7 +3,6 @@
 """
 Class View
 """
-import sys
 from time import sleep
 from os import sep
 import traceback
@@ -19,7 +18,7 @@ from matplotlib import gridspec
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT
 from matplotlib.lines import Line2D
-from PyQt5.QtWidgets import QWidget, QFileDialog, QFrame, QSpinBox, QApplication, QMenuBar, QMenu
+from PyQt5.QtWidgets import QWidget, QFileDialog, QFrame, QSpinBox, QApplication, QMenuBar
 from PyQt5.QtWidgets import QPushButton, QRadioButton, QHBoxLayout, QVBoxLayout, QLabel, QMessageBox
 from PyQt5.QtWidgets import QLineEdit, QGridLayout, QGroupBox, QDoubleSpinBox, QButtonGroup, QComboBox
 from PyQt5.QtWidgets import QScrollArea, QMainWindow, QAction, QDialog, QCheckBox
@@ -706,6 +705,13 @@ class View(QMainWindow, QWidget):
 
     ########################################################################################
     def retrieve_focus_window(self, event):
+        """
+        recovery of the window focu when leaving the hover menu
+
+        :parameters:
+            event: object
+                event back to the window
+        """
         if event:
             self.setFocus()
 
