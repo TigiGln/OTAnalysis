@@ -10,7 +10,6 @@ Subpackages
    otanalysis.controller
    otanalysis.extractor
    otanalysis.model
-   otanalysis.tests
    otanalysis.view
 
 Module contents
@@ -20,3 +19,4 @@ Module contents
    :members:
    :undoc-members:
    :show-inheritance:
+   :private-members:

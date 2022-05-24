@@ -19,7 +19,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="setup_logger module" href="setup_logger.html" />
-    <link rel="prev" title="otanalysis.tests package" href="otanalysis.tests.html" /> 
+    <link rel="prev" title="otanalysis.model package" href="otanalysis.model.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -54,7 +54,6 @@
 <li class="toctree-l4"><a class="reference internal" href="otanalysis.controller.html">otanalysis.controller package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="otanalysis.extractor.html">otanalysis.extractor package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="otanalysis.model.html">otanalysis.model package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="otanalysis.tests.html">otanalysis.tests package</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">otanalysis.view package</a></li>
 </ul>
 </li>
@@ -132,92 +131,6 @@
 <dt class="sig sig-object py" id="otanalysis.view.info.Infowindow.set_title">
 <span class="sig-name descname"><span class="pre">set_title</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/view/info.html#Infowindow.set_title"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.view.info.Infowindow.set_title" title="Permalink to this definition"></a></dt>
 <dd><p>setter of the ‘title’ widget text</p>
-</dd></dl>
-
-</dd></dl>
-
-</section>
-<section id="module-otanalysis.view.toggle">
-<span id="otanalysis-view-toggle-module"></span><h2>otanalysis.view.toggle module<a class="headerlink" href="#module-otanalysis.view.toggle" title="Permalink to this headline"></a></h2>
-<p>Plan to build a custom Toggle button</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="otanalysis.view.toggle.QtToggle">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">otanalysis.view.toggle.</span></span><span class="sig-name descname"><span class="pre">QtToggle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bg_color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">circle_color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">active_color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">active_text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">animation_curve</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/view/toggle.html#QtToggle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.view.toggle.QtToggle" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QCheckBox</span></code></p>
-<p>Toggle Button instantiation class in the Qt interface</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt>QCheckBox: heritage</dt><dd><p>inheritance of the checkBox widget class</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p>Initialization of the Toggle object</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt>width: int</dt><dd><p>horizontal size of the button</p>
-</dd>
-<dt>height: int</dt><dd><p>height of the button</p>
-</dd>
-<dt>bg_color: str</dt><dd><p>background color when the button is in the OFF position</p>
-</dd>
-<dt>circle_color: str</dt><dd><p>color of the animation circle for the toggle state change</p>
-</dd>
-<dt>active_color: str</dt><dd><p>color when the button is in the ON position</p>
-</dd>
-<dt>text: str</dt><dd><p>text when the button is OFF</p>
-</dd>
-<dt>active_text: str</dt><dd><p>text when the button is ON</p>
-</dd>
-<dt>animation_curve: object</dt><dd><p>QEasingCurve.OutQuint by default
-animation during the transition of the button between two states</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="otanalysis.view.toggle.QtToggle.circle_position">
-<span class="sig-name descname"><span class="pre">circle_position</span></span><a class="headerlink" href="#otanalysis.view.toggle.QtToggle.circle_position" title="Permalink to this definition"></a></dt>
-<dd><p>getter of the button position</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.view.toggle.QtToggle.hitButton">
-<span class="sig-name descname"><span class="pre">hitButton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">PyQt5.QtCore.QPoint</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/view/toggle.html#QtToggle.hitButton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.view.toggle.QtToggle.hitButton" title="Permalink to this definition"></a></dt>
-<dd><p>Position of the circle in the rectangle forming the toggle button</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt>pos: object</dt><dd><p>object representing a point in the plane</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.view.toggle.QtToggle.paintEvent">
-<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/view/toggle.html#QtToggle.paintEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.view.toggle.QtToggle.paintEvent" title="Permalink to this definition"></a></dt>
-<dd><p>Drawing of the button including a rectangle with a point moving inside
-according to a particular transition (left end to right end).
-It also has a word centered on the opposite side of the point representing
-the action to be performed</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.view.toggle.QtToggle.start_transition">
-<span class="sig-name descname"><span class="pre">start_transition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/view/toggle.html#QtToggle.start_transition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.view.toggle.QtToggle.start_transition" title="Permalink to this definition"></a></dt>
-<dd><p>movement of the button according to the change of state</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt>value: bool</dt><dd><p>Button status</p>
-</dd>
-</dl>
-</dd>
-</dl>
 </dd></dl>
 
 </dd></dl>
@@ -703,6 +616,92 @@ the action on the graph is different</p>
 </dd></dl>
 
 </section>
+<section id="module-otanalysis.view.toggle">
+<span id="otanalysis-view-toggle-module"></span><h2>otanalysis.view.toggle module<a class="headerlink" href="#module-otanalysis.view.toggle" title="Permalink to this headline"></a></h2>
+<p>Plan to build a custom Toggle button</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="otanalysis.view.toggle.QtToggle">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">otanalysis.view.toggle.</span></span><span class="sig-name descname"><span class="pre">QtToggle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bg_color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">circle_color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">active_color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">active_text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">animation_curve</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/view/toggle.html#QtToggle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.view.toggle.QtToggle" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QCheckBox</span></code></p>
+<p>Toggle Button instantiation class in the Qt interface</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>QCheckBox: heritage</dt><dd><p>inheritance of the checkBox widget class</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>Initialization of the Toggle object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>width: int</dt><dd><p>horizontal size of the button</p>
+</dd>
+<dt>height: int</dt><dd><p>height of the button</p>
+</dd>
+<dt>bg_color: str</dt><dd><p>background color when the button is in the OFF position</p>
+</dd>
+<dt>circle_color: str</dt><dd><p>color of the animation circle for the toggle state change</p>
+</dd>
+<dt>active_color: str</dt><dd><p>color when the button is in the ON position</p>
+</dd>
+<dt>text: str</dt><dd><p>text when the button is OFF</p>
+</dd>
+<dt>active_text: str</dt><dd><p>text when the button is ON</p>
+</dd>
+<dt>animation_curve: object</dt><dd><p>QEasingCurve.OutQuint by default
+animation during the transition of the button between two states</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="otanalysis.view.toggle.QtToggle.circle_position">
+<span class="sig-name descname"><span class="pre">circle_position</span></span><a class="headerlink" href="#otanalysis.view.toggle.QtToggle.circle_position" title="Permalink to this definition"></a></dt>
+<dd><p>getter of the button position</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="otanalysis.view.toggle.QtToggle.hitButton">
+<span class="sig-name descname"><span class="pre">hitButton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">PyQt5.QtCore.QPoint</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/view/toggle.html#QtToggle.hitButton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.view.toggle.QtToggle.hitButton" title="Permalink to this definition"></a></dt>
+<dd><p>Position of the circle in the rectangle forming the toggle button</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>pos: object</dt><dd><p>object representing a point in the plane</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="otanalysis.view.toggle.QtToggle.paintEvent">
+<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/view/toggle.html#QtToggle.paintEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.view.toggle.QtToggle.paintEvent" title="Permalink to this definition"></a></dt>
+<dd><p>Drawing of the button including a rectangle with a point moving inside
+according to a particular transition (left end to right end).
+It also has a word centered on the opposite side of the point representing
+the action to be performed</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="otanalysis.view.toggle.QtToggle.start_transition">
+<span class="sig-name descname"><span class="pre">start_transition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/view/toggle.html#QtToggle.start_transition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.view.toggle.QtToggle.start_transition" title="Permalink to this definition"></a></dt>
+<dd><p>movement of the button according to the change of state</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>value: bool</dt><dd><p>Button status</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 <section id="module-otanalysis.view">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-otanalysis.view" title="Permalink to this headline"></a></h2>
 </section>
@@ -712,7 +711,7 @@ the action on the graph is different</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="otanalysis.tests.html" class="btn btn-neutral float-left" title="otanalysis.tests package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="otanalysis.model.html" class="btn btn-neutral float-left" title="otanalysis.model package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="setup_logger.html" class="btn btn-neutral float-right" title="setup_logger module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
