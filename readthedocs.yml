@@ -32,6 +32,6 @@ python:
      extra_requirements:
       - docs
    - method: setuptools
-     path: otanalysis
+     path: .
    system_packages: true
 
