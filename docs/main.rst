@@ -4,7 +4,6 @@ main
 main module
 -----------
 
-.. automodule:: main
+.. autofunction:: main
    :members:
-   :undoc-members:
    :show-inheritance:
