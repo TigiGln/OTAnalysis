@@ -1,5 +1,0 @@
-controller
-extractor
-model
-multithread
-view

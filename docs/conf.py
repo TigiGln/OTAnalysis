@@ -24,7 +24,9 @@ import sys
 # for mod_name in MOCK_MODULES:
 #     sys.modules[mod_name] = mock.Mock()
 sys.path.insert(0, os.path.abspath('..'))
-from otanalysis import controller, view, model, extractor, tests
+import otanalysis
+import main
+import setup_logger
 
 # -- Project information -----------------------------------------------------
 
