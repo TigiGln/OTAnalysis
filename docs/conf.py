@@ -28,11 +28,11 @@ for mod_name in MOCK_MODULES:
 # -- Project information -----------------------------------------------------
 
 project = 'OTAnalysis'
-copyright = '2022, Thierry GALLIANO (LAI)'
+copyright = '2022, GNU GENERAL PUBLIC LICENSE'
 author = 'Thierry GALLIANO (LAI)'
 
 # The full version, including alpha/beta/rc tags
-release = '0.2.71'
+release = '0.2.72'
 
 
 # -- General configuration ---------------------------------------------------
@@ -50,7 +50,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "m2r2",
-    "sphinx_rtd_theme",
+    "sphinx_book_theme"
 ]
 
 autoclass_content = "both"
@@ -70,12 +70,17 @@ templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 
+autodoc_default_options = {
+    "inherited-members": False,
+    "autodoc_inherit_docstrings": True,
+}
+
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'sphinx-book-theme'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
