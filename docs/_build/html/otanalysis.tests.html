@@ -19,7 +19,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="otanalysis.view package" href="otanalysis.view.html" />
-    <link rel="prev" title="otanalysis.multithread package" href="otanalysis.multithread.html" /> 
+    <link rel="prev" title="otanalysis.model package" href="otanalysis.model.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -53,10 +53,9 @@
 <li class="toctree-l3"><a class="reference internal" href="otanalysis.controller.html">otanalysis.controller package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="otanalysis.extractor.html">otanalysis.extractor package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="otanalysis.model.html">otanalysis.model package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="otanalysis.multithread.html">otanalysis.multithread package</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">otanalysis.tests package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-otanalysis.tests.test_controller">otanalysis.tests.test_controller module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#otanalysis-tests-test-controller-module">otanalysis.tests.test_controller module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-otanalysis.tests">Module contents</a></li>
 </ul>
 </li>
@@ -98,69 +97,8 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
 </section>
-<section id="module-otanalysis.tests.test_controller">
-<span id="otanalysis-tests-test-controller-module"></span><h2>otanalysis.tests.test_controller module<a class="headerlink" href="#module-otanalysis.tests.test_controller" title="Permalink to this headline"></a></h2>
-<p>change a line in the misc.py file
-from imp import reload by from importlib import reload</p>
-<p>to eliminate this warning:
-“DeprecationWarning: the imp module is deprecated in favour of importlib;”</p>
-<p>file path:
-~/anaconda3/lib/python3.9/site-packages/past/builtins/misc.py</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="otanalysis.tests.test_controller.TestController">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">otanalysis.tests.test_controller.</span></span><span class="sig-name descname"><span class="pre">TestController</span></span><a class="reference internal" href="_modules/otanalysis/tests/test_controller.html#TestController"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_controller.TestController" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Test class of the controller for the application of processing of the optical tweezers curves</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.tests.test_controller.TestController.setup_class">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">setup_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/tests/test_controller.html#TestController.setup_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_controller.TestController.setup_class" title="Permalink to this definition"></a></dt>
-<dd><p>This function is launched at each test to create the Controller object
-and do the repetitive tasks before launching the test</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.tests.test_controller.TestController.teardown_class">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">teardown_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/tests/test_controller.html#TestController.teardown_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_controller.TestController.teardown_class" title="Permalink to this definition"></a></dt>
-<dd><p>This function is run at the end of each test to destroy
-all the elements created in the setup_class()</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.tests.test_controller.TestController.test_create_list_files">
-<span class="sig-name descname"><span class="pre">test_create_list_files</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/tests/test_controller.html#TestController.test_create_list_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_controller.TestController.test_create_list_files" title="Permalink to this definition"></a></dt>
-<dd><p>Test that the create_list_files() function of the controller returns
-a list of files to analyze</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.tests.test_controller.TestController.test_incomplete_file">
-<span class="sig-name descname"><span class="pre">test_incomplete_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/tests/test_controller.html#TestController.test_incomplete_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_controller.TestController.test_incomplete_file" title="Permalink to this definition"></a></dt>
-<dd><p>Test the completeness of a curve file</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.tests.test_controller.TestController.test_length_dict_curve">
-<span class="sig-name descname"><span class="pre">test_length_dict_curve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/tests/test_controller.html#TestController.test_length_dict_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_controller.TestController.test_length_dict_curve" title="Permalink to this definition"></a></dt>
-<dd><p>Test that the length of the dictionary of curves of the controller after
-analysis is not empty</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="otanalysis.tests.test_controller.TestController.test_output">
-<span class="sig-name descname"><span class="pre">test_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmpdir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/otanalysis/tests/test_controller.html#TestController.test_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#otanalysis.tests.test_controller.TestController.test_output" title="Permalink to this definition"></a></dt>
-<dd><p>Test the output of the output file temporarily</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt>tmpdir: object</dt><dd><p>allows you to create a temporary repository</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
+<section id="otanalysis-tests-test-controller-module">
+<h2>otanalysis.tests.test_controller module<a class="headerlink" href="#otanalysis-tests-test-controller-module" title="Permalink to this headline"></a></h2>
 </section>
 <section id="module-otanalysis.tests">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-otanalysis.tests" title="Permalink to this headline"></a></h2>
@@ -171,7 +109,7 @@ analysis is not empty</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="otanalysis.multithread.html" class="btn btn-neutral float-left" title="otanalysis.multithread package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="otanalysis.model.html" class="btn btn-neutral float-left" title="otanalysis.model package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="otanalysis.view.html" class="btn btn-neutral float-right" title="otanalysis.view package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

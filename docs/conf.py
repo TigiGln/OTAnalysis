@@ -13,11 +13,11 @@
 
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../'))
+sys.path.insert(0, os.path.abspath('..'))
 import otanalysis
 import mock
-MOCK_MODULES = ['traceback', 'argparse', 'shutil.copy', 'webbrowser', 'pandas', 'pandas.core.tools.numeric', 'numpy', 'scipy', 
-'scipy.interpolate', 'scipy.optimize', 'scipy.signal', 'matplotlib', 'matplotlib.pyplot', 'matplotlib.figure', 'matplotlib.lines', 
+MOCK_MODULES = ['numpy', 'traceback', 'argparse', 'shutil.copy', 'webbrowser', 'pandas', 'pandas.core.tools.numeric', 'scipy', 
+'scipy.interpolate', 'scipy.optimize', 'scipy.signal', 'matplotlib.pyplot', 'matplotlib.figure', 'matplotlib.lines', 
 'gridspec', 'PyQt5', 'PyQt5.QtWidgets', 'PyQt5.QtCore', 'PyQt5.QtGui', 'FigureCanvasQTAgg', 'NavigationToolbar2QT', 'Line2D',
 'struct.unpack_from', 'ZipFile', 'QWidget', 'QFileDialog', 'QFrame', 'QSpinBox', 'QApplication', 'QMenuBar',
 'QPushButton', 'QRadioButton', 'QHBoxLayout', 'QVBoxLayout', 'QLabel', 'QMessageBox', 'QLineEdit', 'QGridLayout',

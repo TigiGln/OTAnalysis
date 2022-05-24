@@ -4,34 +4,34 @@ otanalysis.view package
 Submodules
 ----------
 
-otanalysis.view.class\_graph\_view module
+otanalysis.view.graph\_view module
 -----------------------------------------
 
-.. automodule:: otanalysis.view.class_graph_view
+.. automodule:: otanalysis.view.graph_view
    :members:
    :undoc-members:
    :show-inheritance:
 
-otanalysis.view.class\_info module
+otanalysis.view.info module
 ----------------------------------
 
-.. automodule:: otanalysis.view.class_info
+.. automodule:: otanalysis.view.info
    :members:
    :undoc-members:
    :show-inheritance:
 
-otanalysis.view.class\_toggle module
+otanalysis.view.toggle module
 ------------------------------------
 
-.. automodule:: otanalysis.view.class_toggle
+.. automodule:: otanalysis.view.toggle
    :members:
    :undoc-members:
    :show-inheritance:
 
-otanalysis.view.class\_view module
+otanalysis.view.view module
 ----------------------------------
 
-.. automodule:: otanalysis.view.class_view
+.. automodule:: otanalysis.view.mainview
    :members:
    :undoc-members:
    :show-inheritance:
