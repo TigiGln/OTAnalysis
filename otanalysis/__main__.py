@@ -6,8 +6,8 @@ import sys
 from time import time
 from pathlib import Path
 from PyQt5.QtWidgets import QApplication
-from otanalysis.view.mainview import View
-from otanalysis.controller.controller import Controller
+from .view.mainview import View
+from .controller.controller import Controller
 
 
 def main():

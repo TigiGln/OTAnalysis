@@ -1,0 +1,3 @@
+[console_scripts]
+otanalysis = otanalysis.__main__
+
