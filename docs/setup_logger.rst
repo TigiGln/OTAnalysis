@@ -1,7 +1,7 @@
-main module
-===========
+setup\_logger module
+====================
 
-.. automodule:: main
+.. automodule:: setup_logger
    :members:
    :undoc-members:
    :show-inheritance:

@@ -4,7 +4,7 @@ otanalysis.model package
 Submodules
 ----------
 
-otanalysis.model.class\_curve module
+otanalysis.model.curve module
 ------------------------------------
 
 .. automodule:: otanalysis.model.curve
@@ -12,7 +12,7 @@ otanalysis.model.class\_curve module
    :undoc-members:
    :show-inheritance:
 
-otanalysis.model.class\_optical\_effect module
+otanalysis.model.optical\_effect module
 ----------------------------------------------
 
 .. automodule:: otanalysis.model.optical_effect
@@ -20,7 +20,7 @@ otanalysis.model.class\_optical\_effect module
    :undoc-members:
    :show-inheritance:
 
-otanalysis.model.class\_segment\_curve module
+otanalysis.model.segment\_curve module
 ---------------------------------------------
 
 .. automodule:: otanalysis.model.segment_curve

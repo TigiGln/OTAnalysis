@@ -28,7 +28,7 @@ otanalysis.view.toggle module
    :undoc-members:
    :show-inheritance:
 
-otanalysis.view.view module
+otanalysis.view.mainview module
 ----------------------------------
 
 .. automodule:: otanalysis.view.mainview

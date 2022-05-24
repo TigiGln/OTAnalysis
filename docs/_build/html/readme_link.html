@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>README &mdash; OTAnalysis 0.2.71 documentation</title>
+  <title>README &mdash; OTAnalysis 0.2.72 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -18,7 +18,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="main" href="main.html" />
+    <link rel="next" title="OTAnalysis" href="modules.html" />
     <link rel="prev" title="Welcome to OTAnalysis’s documentation!" href="index.html" /> 
 </head>
 
@@ -74,8 +74,7 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="main.html">main</a></li>
-<li class="toctree-l1"><a class="reference internal" href="otanalysis.html">otanalysis package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">OTAnalysis</a></li>
 </ul>
 
         </div>
@@ -244,22 +243,22 @@ columns</p>
 <h3>Important data from the analysis for post-processing<a class="headerlink" href="#important-data-from-the-analysis-for-post-processing" title="Permalink to this headline"></a></h3>
 <ul class="simple">
 <li><dl class="simple">
-<dt>treat_supervised: bool</dt><dd><p>True if curve visualized otherwise False</p>
+<dt>treat_supervised type=bool</dt><dd><p>True if curve visualized otherwise False</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>automatic_type: str</dt><dd><p>type determined by the automatic analysis</p>
+<dt>automatic_type type=str</dt><dd><p>type determined by the automatic analysis</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>type: str</dt><dd><p>type given to the curve with the supervisor menu. If there is no supervision then the same as the ‘automatic_type’ column.</p>
+<dt>type type=str</dt><dd><p>type given to the curve with the supervisor menu. If there is no supervision then the same as the ‘automatic_type’ column.</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>automatic_AL: str</dt><dd><p>“No” if the curve is misaligned according to the automatic threshold otherwise “Yes”</p>
+<dt>automatic_AL type=str</dt><dd><p>“No” if the curve is misaligned according to the automatic threshold otherwise “Yes”</p>
 </dd>
 </dl>
 </li>
@@ -269,12 +268,12 @@ columns</p>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>automatic_AL_axe: list</dt><dd><p>secondary axis affected by curve misalignment and its sign to know the direction of the misalignment with respect to the direction of the main axis</p>
+<dt>automatic_AL_axe type=list</dt><dd><p>secondary axis affected by curve misalignment and its sign to know the direction of the misalignment with respect to the direction of the main axis</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>optical_state: str</dt><dd><p>optical correction applied (No_correction, Auto_correction, Manual_correction)</p>
+<dt>optical_state type=str</dt><dd><p>optical correction applied (No_correction, Auto_correction, Manual_correction)</p>
 </dd>
 </dl>
 </li>
@@ -284,47 +283,47 @@ columns</p>
 <h3>Data of the analysis parameters<a class="headerlink" href="#data-of-the-analysis-parameters" title="Permalink to this headline"></a></h3>
 <ul class="simple">
 <li><dl class="simple">
-<dt>model: str</dt><dd><p>model for the fit on “Press” segment chosen by the user for the analysis</p>
+<dt>model type=str</dt><dd><p>model for the fit on “Press” segment chosen by the user for the analysis</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>Date: str</dt><dd><p>date of creation of the curve file</p>
+<dt>Date type=str</dt><dd><p>date of creation of the curve file</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>Hour: str</dt><dd><p>time of creation of the curve file</p>
+<dt>Hour type=str</dt><dd><p>time of creation of the curve file</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>condition: str</dt><dd><p>condition applied to the analysis set (often antibodies on the bead)</p>
+<dt>condition type=str</dt><dd><p>condition applied to the analysis set (often antibodies on the bead)</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>drug: str</dt><dd><p>drug put in the medium for analysis (can be used to add a second condition)</p>
+<dt>drug type=str</dt><dd><p>drug put in the medium for analysis (can be used to add a second condition)</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>tolerance: float</dt><dd><p>noise tolerance for the baseline (xstd)</p>
+<dt>tolerance type=float</dt><dd><p>noise tolerance for the baseline (xstd)</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>bead: str</dt><dd><p>number of the ball used for the curve</p>
+<dt>bead type=str</dt><dd><p>number of the ball used for the curve</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>cell: str</dt><dd><p>number of the cell used for the curve</p>
+<dt>cell type=str</dt><dd><p>number of the cell used for the curve</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>couple: str</dt><dd><p>couple ball number and cell number</p>
+<dt>couple type=str</dt><dd><p>couple ball number and cell number</p>
 </dd>
 </dl>
 </li>
@@ -334,7 +333,7 @@ columns</p>
 <h3>Theoretical data present in the headers of the files<a class="headerlink" href="#theoretical-data-present-in-the-headers-of-the-files" title="Permalink to this headline"></a></h3>
 <ul>
 <li><dl class="simple">
-<dt>main_axis: str</dt><dd><p>main axis of the experiment and the direction of approach of the cell with respect to the ball:</p>
+<dt>main_axis type=str</dt><dd><p>main axis of the experiment and the direction of approach of the cell with respect to the ball:</p>
 </dd>
 </dl>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">+</span><span class="n">X</span><span class="p">:</span> <span class="n">the</span> <span class="n">cell</span> <span class="n">approaches</span> <span class="kn">from</span> <span class="nn">the</span> <span class="n">right</span>
@@ -345,47 +344,47 @@ columns</p>
 </div>
 </li>
 <li><dl class="simple">
-<dt>stiffness: float</dt><dd><p>value of the spring stiffness to correct the distance values</p>
+<dt>stiffness type=float</dt><dd><p>value of the spring stiffness to correct the distance values</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>theorical_contact_force (N): float</dt><dd><p>theoretical contact force between the ball and the cell required by the user before starting the experiment</p>
+<dt>theorical_contact_force (N) type=float</dt><dd><p>theoretical contact force between the ball and the cell required by the user before starting the experiment</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>theorical_distance_Press (m): float</dt><dd><p>theoretical length of the “Press” segment</p>
+<dt>theorical_distance_Press (m) type=float</dt><dd><p>theoretical length of the “Press” segment</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>theorical_speed_Press (m/s): float</dt><dd><p>theoretical speed of the “Press” segment</p>
+<dt>theorical_speed_Press (m/s) type=float</dt><dd><p>theoretical speed of the “Press” segment</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>theorical_freq_Press (Hz): float</dt><dd><p>theoretical frequency of the “Press” segment</p>
+<dt>theorical_freq_Press (Hz) type=float</dt><dd><p>theoretical frequency of the “Press” segment</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>time_segment_pause_Wait1 (s): float</dt><dd><p>pause time of the “Wait” segment (often 0s)</p>
+<dt>time_segment_pause_Wait1 (s) type=float</dt><dd><p>pause time of the “Wait” segment (often 0s)</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>theorical_distance_Pull (m): float</dt><dd><p>theoretical length of the “Pull” segment</p>
+<dt>theorical_distance_Pull (m) type=float</dt><dd><p>theoretical length of the “Pull” segment</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>theorical_speed_Pull (m/s): float</dt><dd><p>theoretical speed of the “Pull” segment</p>
+<dt>theorical_speed_Pull (m/s) type=float</dt><dd><p>theoretical speed of the “Pull” segment</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>theorical_freq_Pull (Hz): float</dt><dd><p>theoretical frequency of the “Pull” segment</p>
+<dt>theorical_freq_Pull (Hz) type=float</dt><dd><p>theoretical frequency of the “Pull” segment</p>
 </dd>
 </dl>
 </li>
@@ -395,97 +394,97 @@ columns</p>
 <h3>Data calculated during the analysis<a class="headerlink" href="#data-calculated-during-the-analysis" title="Permalink to this headline"></a></h3>
 <ul class="simple">
 <li><dl class="simple">
-<dt>baseline_origin_press (N): float</dt><dd><p>average of the first 1000 points of the “Press” segment on the data without correction</p>
+<dt>baseline_origin_press (N) type=float</dt><dd><p>average of the first 1000 points of the “Press” segment on the data without correction</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>baseline_corrected_press (pN): float</dt><dd><p>average of the first 1000 points of the “Press” segment on the data corrected to bring the baseline centered on 0</p>
+<dt>baseline_corrected_press (pN) type=float</dt><dd><p>average of the first 1000 points of the “Press” segment on the data corrected to bring the baseline centered on 0</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>std_origin_press (N): float</dt><dd><p>standard deviation of the first 1000 points to define the noise rate of the curve (on the data without correction)</p>
+<dt>std_origin_press (N) type=float</dt><dd><p>standard deviation of the first 1000 points to define the noise rate of the curve (on the data without correction)</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>std_corrected_press (pN): float</dt><dd><p>standard deviation of the first 1000 points to define the noise rate of the curve (on the data correction)</p>
+<dt>std_corrected_press (pN) type=float</dt><dd><p>standard deviation of the first 1000 points to define the noise rate of the curve (on the data correction)</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>slope (pN/nm): float</dt><dd><p>calculation of the force slope for the “Press” segment</p>
+<dt>slope (pN/nm) type=float</dt><dd><p>calculation of the force slope for the “Press” segment</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>error (pN/nm): float</dt><dd><p>calculates the error of the force slope for the “Press” segment</p>
+<dt>error (pN/nm) type=float</dt><dd><p>calculates the error of the force slope for the “Press” segment</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>contact_point_index: int</dt><dd><p>index of the contact point between the ball and the cell on the “Press” segment</p>
+<dt>contact_point_index type=int</dt><dd><p>index of the contact point between the ball and the cell on the “Press” segment</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>contact_point_value  (pN): float</dt><dd><p>force value of the contact point between the ball and the cell on the “Press” segment</p>
+<dt>contact_point_value  (pN) type=float</dt><dd><p>force value of the contact point between the ball and the cell on the “Press” segment</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>force_min_press_index: int</dt><dd><p>index of the minimum force of the “Press” segment</p>
+<dt>force_min_press_index type=int</dt><dd><p>index of the minimum force of the “Press” segment</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>force_min_press_value (pN): float</dt><dd><p>value of the minimum force of the “Press” segment</p>
+<dt>force_min_press_value (pN) type=float</dt><dd><p>value of the minimum force of the “Press” segment</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>force_min_curve_index: int</dt><dd><p>index of the minimum force of the curve (sometimes confused with minimum Press)</p>
+<dt>force_min_curve_index type=int</dt><dd><p>index of the minimum force of the curve (sometimes confused with minimum Press)</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>force_min_curve_value (pN): float</dt><dd><p>value of the minimum force of the curve (sometimes confused with minimum Press)</p>
+<dt>force_min_curve_value (pN) type=float</dt><dd><p>value of the minimum force of the curve (sometimes confused with minimum Press)</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>point_release_index: int</dt><dd><p>‘index of the point where the cell loses contact with the ball (without taking into account the adhesive molecules or the membrane tubes).’</p>
+<dt>point_release_index type=int</dt><dd><p>‘index of the point where the cell loses contact with the ball (without taking into account the adhesive molecules or the membrane tubes).’</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>point_release_value (pN): float</dt><dd><p>value of the point where the cell loses contact with the ball (without taking into account the adhesive molecules or the membrane tubes).</p>
+<dt>point_release_value (pN) type=float</dt><dd><p>value of the point where the cell loses contact with the ball (without taking into account the adhesive molecules or the membrane tubes).</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>force_max_pull_index: int</dt><dd><p>index of the maximum force on a part of the “Pull” segment between the release point and the return to the baseline</p>
+<dt>force_max_pull_index type=int</dt><dd><p>index of the maximum force on a part of the “Pull” segment between the release point and the return to the baseline</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>force_max_pull_value (pN): float</dt><dd><p>value of the maximum force on a part of the “Pull” segment between the release point and the return to the baseline</p>
+<dt>force_max_pull_value (pN) type=float</dt><dd><p>value of the maximum force on a part of the “Pull” segment between the release point and the return to the baseline</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>force_max_curve_index: int</dt><dd><p>index of the maximum force of the curve</p>
+<dt>force_max_curve_index type=int</dt><dd><p>index of the maximum force of the curve</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>force_max_curve_value (pN)<span class="classifier">float</span></dt><dd><p>value of the maximum force of the curve</p>
+<dt>force_max_curve_value (pN) type=float</dt><dd><p>value of the maximum force of the curve</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>Pente (pN/nm): float</dt><dd><p>coefficient of the contact loss slope between the ball and the cell due to the retraction effect of the cell with respect to the ball</p>
+<dt>Pente (pN/nm) type=float</dt><dd><p>coefficient of the contact loss slope between the ball and the cell due to the retraction effect of the cell with respect to the ball</p>
 </dd>
 </dl>
 </li>
@@ -495,22 +494,22 @@ columns</p>
 <h3>Data calculated if type of curves different from non-adhesive, infinite tube or rejected<a class="headerlink" href="#data-calculated-if-type-of-curves-different-from-non-adhesive-infinite-tube-or-rejected" title="Permalink to this headline"></a></h3>
 <ul class="simple">
 <li><dl class="simple">
-<dt>point_transition_index: int</dt><dd><p>index of the break point of the tube (called transition point)</p>
+<dt>point_transition_index type=int</dt><dd><p>index of the break point of the tube (called transition point)</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>point_transition_value (pN): float</dt><dd><p>value of the break point of the tube (called transition point)</p>
+<dt>point_transition_value (pN) type=float</dt><dd><p>value of the break point of the tube (called transition point)</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>point_return_endline_index: int</dt><dd><p>index of the point where the curve returns to the baseline values</p>
+<dt>point_return_endline_index type=int</dt><dd><p>index of the point where the curve returns to the baseline values</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>point_return_endline_value: float</dt><dd><p>value of the point where the curve returns to the baseline values</p>
+<dt>point_return_endline_value type=float</dt><dd><p>value of the point where the curve returns to the baseline values</p>
 </dd>
 </dl>
 </li>
@@ -518,37 +517,37 @@ columns</p>
 <p><strong>Jumps:</strong></p>
 <ul class="simple">
 <li><dl class="simple">
-<dt>jump_force_start_pull (pN): float</dt><dd><p>force jump between the release point and the maximum force of the curve in the case of an adhesion or a finished tube</p>
+<dt>jump_force_start_pull (pN) type=float</dt><dd><p>force jump between the release point and the maximum force of the curve in the case of an adhesion or a finished tube</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>jump_force_end_pull (pN): float</dt><dd><p>force jump between the maximum force of the curve and the point of return to the baseline</p>
+<dt>jump_force_end_pull (pN) type=float</dt><dd><p>force jump between the maximum force of the curve and the point of return to the baseline</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>jump_nb_points</dt><dd><p>number of points between the point of return to the baseline and the maximum strength of the curve</p>
+<dt>jump_nb_points type=int</dt><dd><p>number of points between the point of return to the baseline and the maximum strength of the curve</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>jump_time_start_pull (s)</dt><dd><p>time between the release point and the maximum force of the curve</p>
+<dt>jump_time_start_pull (s) type=float</dt><dd><p>time between the release point and the maximum force of the curve</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>jump_time_end_pull (s)</dt><dd><p>time between the maximum force of the curve and the point of return to the baseline</p>
+<dt>jump_time_end_pull (s) type=float</dt><dd><p>time between the maximum force of the curve and the point of return to the baseline</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>jump_distance_start_pull (nm): float</dt><dd><p>distance between the release point and the maximum force of the curve</p>
+<dt>jump_distance_start_pull (nm) type=float</dt><dd><p>distance between the release point and the maximum force of the curve</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>jump_distance_end_pull (nm): float</dt><dd><p>distance between the maximum force of the curve and the point of return to the baseline</p>
+<dt>jump_distance_end_pull (nm) type=float</dt><dd><p>distance between the maximum force of the curve and the point of return to the baseline</p>
 </dd>
 </dl>
 </li>
@@ -558,12 +557,12 @@ columns</p>
 <h3>Boolean validation of the fits<a class="headerlink" href="#boolean-validation-of-the-fits" title="Permalink to this headline"></a></h3>
 <ul class="simple">
 <li><dl class="simple">
-<dt>valid_fit_press<span class="classifier">bool</span></dt><dd><p>validation of the fit on the “Press” segment. False by default because not validated</p>
+<dt>valid_fit_press type=bool</dt><dd><p>validation of the fit on the “Press” segment. False by default because not validated</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>valid_fit_pull<span class="classifier">bool</span></dt><dd><p>validation of the fit on the “Pull” segment. False by default because not validated</p>
+<dt>valid_fit_pull type=bool</dt><dd><p>validation of the fit on the “Pull” segment. False by default because not validated</p>
 </dd>
 </dl>
 </li>
@@ -577,13 +576,13 @@ columns</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="index.html" class="btn btn-neutral float-left" title="Welcome to OTAnalysis’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="main.html" class="btn btn-neutral float-right" title="main" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="modules.html" class="btn btn-neutral float-right" title="OTAnalysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Thierry GALLIANO (LAI).</p>
+    <p>&#169; Copyright 2022, GNU GENERAL PUBLIC LICENSE.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
