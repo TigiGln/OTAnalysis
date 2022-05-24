@@ -17,7 +17,7 @@ import otanalysis
 
 autodoc_mock_imports = ['sip', 'PyQt5', 'PyQt5.QtGui', 'PyQt5.QtCore', 'PyQt5.QtWidgets']
 napoleon_mock_imports = ['sip', 'PyQt5', 'PyQt5.QtGui', 'PyQt5.QtCore', 'PyQt5.QtWidgets']
-import main
+from main import main
 import setup_logger
 # -- Project information -----------------------------------------------------
 
