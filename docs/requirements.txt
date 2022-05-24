@@ -6,7 +6,6 @@ scipy==1.7.3
 pandas==1.4.0
 matplotlib==3.5.1
 zipp==3.8.0
-pyqt5>=5.15
 
 
 

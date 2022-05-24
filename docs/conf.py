@@ -10,27 +10,15 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-
-# 'numpy', 'traceback', 'argparse', 'shutil.copy', 'webbrowser', 'pandas', 'pandas.core.tools.numeric', 'scipy', 
-# # 'scipy.interpolate', 'scipy.optimize', 'scipy.signal', 'matplotlib.pyplot', 'matplotlib.figure', 'matplotlib.lines', 
-# # 'gridspec', 'FigureCanvasQTAgg', 'NavigationToolbar2QT','struct.unpack_from', 'ZipFile','Line2D',
 import os
 import sys
-# import mock
-# MOCK_MODULES = ['sip', 'PyQt5', 'PyQt5.QtGui', 'PyQt5.QtCore', 'PyQt5.QtWidgets']
-# # ['PyQt5.QtWidgets', 'QWidget',\
-# # 'QFileDialog', 'QFrame', 'QSpinBox', 'QApplication', 'QMenuBar',\
-# # 'QPushButton', 'QRadioButton', 'QHBoxLayout', 'QVBoxLayout', 'QLabel', 'QMessageBox', 'QLineEdit', 'QGridLayout',\
-# # 'QGroupBox', 'QDoubleSpinBox', 'QButtonGroup', 'QComboBox', 'QScrollArea', 'QMainWindow', 'QAction', 'QDialog', 'QCheckBox',\
-# # 'Qt', 'pyqtSignal', 'QEvent', 'QEventLoop', 'QTimer', 'QIcon']
-# for mod_name in MOCK_MODULES:
-#     sys.modules[mod_name] = mock.Mock()
 sys.path.insert(0, os.path.abspath('..'))
 import otanalysis
 import main
 import setup_logger
 
 autodoc_mock_imports = ['sip', 'PyQt5', 'PyQt5.QtGui', 'PyQt5.QtCore', 'PyQt5.QtWidgets']
+napoleon_mock_imports = ['sip', 'PyQt5', 'PyQt5.QtGui', 'PyQt5.QtCore', 'PyQt5.QtWidgets']
 # -- Project information -----------------------------------------------------
 
 project = 'OTAnalysis'
