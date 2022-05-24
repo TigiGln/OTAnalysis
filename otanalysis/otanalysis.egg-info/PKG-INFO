@@ -1,5 +1,5 @@
 Metadata-Version: 2.1
-Name: OTAnalysis
+Name: otanalysis
 Version: 0.2.73
 Summary: Tools for extracting, analyzing and classifying optical tweezer data curves
 Home-page: https://github.com/TigiGln/OTAnalysis.git

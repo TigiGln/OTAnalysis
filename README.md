@@ -20,7 +20,7 @@ If selected sphere, appearance of the physical parameters menu for the calculati
 - eta: Poisson's ratio
 - bead rdius: diameter of the ball used during the experiment
 
-### Management of curve anomalies 
+### Management of curve anomalies
 Curve management parameters Incomplete (no analysis possible) or misaligned (analysis but warning)
 - pulling length min : minimum percentage of the length of the "Pull" segment to determine if the curve is rejected despite the presence of all the segments indicated in the header
 - Fmax epsilon: percentage of max force on the major axis to determine misalignment of the curve on the minor axes
@@ -90,8 +90,9 @@ pip install OTAnalysis
 ```
 
 # Launch project
+In a termnial, run (from anywhere):
 ```
-python -m main
+otanalysis
 ```
 
 # Documentation
@@ -149,26 +150,26 @@ columns
 ### Theoretical data present in the headers of the files
 - main_axis type=str
     main axis of the experiment and the direction of approach of the cell with respect to the ball:
-        +X: the cell approaches from the right 
+        +X: the cell approaches from the right
         -X : the cell approaches from the left
         +Y : the cell comes from the top
         -Y : the cell comes from the bottom
 - stiffness type=float
     value of the spring stiffness to correct the distance values
 - theorical_contact_force (N) type=float
-    theoretical contact force between the ball and the cell required by the user before starting the experiment 
+    theoretical contact force between the ball and the cell required by the user before starting the experiment
 - theorical_distance_Press (m) type=float
     theoretical length of the "Press" segment
 - theorical_speed_Press (m/s) type=float
-    theoretical speed of the "Press" segment 
+    theoretical speed of the "Press" segment
 - theorical_freq_Press (Hz) type=float
-    theoretical frequency of the "Press" segment 
+    theoretical frequency of the "Press" segment
 - time_segment_pause_Wait1 (s) type=float
     pause time of the "Wait" segment (often 0s)
 - theorical_distance_Pull (m) type=float
     theoretical length of the "Pull" segment
 - theorical_speed_Pull (m/s) type=float
-    theoretical speed of the "Pull" segment 
+    theoretical speed of the "Pull" segment
 - theorical_freq_Pull (Hz) type=float
     theoretical frequency of the "Pull" segment
 
@@ -195,12 +196,12 @@ columns
 - force_min_press_value (pN) type=float
     value of the minimum force of the "Press" segment
 - force_min_curve_index type=int
-    index of the minimum force of the curve (sometimes confused with minimum Press)  
+    index of the minimum force of the curve (sometimes confused with minimum Press)
 - force_min_curve_value (pN) type=float
     value of the minimum force of the curve (sometimes confused with minimum Press)
 - point_release_index type=int
     'index of the point where the cell loses contact with the ball (without taking \ into account the adhesive molecules or the membrane tubes).'
-- point_release_value (pN) type=float 
+- point_release_value (pN) type=float
     value of the point where the cell loses contact with the ball (without taking \ into account the adhesive molecules or the membrane tubes).
 - force_max_pull_index type=int
     index of the maximum force on a part of the "Pull" segment between the release \ point and the return to the baseline
@@ -229,7 +230,7 @@ columns
 - jump_force_end_pull (pN) type=float
     force jump between the maximum force of the curve and the point of return to the baseline
 - jump_nb_points type=int
-    number of points between the point of return to the baseline and the maximum strength of the curve 
+    number of points between the point of return to the baseline and the maximum strength of the curve
 - jump_time_start_pull (s) type=float
     time between the release point and the maximum force of the curve
 - jump_time_end_pull (s) type=float
@@ -239,19 +240,9 @@ columns
 - jump_distance_end_pull (nm) type=float
     distance between the maximum force of the curve and the point of return to the baseline
 
-### Boolean validation of the fits 
+### Boolean validation of the fits
 - valid_fit_press type=bool
     validation of the fit on the "Press" segment. False by default because not validated
 
 - valid_fit_pull type=bool
     validation of the fit on the "Pull" segment. False by default because not validated
-
-
-
-
-
-
-
-
-
-

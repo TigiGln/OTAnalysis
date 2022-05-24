@@ -9,6 +9,9 @@ from PyQt5.QtWidgets import QApplication
 from .view.mainview import View
 from .controller.controller import Controller
 
+START_TIME = time()
+PATH_FILE = Path('data_test' + os.sep + 'txt' + os.sep)
+PATH_FILE_JPK = Path("data_test" + os.sep + 'jpk_nt_force' + os.sep)
 
 def main():
     """
@@ -24,9 +27,3 @@ def main():
     view.set_controller(controller)
     view.show()
     app.exec()
-
-START_TIME = time()
-PATH_FILE = Path('data_test' + os.sep + 'txt' + os.sep)
-PATH_FILE_JPK = Path("data_test" + os.sep + 'jpk_nt_force' + os.sep)
-main()
-print("--- %s seconds ---" % (time() - START_TIME))
