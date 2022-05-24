@@ -5,7 +5,10 @@ import os
 import sys
 from time import time
 from pathlib import Path
-from PyQt5.QtWidgets import QApplication
+try:
+    from PyQt5.QtWidgets import QApplication
+except ImportError:
+    pass 
 from otanalysis.view.mainview import View
 from otanalysis.controller.controller import Controller
 
@@ -25,9 +28,8 @@ def main():
     view.show()
     app.exec()
 
-if __name__ == "__main__":
-    START_TIME = time()
-    PATH_FILE = Path('data_test' + os.sep + 'txt' + os.sep)
-    PATH_FILE_JPK = Path("data_test" + os.sep + 'jpk_nt_force' + os.sep)
-    main()
-    print("--- %s seconds ---" % (time() - START_TIME))
+START_TIME = time()
+PATH_FILE = Path('data_test' + os.sep + 'txt' + os.sep)
+PATH_FILE_JPK = Path("data_test" + os.sep + 'jpk_nt_force' + os.sep)
+main()
+print("--- %s seconds ---" % (time() - START_TIME))
