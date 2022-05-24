@@ -16,15 +16,15 @@
 # # 'gridspec', 'FigureCanvasQTAgg', 'NavigationToolbar2QT','struct.unpack_from', 'ZipFile','Line2D',
 import os
 import sys
-import mock
-MOCK_MODULES = ['sip', 'PyQt5', 'PyQt5.QtGui', 'PyQt5.QtCore', 'PyQt5.QtWidgets']
-# ['PyQt5.QtWidgets', 'QWidget',\
-# 'QFileDialog', 'QFrame', 'QSpinBox', 'QApplication', 'QMenuBar',\
-# 'QPushButton', 'QRadioButton', 'QHBoxLayout', 'QVBoxLayout', 'QLabel', 'QMessageBox', 'QLineEdit', 'QGridLayout',\
-# 'QGroupBox', 'QDoubleSpinBox', 'QButtonGroup', 'QComboBox', 'QScrollArea', 'QMainWindow', 'QAction', 'QDialog', 'QCheckBox',\
-# 'Qt', 'pyqtSignal', 'QEvent', 'QEventLoop', 'QTimer', 'QIcon']
-for mod_name in MOCK_MODULES:
-    sys.modules[mod_name] = mock.Mock()
+# import mock
+# MOCK_MODULES = ['sip', 'PyQt5', 'PyQt5.QtGui', 'PyQt5.QtCore', 'PyQt5.QtWidgets']
+# # ['PyQt5.QtWidgets', 'QWidget',\
+# # 'QFileDialog', 'QFrame', 'QSpinBox', 'QApplication', 'QMenuBar',\
+# # 'QPushButton', 'QRadioButton', 'QHBoxLayout', 'QVBoxLayout', 'QLabel', 'QMessageBox', 'QLineEdit', 'QGridLayout',\
+# # 'QGroupBox', 'QDoubleSpinBox', 'QButtonGroup', 'QComboBox', 'QScrollArea', 'QMainWindow', 'QAction', 'QDialog', 'QCheckBox',\
+# # 'Qt', 'pyqtSignal', 'QEvent', 'QEventLoop', 'QTimer', 'QIcon']
+# for mod_name in MOCK_MODULES:
+#     sys.modules[mod_name] = mock.Mock()
 sys.path.insert(0, os.path.abspath('..'))
 import otanalysis
 import main
@@ -74,7 +74,7 @@ templates_path = ['_templates']
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
-
+autodoc_mock_imports = ['sip', 'PyQt5', 'PyQt5.QtGui', 'PyQt5.QtCore', 'PyQt5.QtWidgets']
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
