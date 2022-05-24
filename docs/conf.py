@@ -17,11 +17,12 @@
 import os
 import sys
 import mock
-MOCK_MODULES = ['PyQt5.QtWidgets', 'QWidget',\
-'QFileDialog', 'QFrame', 'QSpinBox', 'QApplication', 'QMenuBar',\
-'QPushButton', 'QRadioButton', 'QHBoxLayout', 'QVBoxLayout', 'QLabel', 'QMessageBox', 'QLineEdit', 'QGridLayout',\
-'QGroupBox', 'QDoubleSpinBox', 'QButtonGroup', 'QComboBox', 'QScrollArea', 'QMainWindow', 'QAction', 'QDialog', 'QCheckBox',\
-'Qt', 'pyqtSignal', 'QEvent', 'QEventLoop', 'QTimer', 'QIcon']
+MOCK_MODULES = ['sip', 'PyQt5', 'PyQt5.QtGui', 'PyQt5.QtCore', 'PyQt5.QtWidgets']
+# ['PyQt5.QtWidgets', 'QWidget',\
+# 'QFileDialog', 'QFrame', 'QSpinBox', 'QApplication', 'QMenuBar',\
+# 'QPushButton', 'QRadioButton', 'QHBoxLayout', 'QVBoxLayout', 'QLabel', 'QMessageBox', 'QLineEdit', 'QGridLayout',\
+# 'QGroupBox', 'QDoubleSpinBox', 'QButtonGroup', 'QComboBox', 'QScrollArea', 'QMainWindow', 'QAction', 'QDialog', 'QCheckBox',\
+# 'Qt', 'pyqtSignal', 'QEvent', 'QEventLoop', 'QTimer', 'QIcon']
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = mock.Mock()
 sys.path.insert(0, os.path.abspath('..'))
