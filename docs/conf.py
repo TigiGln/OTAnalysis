@@ -17,7 +17,7 @@
 import os
 import sys
 import mock
-MOCK_MODULES = ['QWidget',\
+MOCK_MODULES = ['pyqt5', 'PyQt5-Qt5', 'PyQt5-sip', 'QWidget',\
 'QFileDialog', 'QFrame', 'QSpinBox', 'QApplication', 'QMenuBar',\
 'QPushButton', 'QRadioButton', 'QHBoxLayout', 'QVBoxLayout', 'QLabel', 'QMessageBox', 'QLineEdit', 'QGridLayout',\
 'QGroupBox', 'QDoubleSpinBox', 'QButtonGroup', 'QComboBox', 'QScrollArea', 'QMainWindow', 'QAction', 'QDialog', 'QCheckBox',\
