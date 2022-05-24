@@ -25,9 +25,9 @@ def main():
     view.show()
     app.exec()
 
-
-START_TIME = time()
-PATH_FILE = Path('data_test' + os.sep + 'txt' + os.sep)
-PATH_FILE_JPK = Path("data_test" + os.sep + 'jpk_nt_force' + os.sep)
-main()
-print("--- %s seconds ---" % (time() - START_TIME))
+if __name__ == "__main__":
+    START_TIME = time()
+    PATH_FILE = Path('data_test' + os.sep + 'txt' + os.sep)
+    PATH_FILE_JPK = Path("data_test" + os.sep + 'jpk_nt_force' + os.sep)
+    main()
+    print("--- %s seconds ---" % (time() - START_TIME))
