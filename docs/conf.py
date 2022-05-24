@@ -11,18 +11,19 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 
+# 'numpy', 'traceback', 'argparse', 'shutil.copy', 'webbrowser', 'pandas', 'pandas.core.tools.numeric', 'scipy', 
+# # 'scipy.interpolate', 'scipy.optimize', 'scipy.signal', 'matplotlib.pyplot', 'matplotlib.figure', 'matplotlib.lines', 
+# # 'gridspec', 'FigureCanvasQTAgg', 'NavigationToolbar2QT','struct.unpack_from', 'ZipFile','Line2D',
 import os
 import sys
-# import mock
-# MOCK_MODULES = ['numpy', 'traceback', 'argparse', 'shutil.copy', 'webbrowser', 'pandas', 'pandas.core.tools.numeric', 'scipy', 
-# 'scipy.interpolate', 'scipy.optimize', 'scipy.signal', 'matplotlib.pyplot', 'matplotlib.figure', 'matplotlib.lines', 
-# 'gridspec', 'PyQt5', 'PyQt5.QtWidgets', 'PyQt5.QtCore', 'PyQt5.QtGui', 'FigureCanvasQTAgg', 'NavigationToolbar2QT', 'Line2D',
-# 'struct.unpack_from', 'ZipFile', 'QWidget', 'QFileDialog', 'QFrame', 'QSpinBox', 'QApplication', 'QMenuBar',
-# 'QPushButton', 'QRadioButton', 'QHBoxLayout', 'QVBoxLayout', 'QLabel', 'QMessageBox', 'QLineEdit', 'QGridLayout',
-# 'QGroupBox', 'QDoubleSpinBox', 'QButtonGroup', 'QComboBox', 'QScrollArea', 'QMainWindow', 'QAction', 'QDialog', 'QCheckBox',
-# 'Qt', 'pyqtSignal', 'QEvent', 'QEventLoop', 'QTimer', 'QIcon']
-# for mod_name in MOCK_MODULES:
-#     sys.modules[mod_name] = mock.Mock()
+import mock
+MOCK_MODULES = ['QWidget',\
+'QFileDialog', 'QFrame', 'QSpinBox', 'QApplication', 'QMenuBar',\
+'QPushButton', 'QRadioButton', 'QHBoxLayout', 'QVBoxLayout', 'QLabel', 'QMessageBox', 'QLineEdit', 'QGridLayout',\
+'QGroupBox', 'QDoubleSpinBox', 'QButtonGroup', 'QComboBox', 'QScrollArea', 'QMainWindow', 'QAction', 'QDialog', 'QCheckBox',\
+'Qt', 'pyqtSignal', 'QEvent', 'QEventLoop', 'QTimer', 'QIcon']
+for mod_name in MOCK_MODULES:
+    sys.modules[mod_name] = mock.Mock()
 sys.path.insert(0, os.path.abspath('..'))
 import otanalysis
 import main
