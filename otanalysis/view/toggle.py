@@ -146,7 +146,7 @@ class QtToggle(QCheckBox):
                 pos_x = taille_cadre - length_word + ((taille_cadre-110)//2)
             else:
                 pos_x = taille_cadre - length_word - ((taille_cadre-110)//2)
-            painter.drawText(pos_x, rect.height()//1.5, self.inactive_text)
+            painter.drawText(int(pos_x), int(rect.height()//1.5), self.inactive_text)
 
         else:
             # DRAW BG
@@ -161,7 +161,7 @@ class QtToggle(QCheckBox):
             # Write Text
             painter.setPen(QColor(self._bg_color))
             painter.setFont(QFont('Arial Black', 12, QFont.Bold))
-            painter.drawText(5, rect.height()//1.5, self.active_text)
+            painter.drawText(5, int(rect.height()//1.5), self.active_text)
 
         # END DRAW
         painter.end()
