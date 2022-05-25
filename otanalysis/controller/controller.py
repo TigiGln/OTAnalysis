@@ -408,10 +408,10 @@ class Controller:
         path_dir_problem = ""
         if extension == "jpk":
             path_dir_problem = Path(
-                '.' + sep + 'File_rejected' + sep + 'problem_curve' + sep + 'JPK')
+                'File_rejected' + sep + 'problem_curve' + sep + 'JPK')
         else:
             path_dir_problem = Path(
-                '.' + sep + 'File_rejected' + sep + 'problem_curve' + sep + 'TXT')
+                'File_rejected' + sep + 'problem_curve' + sep + 'TXT')
         path_dir_problem.mkdir(parents=True, exist_ok=True)
         copy(file, str(path_dir_problem))
         print('###########################################')
@@ -448,10 +448,10 @@ class Controller:
         path_dir_incomplete = ""
         if extension == "jpk":
             path_dir_incomplete = Path(
-                '.' + sep + 'File_rejected' + sep + 'Incomplete' + sep + 'JPK')
+                'File_rejected' + sep + 'Incomplete' + sep + 'JPK')
         else:
             path_dir_incomplete = Path(
-                '.' + sep + 'File_rejected' + sep + 'Incomplete' + sep + 'TXT')
+                'File_rejected' + sep + 'Incomplete' + sep + 'TXT')
         path_dir_incomplete.mkdir(parents=True, exist_ok=True)
         copy(file, str(path_dir_incomplete))
         print("File incomplete")
@@ -1118,10 +1118,10 @@ class Controller:
             name_file = file.split(sep)[-1]
             if name_file.split('.')[-1] == "txt":
                 path_dir_alignment = Path(
-                    '.' + sep + 'File_rejected' + sep + 'Alignment' + sep + 'TXT')
+                    'File_rejected' + sep + 'Alignment' + sep + 'TXT')
             elif name_file.split('.')[-1] == "jpk-nt-force":
                 path_dir_alignment = Path(
-                    '.' + sep + 'File_rejected' + sep + 'Alignment' + sep + 'JPK')
+                    'File_rejected' + sep + 'Alignment' + sep + 'JPK')
             path_dir_alignment.mkdir(parents=True, exist_ok=True)
             copy(file, str(path_dir_alignment))
         return dict_align
