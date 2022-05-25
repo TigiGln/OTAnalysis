@@ -11,6 +11,7 @@ import argparse
 from shutil import copy
 from time import time
 from datetime import date, datetime
+from ..__init__ import DATA_DIR
 import re
 from math import ceil, floor
 import pandas as pd
@@ -408,10 +409,10 @@ class Controller:
         path_dir_problem = ""
         if extension == "jpk":
             path_dir_problem = Path(
-                'File_rejected' + sep + 'problem_curve' + sep + 'JPK')
+                DATA_DIR + sep + 'File_rejected' + sep + 'problem_curve' + sep + 'JPK')
         else:
             path_dir_problem = Path(
-                'File_rejected' + sep + 'problem_curve' + sep + 'TXT')
+                DATA_DIR + sep + 'File_rejected' + sep + 'problem_curve' + sep + 'TXT')
         path_dir_problem.mkdir(parents=True, exist_ok=True)
         copy(file, str(path_dir_problem))
         print('###########################################')
@@ -448,10 +449,10 @@ class Controller:
         path_dir_incomplete = ""
         if extension == "jpk":
             path_dir_incomplete = Path(
-                'File_rejected' + sep + 'Incomplete' + sep + 'JPK')
+                DATA_DIR + sep + 'File_rejected' + sep + 'Incomplete' + sep + 'JPK')
         else:
             path_dir_incomplete = Path(
-                'File_rejected' + sep + 'Incomplete' + sep + 'TXT')
+                DATA_DIR + sep + 'File_rejected' + sep + 'Incomplete' + sep + 'TXT')
         path_dir_incomplete.mkdir(parents=True, exist_ok=True)
         copy(file, str(path_dir_incomplete))
         print("File incomplete")
@@ -913,19 +914,19 @@ class Controller:
 
         """
         name_curve = ""
-        today = date.today()
+        today = datetime.now().strftime("%d-%m-%Y")
         count = 1
         name_curve = curve.file
         count += 1
-        path_graphs = Path(directory_graphs + sep + 'graphs_' + str(today))
+        path_graphs = Path(directory_graphs + sep + 'graphs_' + today)
         path_graphs.mkdir(parents=True, exist_ok=True)
         name_img = ""
         if abscissa_curve == 'distance':
-            name_img = 'fig_' + name_curve + '_' + str(today) + '_distance.png'
+            name_img = 'fig_' + name_curve + '_' + today + '_distance.png'
         elif abscissa_curve == 'time':
-            name_img = 'fig_' + name_curve + '_' + str(today) + '_time.png'
+            name_img = 'fig_' + name_curve + '_' + today + '_time.png'
         else:
-            name_img = 'fig_' + name_curve + '_' + str(today) + '_overview.png'
+            name_img = 'fig_' + name_curve + '_' + today + '_overview.png'
         fig.savefig(path_graphs.__str__() + sep +
                     name_img, bbox_inches='tight')
         fig.close()
@@ -1118,10 +1119,10 @@ class Controller:
             name_file = file.split(sep)[-1]
             if name_file.split('.')[-1] == "txt":
                 path_dir_alignment = Path(
-                    'File_rejected' + sep + 'Alignment' + sep + 'TXT')
+                    DATA_DIR + sep + 'File_rejected' + sep + 'Alignment' + sep + 'TXT')
             elif name_file.split('.')[-1] == "jpk-nt-force":
                 path_dir_alignment = Path(
-                    'File_rejected' + sep + 'Alignment' + sep + 'JPK')
+                    DATA_DIR + sep + 'File_rejected' + sep + 'Alignment' + sep + 'JPK')
             path_dir_alignment.mkdir(parents=True, exist_ok=True)
             copy(file, str(path_dir_alignment))
         return dict_align
@@ -1550,9 +1551,7 @@ class Controller:
                 name of the folder to save the output
         """
         print("output_save")
-        today = str(date.today())
-        time_today = str(datetime.now().time().replace(
-            microsecond=0)).replace(':', '-')
+        today = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
         if len(self.dict_curve) > 0:
             dict_infos_curves = {}
             for curve in self.dict_curve.values():
@@ -1619,7 +1618,7 @@ class Controller:
                 path_directory = Path("Result")
                 path_directory.mkdir(parents=True, exist_ok=True)
                 path_directory = path_directory.__str__()
-            name_file = path_directory + sep + 'output_' + today + '_' + time_today + '.csv'
+            name_file = path_directory + sep + 'output_' + today + '.csv'
             self.output.to_csv(name_file, sep='\t',
                                encoding='utf-8', na_rep="NaN")
 

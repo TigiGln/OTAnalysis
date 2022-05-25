@@ -79,15 +79,20 @@ pip install supyr-struct
 pip install pathlib
 pip install pytest
 pip install m2r2
-
 ```
 
 # Install package
 You can install napari-openlabframe via <a href="https://pypi.org/project/pip/" rel="opener">pip</a>:
 
+Installation directly through the python pip
 ```
-conda install pip
-pip install OTAnalysis
+python -m pip install OTAnalysis
+```
+Installation by conda environment
+```
+git clone https://github.com/TigiGln/OTAnalysis.git
+cd OTAnalysis
+conda env create -f environment.yml
 ```
 
 # Launch project

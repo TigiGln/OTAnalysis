@@ -8,7 +8,7 @@ from os import sep
 import traceback
 import logging
 from ..setup_logger import create_logger
-from datetime import date, datetime
+from datetime import datetime
 from pathlib import Path
 from re import match
 import webbrowser
@@ -49,7 +49,7 @@ class View(QMainWindow, QWidget):
         self.msg_box = QMessageBox()
         self.keyPressed.connect(self.on_key)
         self.nb_save_graph = 0
-        self.setWindowIcon(QIcon('pictures' + sep + 'icon.png'))
+        self.setWindowIcon(QIcon('../pictures' + sep + 'icon.png'))
         self.info.setWindowIcon(QIcon('../pictures' + sep + 'icon.png'))
         self.setWindowTitle("View")
         self.size_window()
@@ -1491,7 +1491,7 @@ class View(QMainWindow, QWidget):
         """
         if not self.check_bilan:
             self.check_bilan = True
-            today = str(date.today())
+            today = datetime.now().strftime("%d-%m-%Y")
             self.graph_bilan = GraphView()
             hbox_bilan = QHBoxLayout()
             frame = QFrame()
@@ -1577,9 +1577,7 @@ class View(QMainWindow, QWidget):
         if self.nb_output == 0:
             self.directory_output = QFileDialog.getExistingDirectory(
                 self, "Open folder", "..", QFileDialog.ShowDirsOnly)
-        today = str(date.today())
-        time_today = str(datetime.now().time().replace(
-            microsecond=0)).replace(':', '-')
+        today = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
         if self.check_graph:
             self.current_curve.output['treat_supervised'] = True
         self.controller.output_save(self.directory_output)
@@ -1594,7 +1592,7 @@ class View(QMainWindow, QWidget):
                                    'factor_noise', 'width_window_smooth', 'optical']
             output_methods = output_methods[list_labels_methods]
             output_methods.to_csv(self.directory_output + sep + 'methods_' + today + '_' +
-                                  time_today + '.tsv', sep='\t', encoding='utf-8', na_rep="NaN")
+                                  '.tsv', sep='\t', encoding='utf-8', na_rep="NaN")
         if not self.controller.check_length_files:
             self.controller.dict_curve = {}
         elif self.check_graph or self.save_table.isChecked():
