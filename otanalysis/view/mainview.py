@@ -918,8 +918,8 @@ class View(QMainWindow, QWidget):
         self.clear()
         self.setMouseTracking(True)
         if self.screen_display.height() > 1000:
-            self.setGeometry(0, 0, self.screen_display.width(
-            ), self.screen_display.height()-self.screen_display.height()//3)
+            self.setGeometry(0, self.screen_display.height()//6, self.screen_display.width(), \
+                2*self.screen_display.height()//3)
         self.check_graph = True
         self.select_plot(self.check_global_local_graph, self.abscissa_curve)
         self.length_list_curve = len(self.controller.dict_curve.values())
