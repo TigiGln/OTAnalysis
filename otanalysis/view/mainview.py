@@ -7,7 +7,7 @@ from time import sleep
 from os import sep
 import traceback
 import logging
-from setup_logger import create_logger
+from ..setup_logger import create_logger
 from datetime import date, datetime
 from pathlib import Path
 from re import match
