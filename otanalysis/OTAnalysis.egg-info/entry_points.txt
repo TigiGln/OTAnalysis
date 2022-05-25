@@ -1,3 +1,2 @@
 [console_scripts]
-otanalysis = otanalysis.__main__
-
+otanalysis = otanalysis.__main__:main

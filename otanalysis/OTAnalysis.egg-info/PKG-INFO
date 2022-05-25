@@ -6,7 +6,6 @@ Home-page: https://github.com/TigiGln/OTAnalysis.git
 Author: Thierry GALLIANO (LAI)
 Author-email: thierry.galliano@etu.univ-amu.fr
 License: GPL-3.0-only
-Platform: UNKNOWN
 Classifier: Intended Audience :: Developers
 Classifier: Programming Language :: Python :: 3.9
 Classifier: License :: OSI Approved :: GNU General Public License v3 (GPLv3)
@@ -262,8 +261,6 @@ columns
 
 - valid_fit_pull type=bool
     validation of the fit on the "Pull" segment. False by default because not validated
-
-
 
 
 
