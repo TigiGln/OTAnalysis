@@ -212,9 +212,6 @@ class Curve:
             pulling_length: int
                 Percentage of length to accept the curve
         """
-        # segment = self.dict_segments['Press']
-        # nb_point_segment = segment.header_segment['.num-points']
-        # print(nb_point_segment)
         segment = self.dict_segments['Pull']
         nb_point_segment = int(
             segment.header_segment['segment-settings.num-points'])
@@ -386,12 +383,6 @@ class Curve:
         baseline_start = float(self.features['baseline_corrected_press (pN)'])
         line_end = self.calcul_baseline("Pull", True)
         std_start = float(self.features['std_corrected_press (pN)'])
-        # print('baseline_start: ', baseline_start)
-        # print('std_start: ', std_start)
-        # print('line_end: ', line_end)
-        # print(line_end)
-        # print(baseline_start - std_start*tolerance)
-        # print(baseline_start + std_start*tolerance)
         if (baseline_start - std_start*tolerance) < line_end < (baseline_start + std_start*tolerance):
             self.message += "\nbaseline_end Ok\n"
             print("baseline_end Ok")
@@ -627,17 +618,11 @@ class Curve:
             index_return_endline: int
                 index of the return point to the baseline
         """
-        # threshold = np.abs(mean_final_points + std_final_points * nb_std)
-        # threshold2 = np.abs(mean_final_points + std_final_points * 8)
-        # print("threshold: ", threshold)
-        # print("threshold2: ", threshold2)
         index_return_endline = None
         if type_curve is None:
             list_data_return_endline = []
             data = data_analyze[data_analyze.argmax():]
             data = np.array(data)
-            # data_analyze_reverse = np.flip(
-            # data_analyze)
             list_data_return_endline = data[(
                 data < line_pos_threshold)]
             if list_data_return_endline.size != 0:
@@ -800,7 +785,6 @@ class Curve:
             # self.features['point_transition'] = {
             #             'index': index_transition, 'value (pN)': y_smooth[index_transition]}
             derive_smooth = self.search_transition_point(time_data, force_data)
-            print(derive_smooth)
         else:
             self.features['point_return_endline'] = {
                 'index': 'NaN', 'value': 'NaN'}
@@ -933,8 +917,6 @@ class Curve:
 
                         ####### fit max transition ####
                         if self.features['transition_point']['index'] != 'NaN':
-                            print(y_smooth_pull.argmax())
-                            print(self.features['transition_point']['index'])
                             index_start = y_smooth_pull.argmax() + 2
                             index_end = self.features['transition_point']['index']
                             if index_start < index_end:
@@ -1011,13 +993,14 @@ class Curve:
                         methods['factor_noise'])
                     optical_state = "Auto_correction"
                 except Exception as error:
-                    print('###########################################')
-                    print(())
-                    print(type(error).__name__, ':')
-                    print(error)
-                    print(traceback.format_exc())
-                    print('index error No correction')
-                    print('###########################################')
+                    pass
+                    # print('###########################################')
+                    # print(())
+                    # print(type(error).__name__, ':')
+                    # print(error)
+                    # print(traceback.format_exc())
+                    # print('index error No correction')
+                    # print('###########################################')
         self.curve_approach_analyze(methods)
         type_curve = self.curve_return_analyze(methods, type_curve)
         self.features['drug'] = methods['drug']

@@ -11,7 +11,7 @@ import argparse
 from shutil import copy
 from time import time
 from datetime import date, datetime
-from ..__init__ import DATA_DIR
+from .. import DATA_DIR
 import re
 from math import ceil, floor
 import pandas as pd
@@ -47,7 +47,6 @@ class Controller:
         self.dict_curve = {}
         self.check_length_files = True
         self.output = pd.DataFrame(dtype='float64')
-
         if path_files is not None:
             self.manage_list_files(path_files)
         # methods = {'threshold_align': 30, 'pulling_length': 50, 'model': 'linear',
@@ -139,7 +138,6 @@ class Controller:
         """
         if self.view.check_logger:
             self.logger = logging.getLogger('logger_otanalysis.controller')
-        print(self.view.check_logger)
         self.dict_type_files = {'txt': 0, 'jpk': 0,
                                 'NC': 0, 'PB': 0, 'INC': 0, 'DP': 0}
         # 'txt': fichier .txt, 'jpk':fichier .jpk-nt-force,
@@ -153,7 +151,6 @@ class Controller:
             files = list_files
 
         for index_file in range(0, len(files), 1):
-            # self.tracker.print_diff()
             new_curve = None
             type_file = files[index_file].split('.')[-1]
             name_file = files[index_file].split(sep)[-1]
@@ -202,7 +199,6 @@ class Controller:
                         Controller.file_incomplete_rejected(
                             type_file, files[index_file])
                         self.dict_type_files['INC'] += 1
-                        print(type_file[0:3])
                         self.dict_type_files[type_file[0:3]] -= 1
                         self.list_file_imcomplete.add(
                             files[index_file].split(sep)[-1])
@@ -237,8 +233,6 @@ class Controller:
                 self.dict_type_files['DP'] += 1
             if self.view is not None:
                 self.view.info_processing(nb, len(files))
-            print(self.dict_type_files)
-            print(len(self.dict_curve))
 
     #############################################################################################
 
@@ -415,12 +409,12 @@ class Controller:
                 DATA_DIR + sep + 'File_rejected' + sep + 'problem_curve' + sep + 'TXT')
         path_dir_problem.mkdir(parents=True, exist_ok=True)
         copy(file, str(path_dir_problem))
-        print('###########################################')
-        print(type(error).__name__, ':')
-        print(error)
-        print(traceback.format_exc())
-        print(message)
-        print('###########################################')
+        # print('###########################################')
+        # print(type(error).__name__, ':')
+        # print(error)
+        # print(traceback.format_exc())
+        # print(message)
+        # print('###########################################')
         if self.view.check_logger:
             self.logger.info(
                 '###########################################')
@@ -757,7 +751,6 @@ class Controller:
             curve = list_curves_for_graphs[n]
             main_axis = curve.features['main_axis']['axe']
             data_total = curve.retrieve_data_curve('data_corrected')
-            # print(data_total[main_axis + 'Signal1'])
             threshold_align = curve.graphics['threshold alignement']
             threshold_line_pos = np.full(len(data_total), threshold_align)
             threshold_line_neg = np.negative(
@@ -1393,12 +1386,12 @@ class Controller:
                 retour = f"{pct}%({val})"
             retour = f"{pct}%\n({val})"
         except Exception as error:
-            print('###########################################')
-            print(type(error).__name__, ':')
-            print(error)
-            print(traceback.format_exc())
-            print('value problem')
-            print('###########################################')
+            # print('###########################################')
+            # print(type(error).__name__, ':')
+            # print(error)
+            # print(traceback.format_exc())
+            # print('value problem')
+            # print('###########################################')
             if self.view.check_logger:
                 self.logger.info(
                     '###########################################')

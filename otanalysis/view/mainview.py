@@ -918,8 +918,8 @@ class View(QMainWindow, QWidget):
         self.clear()
         self.setMouseTracking(True)
         if self.screen_display.height() > 1000:
-            self.setGeometry(0, self.screen_display.height()//6, self.screen_display.width(), \
-                2*self.screen_display.height()//3)
+            self.setGeometry(0, self.screen_display.height()//6, self.screen_display.width(),
+                             2*self.screen_display.height()//3)
         self.check_graph = True
         self.select_plot(self.check_global_local_graph, self.abscissa_curve)
         self.length_list_curve = len(self.controller.dict_curve.values())
@@ -1397,12 +1397,12 @@ class View(QMainWindow, QWidget):
                 self.logger.error(traceback.format_exc())
                 self.logger.info(
                     '###########################################\n\n')
-            print('###########################################')
-            print(type(error).__name__, ':')
-            print(error)
-            print(traceback.format_exc())
-            print('Index error')
-            print('###########################################')
+            # print('###########################################')
+            # print(type(error).__name__, ':')
+            # print(error)
+            # print(traceback.format_exc())
+            # print('Index error')
+            # print('###########################################')
 
     ##################################################################################
 
@@ -1426,7 +1426,8 @@ class View(QMainWindow, QWidget):
                         self.dict_fig_open[self.current_curve.file], self.methods['factor_noise'])
                     for child in self.graph_view.children():
                         if isinstance(child, QPushButton):
-                            child.hide()
+                            if child.text() == "Accept correction":
+                                child.hide()
                     self.toggle.setChecked(True)
                 if len(self.intreval_optical_effect) <= 2:
                     ax = self.dict_fig_open[self.current_curve.file].axes[0]
@@ -1441,12 +1442,13 @@ class View(QMainWindow, QWidget):
                             self.intreval_optical_effect, self.dict_fig_open[self.current_curve.file])
                         for child in self.graph_view.children():
                             if isinstance(child, QPushButton):
-                                child.show()
+                                if child.text() == "Accept correction":
+                                    child.show()
                 if len(self.intreval_optical_effect) > 2:
                     self.intreval_optical_effect = []
                 canvas = FigureCanvasQTAgg(
                     self.dict_fig_open[self.current_curve.file])
-                self.graph_view.main_layout.addWidget(canvas, 1, 0, 4, 2)
+                self.graph_view.main_layout.addWidget(canvas, 1, 0, 4, 3)
                 self.graph_view.showMaximized()
         except Exception as error:
             if self.check_logger:
