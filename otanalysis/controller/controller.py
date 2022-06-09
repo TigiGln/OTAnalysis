@@ -1292,7 +1292,7 @@ class Controller:
         """
         dict_type = {'NAD': 0, 'AD': 0, 'FTU': 0, 'ITU': 0, 'RE': 0}
         for curve in self.dict_curve.values():
-            if curve.features['automatic_AL']['AL'] == curve.features['AL']:
+            if name_classification == 'automatic_type':
                 if curve.features['automatic_AL']['AL'] == 'Yes':
                     if curve.features[name_classification] in dict_type:
                         dict_type[curve.features[name_classification]] += 1
@@ -1301,29 +1301,30 @@ class Controller:
                     if curve.features[name_classification] in dict_type:
                         dict_type[curve.features[name_classification]] += 1
 
-        percent_NAD_auto = 0
-        percent_AD_auto = 0
-        percent_FTU_auto = 0
-        percent_ITU_auto = 0
-        percent_RE_auto = 0
+        print(dict_type)
+        percent_NAD = 0
+        percent_AD = 0
+        percent_FTU = 0
+        percent_ITU = 0
+        percent_RE = 0
         if nb_conforming_curves != 0:
-            percent_NAD_auto = (
+            percent_NAD = (
                 dict_type['NAD']/nb_conforming_curves * 100)
-            percent_AD_auto = (
+            percent_AD = (
                 dict_type['AD']/nb_conforming_curves * 100)
-            percent_FTU_auto = (
+            percent_FTU = (
                 dict_type['FTU']/nb_conforming_curves * 100)
-            percent_ITU_auto = (
+            percent_ITU = (
                 dict_type['ITU']/nb_conforming_curves * 100)
-            percent_RE_auto = (
+            percent_RE = (
                 dict_type['RE']/nb_conforming_curves*100)
-            dict_classification_auto = {'NAD': f"{percent_NAD_auto:.2f}", 'AD': f"{percent_AD_auto:.2f}",
-                                        'FTU': f"{percent_FTU_auto:.2f}", 'ITU': f"{percent_ITU_auto:.2f}", 'RE': f"{percent_RE_auto:.2f}"}
-            values = [f"{percent_FTU_auto:.2f}", f"{percent_NAD_auto:.2f}",
-                      f"{percent_RE_auto:.2f}", f"{percent_AD_auto:.2f}", f"{percent_ITU_auto:.2f}"]
+            dict_classification = {'NAD': f"{percent_NAD:.2f}", 'AD': f"{percent_AD:.2f}",
+                                        'FTU': f"{percent_FTU:.2f}", 'ITU': f"{percent_ITU:.2f}", 'RE': f"{percent_RE:.2f}"}
+            values = [f"{percent_FTU:.2f}", f"{percent_NAD:.2f}",
+                      f"{percent_RE:.2f}", f"{percent_AD:.2f}", f"{percent_ITU:.2f}"]
             values_auto = [value for value in values if value != '0.00']
             ax.pie(values_auto, autopct=lambda pct: self.make_autopct(
-                pct, dict_classification_auto), shadow=True, startangle=45)
+                pct, dict_classification), shadow=True, startangle=45)
         return ax
 
     ####################################################################################################################################
@@ -1373,6 +1374,7 @@ class Controller:
             pct: percentage
             val: label
         """
+        print(dico)
         retour = None
         try:
             pct = f"{pct:.2f}"
@@ -1428,15 +1430,22 @@ class Controller:
                 annotations_ax1.append(ax1.annotate(curve.file, xy=(curve.features['jump_distance_end_pull (nm)'],
                                                                     curve.features['jump_force_end_pull (pN)']), xytext=(-50, 10),
                                                     textcoords="offset points", bbox=dict(boxstyle="round", fc="w"), visible=False))
-                if 'slope_fitted_classification_max_transition' in curve.features:
-                    ax2.plot(curve.features["slope_fitted_classification_max_transition"],
-                             curve.features['jump_force_end_pull (pN)'], marker='o', color=color_dict[curve.features['type']],
-                             picker=True, label=curve.file)
-                    annotations_ax2.append(ax2.annotate(curve.file, xy=(curve.features["slope_fitted_classification_max_transition"],
-                                                                        curve.features['jump_force_end_pull (pN)']), xytext=(-50, 10),
-                                                        textcoords="offset points", bbox=dict(boxstyle="round", fc="w"), visible=False))
-        max_xlim = ax2.get_xlim()[1]
-        ax2.set_xlim(-max_xlim, max_xlim)
+            if 'slope_fit_classification_transition' in curve.features:
+                ax2.plot(curve.features["slope_fit_classification_transition"],
+                            curve.features['jump_force_end_pull (pN)'], marker='o', color=color_dict[curve.features['type']],
+                            picker=True, label=curve.file)
+                annotations_ax2.append(ax2.annotate(curve.file, xy=(curve.features["slope_fit_classification_transition"],
+                                                                    curve.features['jump_force_end_pull (pN)']), xytext=(-50, 10),
+                                                    textcoords="offset points", bbox=dict(boxstyle="round", fc="w"), visible=False))
+            elif 'slope_fitted_classification_max_transition' in curve.features:
+                ax2.plot(curve.features["slope_fitted_classification_max_transition"],
+                            curve.features['jump_force_end_pull (pN)'], marker='o', color=color_dict[curve.features['type']],
+                            picker=True, label=curve.file)
+                annotations_ax2.append(ax2.annotate(curve.file, xy=(curve.features["slope_fitted_classification_max_transition"],
+                                                                    curve.features['jump_force_end_pull (pN)']), xytext=(-50, 10),
+                                                    textcoords="offset points", bbox=dict(boxstyle="round", fc="w"), visible=False))
+        # max_xlim = ax2.get_xlim()[1]
+        # ax2.set_xlim(-max_xlim, max_xlim)
         ax1.axvline(self.view.methods['jump_distance'], ls='-.')
         ax1.axhline(self.view.methods['jump_force'], ls='-.')
         ax2.axvline(0.025, ls='-.')

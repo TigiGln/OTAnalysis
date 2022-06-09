@@ -684,6 +684,7 @@ class View(QMainWindow, QWidget):
         self.display_legend.triggered.connect(
             lambda: self.controller.display_legend(self.fig))
         self.display_legend.setChecked(True)
+        
 
         help = QAction("Help", self)
         help.setStatusTip("Ask help")

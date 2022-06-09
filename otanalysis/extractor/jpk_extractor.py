@@ -626,10 +626,11 @@ class JPKFile:
             msg += " as read from the segment's header file."
             raise RuntimeError(msg)
 
-        # décodage données
-        data = np.array(unpack_from(f'!{num_points}{type_code}', content))
-        data = data[:, np.newaxis]  # Transformation liste en matrice
+        
+        data = np.array(unpack_from(f'!{num_points}{type_code}', content))# data decoding
+        data = data[:, np.newaxis]  # Transformation from list to matrix
         return data
+        
 
     ###########################################################################################################
 
