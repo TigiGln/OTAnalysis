@@ -1,5 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# @author Thierry GALLIANO
+# @contributors Pierre-Henri PUECH, Laurent LIMOZIN, Guillaume GAY
 """
 File describing the instance class of the curved objects
 """
@@ -41,9 +43,7 @@ class Curve:
         self.output = {'bead': bead, 'cell': cell, 'couple': couple}
         self.output['treat_supervised'] = False
         self.message = ""
-
         self.message += "\n========================================================================\n"
-
         self.message += self.file
         self.message += "\n========================================================================\n"
 
@@ -180,7 +180,6 @@ class Curve:
                 data = segment.data[[column]].copy()
                 data = data.sub(baseline, axis=0)
                 segment.corrected_data[column] = data[column] * 1e12
-
         for segment in self.dict_segments.values():
             segment.corrected_data['time'] = segment.data['time'] - \
                 segment.data['time'][0]
@@ -909,7 +908,7 @@ class Curve:
                         self.fit_linear_classification(
                             index_start, index_end, "fitted_classification_max")
 
-                        ###### fit release ######
+                        ###### fit release #####transition_point#
                         index_start = index_release
                         index_end = index_release+jump_nb_points_start
                         self.fit_linear_classification(
@@ -937,7 +936,7 @@ class Curve:
                         jump_distance_end_pull = (
                             speed*1e9) * jump_time_end_pull
                     self.features['jump_distance_end_pull (nm)'] = jump_distance_end_pull
-
+                    
                     ############### determination AD ou FTU ###############
                     if jump_nb_points_end < methods['jump_point'] and jump_distance_end_pull < methods['jump_distance']:
                         type_curve = 'AD'
@@ -946,8 +945,29 @@ class Curve:
 
         else:
             index_force_max = force_data.argmax()
+            if type_curve == "ITU":
+                self.features['transition_point'] = {'index': len(force_data)-1, 'value': force_data[len(force_data)-1]}
+                index_start = self.features['transition_point']['index'] - 2000
+                index_end = self.features['transition_point']['index']
+                self.fit_linear_classification(
+                                index_start, index_end, "fitted_classification_max_transition")
+                
+                jump_distance_end_pull = distance_data[self.features['transition_point']['index']] - \
+                            distance_data[index_force_max]
+                jump_force_end_pull = ""
+                if self.features['transition_point']['value'] < force_data[index_force_max]:
+                    jump_force_end_pull = force_data[index_force_max] - \
+                        force_data[self.features['transition_point']['index']]
+                else:
+                    jump_force_end_pull = force_data[self.features['transition_point']['index']] - \
+                        force_data[index_force_max]
+                
+                self.features['jump_distance_end_pull (nm)'] = jump_distance_end_pull
+                self.features['jump_force_end_pull (pN)'] = jump_force_end_pull
+                
         self.features['force_max_pull'] = {
             'index': index_force_max, 'value': force_data[index_force_max]}
+            
 
         return type_curve
 

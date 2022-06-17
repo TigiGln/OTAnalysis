@@ -58,6 +58,15 @@ Visualization of all curves as a function of time on the 3 axes and as a functio
 - correction of the type of curve classification (type defined checked)
 - Pagination to determine our position in the whole analysis. Possibility to move with the 'Enter' key and the number of the curve
 
+### Changes in points and fits
+In the supervision interface, you can modify the characteristic points and curve fits:
+Go to the force vs distance curve
+In the menu press Edit/Pick event
+in the secondary window that appears choose what you want to modify and click on OK
+then click on the graph:
+- on the selected point
+- on the two extreme points for the fit
+
 # Install MiniConda && Create conda environment
 ```
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
@@ -252,3 +261,33 @@ columns
 
 - valid_fit_pull type=bool
     validation of the fit on the "Pull" segment. False by default because not validated
+
+
+## Add features
+To add a feature, two options are possible: 
+- During the automatic analysis 
+- After analysis for post processing
+
+### In analysis
+We need to add a method to the curve object
+then call it in the "analyzed_curve" method of the curve object
+This method is called by the controller when the automatic analysis is launched
+
+### In interface
+If we want to call an external post processing script: 
+ - we create a method in the controller that loops on the dict_curve (dictionnare of curved object)
+ - we adapt our add script so that it includes the data of the object
+ - We then create a widget in the interface that calls the method of the view's controller attribute
+if we want to add a new feature after analysis but on the object *curve :  
+ - we add a method to curve
+ - we create a widget that calls this method through the dict-curve of the controller
+
+ ## Adapt input
+ The input text file must have a global header, a calibration part, segment headers and data
+ ![Screenshot](./pictures/structure_file_text.png)
+ 
+ If your data do not have a force (xsignal1, ysignal1, zsignal1), time (seriesTime) and distance column:
+- You will have to implement methods in the specific curve object of your data
+- modify the start of the analysis in the controller in the "create_dict_curves" method
+- adapt the supervision to the data to display
+

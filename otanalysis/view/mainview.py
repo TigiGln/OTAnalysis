@@ -1,5 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# @author Thierry GALLIANO
+# @contributors Pierre-Henri PUECH, Laurent LIMOZIN, Guillaume GAY
 """
 Class View
 """
@@ -109,6 +111,7 @@ class View(QMainWindow, QWidget):
         self.check_plot_bilan = False
         self.check_cid = False
         self.check_logger = False
+        self.check_legend = True
         self.clear()
         self.create_checkbox_logger()
         self.data_description()
@@ -562,8 +565,6 @@ class View(QMainWindow, QWidget):
         num_curve = int(ratio_curve.split('/')[0])
 
         if num_curve < length:
-            # self.PBEtatAvancement = QProgressBar()# Création de la bar de progression
-            # self.PBEtatAvancement.setRange(0, 100)
             loop = QEventLoop()
             self.msg_box.show()
             self.msg_box.setText("Loading...\n" + str(ratio_curve))
@@ -683,7 +684,11 @@ class View(QMainWindow, QWidget):
         self.display_legend.setStatusTip("Delete legend all graph")
         self.display_legend.triggered.connect(
             lambda: self.controller.display_legend(self.fig))
-        self.display_legend.setChecked(True)
+        if self.check_legend:
+            self.display_legend.setChecked(True)
+        else:
+            self.display_legend.setChecked(False)
+        
         
 
         help = QAction("Help", self)
@@ -825,6 +830,10 @@ class View(QMainWindow, QWidget):
                         handles.pop(labels.index(label))
                         labels.pop(labels.index(label))
                 graph.legend(handles, labels, loc="lower right")
+                if self.check_legend:
+                    graph.get_legend().set_visible(True)
+                else:
+                    graph.get_legend().set_visible(False)
 
     ########################################################################################
 
@@ -873,6 +882,10 @@ class View(QMainWindow, QWidget):
                             handles.pop(labels.index(label))
                             labels.pop(labels.index(label))
                     ax.legend(handles, labels, loc="lower right")
+                    if self.check_legend:
+                        ax.get_legend().set_visible(True)
+                    else:
+                        ax.get_legend().set_visible(False)
     ########################################################################################
 
     def select_point(self, event, name_point):
@@ -906,6 +919,10 @@ class View(QMainWindow, QWidget):
                             handles.pop(labels.index(label))
                             labels.pop(labels.index(label))
                     ax.legend(handles, labels, loc="lower right")
+                    if self.check_legend:
+                        ax.get_legend().set_visible(True)
+                    else:
+                        ax.get_legend().set_visible(False)
                     for line in ax.get_children():
                         if line.get_label() == 'smooth':
                             line.set_picker(False)
@@ -1025,6 +1042,7 @@ class View(QMainWindow, QWidget):
         self.valid_fit()
         self.toggle_optical_effect()
         self.type_supervised()
+        self.report_problem()
         self.frame_supervised.setFrameStyle(QFrame.Box | QFrame.Raised)
         self.frame_supervised.setLineWidth(3)
         self.frame_supervised.setMidLineWidth(3)
@@ -1210,7 +1228,6 @@ class View(QMainWindow, QWidget):
         group_button_type = QGroupBox('Pull: Type?')
         group_type = QButtonGroup()
         vbox_type = QHBoxLayout()
-
         type_nad = QRadioButton("NAD")
         type_nad.setToolTip('No Adhesion')
         type_ad = QRadioButton("AD")
@@ -1242,6 +1259,26 @@ class View(QMainWindow, QWidget):
             button.setFocusPolicy(Qt.NoFocus)
             button.clicked.connect(lambda: self.modif_supervised('type'))
         self.grid_supervised.addWidget(group_button_type, 5, 0, 1, 2)
+
+    ##########################################################################################
+    def report_problem(self):
+        group_button_report_problem = QGroupBox("Report problem")
+        group_report_problem = QButtonGroup()
+        hbox_report_problem = QHBoxLayout()
+        true_report = QRadioButton('True')
+        false_report = QRadioButton('False')
+        hbox_report_problem.addWidget(true_report)
+        hbox_report_problem.addWidget(false_report)
+        group_report_problem.addButton(true_report)
+        group_report_problem.addButton(false_report)
+        group_button_report_problem.setLayout(hbox_report_problem)
+        self.current_curve.features['report_problem']
+        self.grid_supervised.addWidget(group_button_report_problem, 6, 0, 1, 2)
+        for button in group_report_problem.buttons():
+            button.clicked.connect(lambda: self.modif_supervised('report_problem'))
+            button.setFocusPolicy(Qt.NoFocus)
+            if button.text() == str(self.current_curve.features['report_problem']):
+                button.setChecked(True)
 
     ##########################################################################################
 

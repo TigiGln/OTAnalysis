@@ -1,3 +1,7 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+# @author Thierry GALLIANO
+# @contributors Pierre-Henri PUECH, Laurent LIMOZIN, Guillaume GAY
 """
 JPK archive extractor for comprehensive processing of optical tweezer curves
 """

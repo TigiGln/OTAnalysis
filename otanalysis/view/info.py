@@ -1,5 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# @author Thierry GALLIANO
+# @contributors Pierre-Henri PUECH, Laurent LIMOZIN, Guillaume GAY
+"""
+Classes of intanciation of the secondary window for the display of the automatic classification
+"""
 
 from PyQt5.QtWidgets import QLabel, QWidget, QVBoxLayout
 

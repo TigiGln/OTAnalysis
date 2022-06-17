@@ -1,3 +1,7 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+# @author Thierry GALLIANO
+# @contributors Pierre-Henri PUECH, Laurent LIMOZIN, Guillaume GAY
 """
 main module to launch the optical tweezers curve analysis and classification tool
 """

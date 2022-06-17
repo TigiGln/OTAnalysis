@@ -1,5 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# @author Thierry GALLIANO
+# @contributors Pierre-Henri PUECH, Laurent LIMOZIN, Guillaume GAY
 """
 Class Controller
 """
@@ -10,8 +12,7 @@ from pathlib import Path
 import argparse
 from shutil import copy
 from time import time
-from datetime import date, datetime
-from .. import DATA_DIR
+from datetime import datetime
 import re
 from math import ceil, floor
 import pandas as pd
@@ -21,6 +22,7 @@ from pandas.core.tools.numeric import to_numeric
 from matplotlib.figure import Figure
 from matplotlib import gridspec
 import matplotlib.pyplot as plt
+from .. import DATA_DIR
 from ..model.curve import Curve
 from ..model.segment_curve import Segment
 from ..extractor.jpk_extractor import JPKFile
@@ -136,8 +138,9 @@ class Controller:
             methods: dict
                 Set of parameters to enter in the interface to launch the analysis
         """
-        if self.view.check_logger:
-            self.logger = logging.getLogger('logger_otanalysis.controller')
+        if self.view is not None:
+            if self.view.check_logger:
+                self.logger = logging.getLogger('logger_otanalysis.controller')
         self.dict_type_files = {'txt': 0, 'jpk': 0,
                                 'NC': 0, 'PB': 0, 'INC': 0, 'DP': 0}
         # 'txt': fichier .txt, 'jpk':fichier .jpk-nt-force,
@@ -206,22 +209,24 @@ class Controller:
                         try:
                             error = new_curve.analyzed_curve(
                                 methods, False)
-                            if self.view.check_logger and error is not None:
-                                self.logger.info(
-                                    '###########################################')
-                                self.logger.info(
-                                    new_curve.file)
-                                self.logger.info(
-                                    '###########################################')
-                                self.logger.error(
-                                    type(error).__name__)
-                                self.logger.error(error)
-                                self.logger.error(traceback.format_exc())
-                                self.logger.info(
-                                    '###########################################\n\n')
+                            if self.view is not None:
+                                if self.view.check_logger and error is not None:
+                                    self.logger.info(
+                                        '###########################################')
+                                    self.logger.info(
+                                        new_curve.file)
+                                    self.logger.info(
+                                        '###########################################')
+                                    self.logger.error(
+                                        type(error).__name__)
+                                    self.logger.error(error)
+                                    self.logger.error(traceback.format_exc())
+                                    self.logger.info(
+                                        '###########################################\n\n')
                             self.dict_curve[new_curve.file] = new_curve
                             new_curve.features['type'] = new_curve.features['automatic_type']
                             new_curve.features['relative_path'] = files[index_file]
+                            new_curve.features['report_problem'] = False
                         except Exception as error:
                             message = "The curve object created but problem \
                                         in analysis due to erroneous data"
@@ -415,17 +420,18 @@ class Controller:
         # print(traceback.format_exc())
         # print(message)
         # print('###########################################')
-        if self.view.check_logger:
-            self.logger.info(
-                '###########################################')
-            self.logger.info(file)
-            self.logger.info(
-                '###########################################')
-            self.logger.error(type(error).__name__)
-            self.logger.error(error)
-            self.logger.error(traceback.format_exc())
-            self.logger.info(
-                '###########################################\n\n')
+        if self.view is not None:
+            if self.view.check_logger:
+                self.logger.info(
+                    '###########################################')
+                self.logger.info(file)
+                self.logger.info(
+                    '###########################################')
+                self.logger.error(type(error).__name__)
+                self.logger.error(error)
+                self.logger.error(traceback.format_exc())
+                self.logger.info(
+                    '###########################################\n\n')
 
     ############################################################################################
 
@@ -479,7 +485,7 @@ class Controller:
             fig = plt.figure()
             graph_position = 1
             if abscissa_curve == 'time':
-                graph_position = Controller.plot_time(
+                graph_position = self.plot_time(
                     curve, fig, graph_position)
             else:
                 for segment in curve.dict_segments.values():
@@ -506,7 +512,12 @@ class Controller:
                                         handles.pop(labels.index(labels[i]))
                                         labels.pop(labels.index(labels[i]))
                                     i -= 1
+                                
                                 ax.legend(handles, labels, loc="lower right")
+                            if self.view.check_legend:
+                                ax.get_legend().set_visible(True)
+                            else:
+                                ax.get_legend().set_visible(False)
 
         fig.subplots_adjust(wspace=0.3, hspace=0.5)
         fig.tight_layout()
@@ -634,8 +645,7 @@ class Controller:
         return graph_position
     #############################################################################################
 
-    @ staticmethod
-    def plot_time(curve, fig, graph_position):
+    def plot_time(self, curve, fig, graph_position):
         """
         allows the display of graphs as a function of time on the 3 axes
 
@@ -706,7 +716,12 @@ class Controller:
             if curve.features['automatic_type'] != 'NAD' and curve.features['automatic_type'] != 'RE':
                 ax1.plot(data_total['seriesTime'][index_max], data_total[main_axis + 'Signal1'][index_max],
                          marker='o', ls='None', color='#1b7837', label='max curve')
+        
         ax1.legend(loc="lower left", ncol=2)
+        if self.view.check_legend:
+            ax1.get_legend().set_visible(True)
+        else:
+            ax1.get_legend().set_visible(False)
         return graph_position
     #################################################################################################################
 
@@ -724,6 +739,7 @@ class Controller:
                     ax.get_legend().set_visible(False)
                 else:
                     ax.get_legend().set_visible(True)
+                self.view.check_legend = ax.get_legend().get_visible()
         fig.canvas.draw_idle()
 
     ###########################################################################################################################################
@@ -1374,7 +1390,6 @@ class Controller:
             pct: percentage
             val: label
         """
-        print(dico)
         retour = None
         try:
             pct = f"{pct:.2f}"
@@ -1394,14 +1409,15 @@ class Controller:
             # print(traceback.format_exc())
             # print('value problem')
             # print('###########################################')
-            if self.view.check_logger:
-                self.logger.info(
-                    '###########################################')
-                self.logger.error(type(error).__name__)
-                self.logger.error(error)
-                self.logger.error(traceback.format_exc())
-                self.logger.info(
-                    '###########################################\n\n')
+            if self.view is not None:
+                if self.view.check_logger:
+                    self.logger.info(
+                        '###########################################')
+                    self.logger.error(type(error).__name__)
+                    self.logger.error(error)
+                    self.logger.error(traceback.format_exc())
+                    self.logger.info(
+                        '###########################################\n\n')
         if retour != None:
             return retour
 
@@ -1422,9 +1438,9 @@ class Controller:
         annotations_ax2 = []
         ax1 = fig.add_subplot(gs[0, 0])
         ax2 = fig.add_subplot(gs[0, 1])
-        color_dict = {'AD': 'red', 'FTU': 'green'}
+        color_dict = {'AD': 'red', 'FTU': 'green', 'ITU': 'blue'}
         for curve in self.dict_curve.values():
-            if curve.features['type'] in ('AD', 'FTU'):
+            if curve.features['type'] in ('AD', 'FTU', 'ITU'):
                 ax1.plot(curve.features['jump_distance_end_pull (nm)'], curve.features['jump_force_end_pull (pN)'],
                          marker='o', color=color_dict[curve.features['type']], picker=True, label=curve.file)
                 annotations_ax1.append(ax1.annotate(curve.file, xy=(curve.features['jump_distance_end_pull (nm)'],
@@ -1554,6 +1570,7 @@ class Controller:
         """
         print("output_save")
         today = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
+        name_file= ""
         if len(self.dict_curve) > 0:
             dict_infos_curves = {}
             for curve in self.dict_curve.values():
@@ -1577,7 +1594,7 @@ class Controller:
             elif self.output['model'][0] == 'sphere':
                 name_parameters = 'young (Pa)'
                 error_parameters = 'error young (Pa)'
-            liste_labels = ['treat_supervised', 'automatic_type', 'type', 'automatic_AL', 'AL', 'automatic_AL_axe',
+            liste_labels = ['treat_supervised', 'automatic_type', 'type', 'report_problem' ,'automatic_AL', 'AL', 'automatic_AL_axe',
                             'optical_state', 'model', 'Date', 'Hour', 'condition', 'drug', 'tolerance', 'bead', 'cell', 'couple',
                             'main_axis', 'stiffness (N/m)', 'theorical_contact_force (N)', 'theorical_distance_Press (m)',
                             'theorical_speed_Press (m/s)', 'theorical_freq_Press (Hz)', 'theorical_distance_Pull (m)',
@@ -1623,6 +1640,7 @@ class Controller:
             name_file = path_directory + sep + 'output_' + today + '.csv'
             self.output.to_csv(name_file, sep='\t',
                                encoding='utf-8', na_rep="NaN")
+        return name_file
 
     ##############################################################################################
 
