@@ -370,6 +370,7 @@ class View(QMainWindow, QWidget):
         directory = None
         self.controller.clear()
         print("Loading file")
+        
         if select == 'files':
             files = QFileDialog.getOpenFileNames(self, u"", u".",
                                                  u"JPK Files (*.jpk-nt-force) ;; Text files(*.txt)")
@@ -576,7 +577,7 @@ class View(QMainWindow, QWidget):
         else:
             self.msg_box.close()
             self.info.set_title("Problem")
-            self.info.set_info_curve("problem files")
+            self.info.set_info_curve("problem files, try again")
             self.info.show()
 
     ####################################################################################
@@ -987,6 +988,8 @@ class View(QMainWindow, QWidget):
                         button_next.setDisabled(True)
                         if self.check_supervised:
                             button_bilan = QPushButton('Bilan')
+                            button_bilan.setStyleSheet(
+                "QPushButton {background-color: yellow;}")
                             button_bilan.clicked.connect(self.show_bilan)
                             self.main_layout.addWidget(
                                 button_bilan, 8, 6, 1, 2)

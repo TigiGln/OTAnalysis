@@ -1015,14 +1015,13 @@ class Curve:
                         methods['factor_noise'])
                     optical_state = "Auto_correction"
                 except Exception as error:
-                    pass
-                    # print('###########################################')
-                    # print(())
-                    # print(type(error).__name__, ':')
-                    # print(error)
-                    # print(traceback.format_exc())
-                    # print('index error No correction')
-                    # print('###########################################')
+                    print('###########################################')
+                    print(())
+                    print(type(error).__name__, ':')
+                    print(error)
+                    print(traceback.format_exc())
+                    print('index error No correction')
+                    print('###########################################')
         self.curve_approach_analyze(methods)
         type_curve = self.curve_return_analyze(methods, type_curve)
         self.features['drug'] = methods['drug']

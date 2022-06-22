@@ -52,4 +52,4 @@ class Infowindow(QWidget):
         """
         setter of the 'title' widget text
         """
-        self.title.setText('Loading is done')
+        self.title.setText(text)

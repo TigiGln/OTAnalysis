@@ -567,7 +567,7 @@ class Controller:
                     label=legend_threshold, ls='-.', alpha=0.5)
             ax.plot(distance_data, threshold_press_neg,
                     color='blue', alpha=0.5, ls='-.')
-            if self.view.methods['optical'] == "Correction":
+            if self.view.methods['optical'] == "Correction" and 'contact_theorical_press' in curve.features:
                 index_x_0 = curve.features['contact_theorical_press']['index']
             else:
                 index_x_0 = curve.features['contact_point']['index']
@@ -1441,24 +1441,22 @@ class Controller:
         color_dict = {'AD': 'red', 'FTU': 'green', 'ITU': 'blue'}
         for curve in self.dict_curve.values():
             if curve.features['type'] in ('AD', 'FTU', 'ITU'):
+                text_annot=curve.file + '/page ' + str(list(self.dict_curve.values()).index(curve)+1)
                 ax1.plot(curve.features['jump_distance_end_pull (nm)'], curve.features['jump_force_end_pull (pN)'],
                          marker='o', color=color_dict[curve.features['type']], picker=True, label=curve.file)
-                annotations_ax1.append(ax1.annotate(curve.file, xy=(curve.features['jump_distance_end_pull (nm)'],
-                                                                    curve.features['jump_force_end_pull (pN)']), xytext=(-50, 10),
+                annotations_ax1.append(ax1.annotate(text_annot, xy=(curve.features['jump_distance_end_pull (nm)'],
+                                                                    curve.features['jump_force_end_pull (pN)']), xytext=(-60, 10),
                                                     textcoords="offset points", bbox=dict(boxstyle="round", fc="w"), visible=False))
-            if 'slope_fit_classification_transition' in curve.features:
-                ax2.plot(curve.features["slope_fit_classification_transition"],
-                            curve.features['jump_force_end_pull (pN)'], marker='o', color=color_dict[curve.features['type']],
-                            picker=True, label=curve.file)
-                annotations_ax2.append(ax2.annotate(curve.file, xy=(curve.features["slope_fit_classification_transition"],
-                                                                    curve.features['jump_force_end_pull (pN)']), xytext=(-50, 10),
-                                                    textcoords="offset points", bbox=dict(boxstyle="round", fc="w"), visible=False))
-            elif 'slope_fitted_classification_max_transition' in curve.features:
-                ax2.plot(curve.features["slope_fitted_classification_max_transition"],
-                            curve.features['jump_force_end_pull (pN)'], marker='o', color=color_dict[curve.features['type']],
-                            picker=True, label=curve.file)
-                annotations_ax2.append(ax2.annotate(curve.file, xy=(curve.features["slope_fitted_classification_max_transition"],
-                                                                    curve.features['jump_force_end_pull (pN)']), xytext=(-50, 10),
+                if 'slope_fit_classification_transition' in curve.features:
+                    ax2.plot(curve.features["slope_fit_classification_transition"],
+                                curve.features['jump_force_end_pull (pN)'], marker='o', color=color_dict[curve.features['type']],
+                                picker=True, label=curve.file)
+                elif 'slope_fitted_classification_max_transition' in curve.features:
+                    ax2.plot(curve.features["slope_fitted_classification_max_transition"],
+                                curve.features['jump_force_end_pull (pN)'], marker='o', color=color_dict[curve.features['type']],
+                                picker=True, label=curve.file)
+                annotations_ax2.append(ax2.annotate(text_annot, xy=(curve.features["slope_fitted_classification_max_transition"],
+                                                                    curve.features['jump_force_end_pull (pN)']), xytext=(-100, 10),
                                                     textcoords="offset points", bbox=dict(boxstyle="round", fc="w"), visible=False))
         # max_xlim = ax2.get_xlim()[1]
         # ax2.set_xlim(-max_xlim, max_xlim)
@@ -1471,9 +1469,9 @@ class Controller:
         ax2.set_ylabel("jump_force (pN)")
         ax2.set_xlabel("slope_fit_max_return (pN/nm)")
         fig.canvas.mpl_connect("pick_event", lambda event: self.click_curve(
-            event, ax1, fig, annotations_ax1, 30, 50))
+            event, ax1, fig, annotations_ax1, 50, 1))
         fig.canvas.mpl_connect("pick_event", lambda event: self.click_curve(
-            event, ax2, fig, annotations_ax2, 0.005, 30))
+            event, ax2, fig, annotations_ax2, 0.01, 10))
         fig.subplots_adjust(wspace=0.5)
         return fig
 
@@ -1502,7 +1500,7 @@ class Controller:
                 for annot in annotations:
                     if event.mouseevent.xdata is not None and event.mouseevent.ydata is not None:
                         if isclose(event.mouseevent.xdata, point.get_xdata(), abs_tol=tolerance_x) and isclose(event.mouseevent.ydata, point.get_ydata(), abs_tol=tolerance_y):
-                            if point.get_label() == annot.get_text():
+                            if point.get_label() == annot.get_text().split('/')[0]:
                                 if not annot.get_visible() and not check_annot:
                                     annot.set_visible(True)
                                     fig.canvas.draw_idle()
