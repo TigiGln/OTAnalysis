@@ -498,11 +498,13 @@ class View(QMainWindow, QWidget):
                 self.controller.create_dict_curves(self.methods, list_files)
                 if len(self.controller.dict_curve) != 0:
                     self.save()
+
             self.close()
         if len(self.controller.dict_curve) != 0:
             self.choices_option()
         else:
             self.create_button_select_data()
+            self.info_processing('0/0', 0)
         self.button_launch_analyze.deleteLater()
         if not self.check_methods:
             self.button_load.deleteLater()

@@ -153,7 +153,7 @@ class Controller:
             files = self.files
         else:
             files = list_files
-
+       
         for index_file in range(0, len(files), 1):
             new_curve = None
             type_file = files[index_file].split('.')[-1]
@@ -237,8 +237,9 @@ class Controller:
             else:
                 print('files already processed')
                 self.dict_type_files['DP'] += 1
-        if self.view is not None:
-            self.view.info_processing(nb, len(files))
+            if self.view is not None:
+                self.view.info_processing(nb, len(files))
+        
 
     #############################################################################################
 
