@@ -563,16 +563,21 @@ class View(QMainWindow, QWidget):
         creation of the information window on the progress of the curve analysis
         """
         num_curve = int(ratio_curve.split('/')[0])
-
-        if num_curve < length:
-            loop = QEventLoop()
-            self.msg_box.show()
-            self.msg_box.setText("Loading...\n" + str(ratio_curve))
-            QTimer.singleShot(0, loop.quit)
-            loop.exec_()
+        if int(ratio_curve.split('/')[1]) != 0:
+            if num_curve < length:
+                loop = QEventLoop()
+                self.msg_box.show()
+                self.msg_box.setText("Loading...\n" + str(ratio_curve))
+                QTimer.singleShot(0, loop.quit)
+                loop.exec_()
+            else:
+                self.msg_box.close()
+                self.info_processing_done(ratio_curve)
         else:
             self.msg_box.close()
-            self.info_processing_done(ratio_curve)
+            self.info.set_title("Problem")
+            self.info.set_info_curve("problem files")
+            self.info.show()
 
     ####################################################################################
 

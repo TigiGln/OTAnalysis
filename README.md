@@ -75,29 +75,26 @@ chmod +x Miniconda3-latest-Linux-x86_64.sh
 conda create -n newenv
 conda activate newenv
 
-```
-# Dependencies
-```
-conda install numpy
-conda install pandas
-conda install scipy
-pip install PyQt5
-conda install pyqt qtpy
-conda install matplotlib
-pip install supyr-struct
-pip install pathlib
-pip install pytest
-pip install m2r2
-```
+
 
 # Install package
 You can install napari-openlabframe via <a href="https://pypi.org/project/pip/" rel="opener">pip</a>:
 
 Installation directly through the python pip
+if OS system is Windows and Mac:
+    Used Anaconda prompt not CMD or Mac console
+if OS system Linux after conda install:
+```
+cd
+source .bashrc
+conda install pip
+```
+After for all:
 ```
 python -m pip install OTAnalysis
 ```
-Installation by conda environment
+
+Installation by conda environment already create
 ```
 git clone https://github.com/TigiGln/OTAnalysis.git
 cd OTAnalysis
@@ -107,7 +104,7 @@ conda env create -f environment.yml
 # Launch project
 In a termnial, run (from anywhere):
 ```
-otanalysis
+otanalysis or OTAnalysis
 ```
 
 # Documentation

@@ -48,7 +48,7 @@ class Infowindow(QWidget):
     
     ###################################################################
     
-    def set_title(self):
+    def set_title(self, text='Loading is done'):
         """
         setter of the 'title' widget text
         """

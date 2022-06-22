@@ -148,6 +148,7 @@ class Controller:
         # 'INC': Incomplete, 'DP': Duplicate
         self.list_file_imcomplete = set()
         files = None
+        nb = "0/0"
         if list_files is None:
             files = self.files
         else:
@@ -236,8 +237,8 @@ class Controller:
             else:
                 print('files already processed')
                 self.dict_type_files['DP'] += 1
-            if self.view is not None:
-                self.view.info_processing(nb, len(files))
+        if self.view is not None:
+            self.view.info_processing(nb, len(files))
 
     #############################################################################################
 
@@ -1317,7 +1318,6 @@ class Controller:
                     if curve.features[name_classification] in dict_type:
                         dict_type[curve.features[name_classification]] += 1
 
-        print(dict_type)
         percent_NAD = 0
         percent_AD = 0
         percent_FTU = 0

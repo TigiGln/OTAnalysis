@@ -868,15 +868,17 @@ class Curve:
                     # else:
                     index_force_max = self.features['force_max_curve']['index']
                     ##################### calcul jump ########################
-                    jump_force_start_pull = self.graphics['y_smooth_Pull'].argmax() - \
+                    jump_force_start_pull = self.graphics['y_smooth_Pull'][self.graphics['y_smooth_Pull'].argmax()] - \
                         self.graphics['y_smooth_Pull'][index_release]
                     jump_nb_points_start = index_force_max - index_release
                     jump_nb_points_end = index_return_endline - index_force_max
 
-                    jump_force_end_pull = self.graphics['y_smooth_Pull'].argmax() - \
+                    jump_force_end_pull = self.graphics['y_smooth_Pull'][self.graphics['y_smooth_Pull'].argmax()] - \
                         self.graphics['y_smooth_Pull'][index_return_endline]
+
                     self.features['jump_force_start_pull (pN)'] = jump_force_start_pull
                     self.features['jump_force_end_pull (pN)'] = jump_force_end_pull
+                    
                     self.features['jump_nb_points_start'] = jump_nb_points_start
                     self.features['jump_nb_points_end'] = jump_nb_points_end
 
