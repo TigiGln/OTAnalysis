@@ -10,6 +10,8 @@ class Compare:
         self.df1 = df1
         self.df2 = df2
         self.pre_processing()
+        print(self.df1)
+        print(self.df2)
         self.compare_type_courbe()
 
     def pre_processing(self):
@@ -25,12 +27,17 @@ class Compare:
         self.df1['theorical_contact_force (pN)'] = self.df1['theorical_contact_force (N)'] * 1e12
         self.df1.drop(['Unnamed: 0', 'model', 'treat_supervised', 'drug', 'tolerance', 'theorical_distance_Press (m)', 
         'theorical_speed_Press (m/s)', 'theorical_freq_Press (Hz)', 'theorical_distance_Pull (m)', 'theorical_speed_Pull (m/s)', 
-        'theorical_freq_Pull (Hz)', 'baseline_press (pN)', 'contact_point_index', 'contact_point_value  (pN)', 'force_min_press_index', 
+        'theorical_freq_Pull (Hz)', 'baseline_origin_press (N)', 'contact_point_index', 'contact_point_value  (pN)', 'force_min_press_index', 
         'force_min_press_value (pN)', 'point_release_index', 'force_max_pull_index', 'point_return_endline_index', 'point_release_value (pN)',
-        'AL', 'AL_axe', 'point_transition_index', 'point_transition_value (pN)', 'Pente (pN/nm)', 'jump_force_start_pull (pN)',
-        'jump_distance_start_pull (nm)', 'jump_force_end_pull (pN)', 'Date', 'Hour', 'bead', 'cell', 'valid_fit_press', 'valid_fit_pull', 
+        'AL', 'automatic_AL_axe', 'transition_point_index', 'transition_point_value', 'Pente (pN/nm)', 'jump_force_start_pull (pN)',
+        'jump_distance_start_pull (nm)', 'jump_force_end_pull (pN)', 'Date', 'Hour', 'bead', 'cell', 'couple', 'optical_state', 'valid_fit_press', 
+        'valid_fit_pull', 'automatic_AL', 'baseline_corrected_press (pN)','std_origin_press (N)', 'force_min_curve_index',
+        'force_min_curve_value (pN)', 'time_min_curve_index', 'time_min_curve_value (s)', 'force_max_curve_index', 'force_max_curve_value (pN)', 
+        'transition_point_value (pN)', 'relative_path', 'jump_nb_points_start', 'jump_nb_points_end', 'jump_time_start_pull (s)', 'jump_time_end_pull (s)', 
+        'slope_fitted_classification_max', 'slope_fitted_classification_release', 'slope_fitted_classification_max_transition', 'slope_fitted_classification_return_endline',
         'theorical_contact_force (N)', 'stiffness (N/m)', 'condition'], axis=1, inplace=True)
         self.df1 = self.df1.fillna(0)
+        self.df1.index.name = 'Filename'
 
         #preprocessing df2
         self.df2.drop(['Filename', 'Unnamed: 0', 'Aire au min (pN*nm)', 'Aire au jump (pN*nm)', 
@@ -41,7 +48,7 @@ class Compare:
         self.df2.rename(columns={'Type of event':'automatic_type', 'Type of event (corrected)':'type',
                 'Constant (pN/nm)': 'stiffness (pN/nm)', 'Force contact (pN)':'theorical_contact_force (pN)',
                 'Slope (pN/nm)': 'slope (pN/nm)', '[error]':'error (pN/nm)',
-                'SD baseline retrace (pN)':'std_press (pN)','Sens':'main_axis', 
+                'SD baseline retrace (pN)':'std_corrected_press (pN)','Sens':'main_axis', 
                 'Time break (s)':'time_segment_pause_Wait1 (s)', 'Min Force (pN)':'force_max_pull_value (pN)', 
                 'Jump force (pN)': 'point_return_endline_value (pN)',
                 'Jump end (nm)':'jump_distance_end_pull (nm)'}, inplace=True)
@@ -56,6 +63,13 @@ class Compare:
         self.df2['main_axis'] = self.df2['main_axis'].str.lower()
         self.df2.drop(['Tube cassé ?'], axis=1, inplace=True)
         self.df2.sort_index(axis=0, ascending=True)
+        list_filename = []
+        for filename in self.df2.index:
+            filename = filename.split('-')[0][0:4] + '-' + '-'.join(filename.split('-')[1:])
+            filename = filename.replace('.txt', "")
+            list_filename.append(filename)
+        list_filename = pd.Series(list_filename)
+        self.df2.set_index(list_filename, inplace=True)
         
         list_label = list(self.df1.columns)
         self.df2= self.df2[list_label]
@@ -124,7 +138,7 @@ class Compare:
         plt.show()
     
     def plot_characteristics_measure(self):
-        columns = ['slope (pN/nm)', 'error (pN/nm)', 'std_press (pN)', 'force_max_pull_value (pN)',
+        columns = ['slope (pN/nm)', 'error (pN/nm)', 'std_corrected_press (pN)', 'force_max_pull_value (pN)',
                     'point_return_endline_value (pN)', 'jump_distance_end_pull (nm)']
         df1 = self.df1[columns]
         df2 = self.df2[columns]
@@ -141,7 +155,8 @@ class Compare:
                 ax = plt.subplot(int(str(nb_line_graph) + '4' + str(pos_graph)))
             for index, row in df1.iterrows():
                 ax.scatter(df1.loc[index][col], df2.loc[index][col], label=index)
-                x0 = np.linspace(df1[col].min(),df1[col].max(),100)
+                #x0 = np.linspace(df1[col].min(),df1[col].max(),100)
+                x0 = np.linspace(0, df1[col].max(),100)
                 ax.plot(x0,x0, color='k', alpha=0.25)
                 ax.set_title(col)
                 ax.set_xlabel('Output Thierry')
@@ -158,10 +173,10 @@ class Compare:
 
 
 if __name__ == "__main__":
-    df_moi = pd.read_csv('Result/output_2022-03-21_17-49-41.csv', sep='\t')
-    df_khalil = pd.read_csv('Result/20220314-150113-results.csv', sep='\t')
+    df_moi = pd.read_csv('./result_dataset/output_2022-06-23_08-48-52.csv', sep='\t')
+    df_khalil = pd.read_csv('./result_dataset/20220623-084602-results.csv', sep='\t')
     compare = Compare(df_moi, df_khalil)
-    check1, check2 = compare.compare_nb_curve('./data_test/txt')
+    check1, check2 = compare.compare_nb_curve('./result_dataset/dataset')
     print(check1, check2)
     compare.compare_main_axis()
     compare.percentage_type()
