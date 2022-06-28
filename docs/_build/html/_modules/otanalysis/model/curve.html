@@ -40,10 +40,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#otanalysis">OTAnalysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#tool-for-managing-the-results-of-optical-tweezers">Tool for managing the results of optical tweezers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#install-miniconda-create-conda-environment">Install MiniConda &amp;&amp; Create conda environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#dependencies">Dependencies</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#install-package">Install package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#launch-project">Launch project</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#documentation">Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules.html">OTAnalysis</a></li>
 </ul>
 
@@ -74,6 +70,8 @@
   <h1>Source code for otanalysis.model.curve</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># @author Thierry GALLIANO</span>
+<span class="c1"># @contributors Pierre-Henri PUECH, Laurent LIMOZIN, Guillaume GAY</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">File describing the instance class of the curved objects</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -81,16 +79,9 @@
 <span class="kn">import</span> <span class="nn">traceback</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-
-<span class="c1"># import matplotlib.pyplot as plt</span>
-<span class="c1"># from matplotlib.figure import Figure</span>
 <span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">curve_fit</span>
 <span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="kn">import</span> <span class="n">savgol_filter</span>
-<span class="c1"># from scipy.interpolate import UnivariateSpline</span>
-<span class="c1"># from lmfit import Model</span>
 <span class="kn">from</span> <span class="nn">.optical_effect</span> <span class="kn">import</span> <span class="n">OpticalEffect</span>
-
-<span class="c1"># logger = logging.getLogger(&#39;logger_otanalysis.curve&#39;)</span>
 
 
 <div class="viewcode-block" id="Curve"><a class="viewcode-back" href="../../../otanalysis.model.html#otanalysis.model.curve.Curve">[docs]</a><span class="k">class</span> <span class="nc">Curve</span><span class="p">:</span>
@@ -115,9 +106,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;bead&#39;</span><span class="p">:</span> <span class="n">bead</span><span class="p">,</span> <span class="s1">&#39;cell&#39;</span><span class="p">:</span> <span class="n">cell</span><span class="p">,</span> <span class="s1">&#39;couple&#39;</span><span class="p">:</span> <span class="n">couple</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s1">&#39;treat_supervised&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">========================================================================</span><span class="se">\n</span><span class="s2">&quot;</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">========================================================================</span><span class="se">\n</span><span class="s2">&quot;</span>
 
@@ -254,7 +243,6 @@
                 <span class="n">data</span> <span class="o">=</span> <span class="n">segment</span><span class="o">.</span><span class="n">data</span><span class="p">[[</span><span class="n">column</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">baseline</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
                 <span class="n">segment</span><span class="o">.</span><span class="n">corrected_data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e12</span>
-
         <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_segments</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="n">segment</span><span class="o">.</span><span class="n">corrected_data</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">segment</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">-</span> \
                 <span class="n">segment</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
@@ -286,9 +274,6 @@
 <span class="sd">            pulling_length: int</span>
 <span class="sd">                Percentage of length to accept the curve</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># segment = self.dict_segments[&#39;Press&#39;]</span>
-        <span class="c1"># nb_point_segment = segment.header_segment[&#39;.num-points&#39;]</span>
-        <span class="c1"># print(nb_point_segment)</span>
         <span class="n">segment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_segments</span><span class="p">[</span><span class="s1">&#39;Pull&#39;</span><span class="p">]</span>
         <span class="n">nb_point_segment</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
             <span class="n">segment</span><span class="o">.</span><span class="n">header_segment</span><span class="p">[</span><span class="s1">&#39;segment-settings.num-points&#39;</span><span class="p">])</span>
@@ -460,12 +445,6 @@
         <span class="n">baseline_start</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;baseline_corrected_press (pN)&#39;</span><span class="p">])</span>
         <span class="n">line_end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calcul_baseline</span><span class="p">(</span><span class="s2">&quot;Pull&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
         <span class="n">std_start</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;std_corrected_press (pN)&#39;</span><span class="p">])</span>
-        <span class="c1"># print(&#39;baseline_start: &#39;, baseline_start)</span>
-        <span class="c1"># print(&#39;std_start: &#39;, std_start)</span>
-        <span class="c1"># print(&#39;line_end: &#39;, line_end)</span>
-        <span class="c1"># print(line_end)</span>
-        <span class="c1"># print(baseline_start - std_start*tolerance)</span>
-        <span class="c1"># print(baseline_start + std_start*tolerance)</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">baseline_start</span> <span class="o">-</span> <span class="n">std_start</span><span class="o">*</span><span class="n">tolerance</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">line_end</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">baseline_start</span> <span class="o">+</span> <span class="n">std_start</span><span class="o">*</span><span class="n">tolerance</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">baseline_end Ok</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;baseline_end Ok&quot;</span><span class="p">)</span>
@@ -701,17 +680,11 @@
 <span class="sd">            index_return_endline: int</span>
 <span class="sd">                index of the return point to the baseline</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># threshold = np.abs(mean_final_points + std_final_points * nb_std)</span>
-        <span class="c1"># threshold2 = np.abs(mean_final_points + std_final_points * 8)</span>
-        <span class="c1"># print(&quot;threshold: &quot;, threshold)</span>
-        <span class="c1"># print(&quot;threshold2: &quot;, threshold2)</span>
         <span class="n">index_return_endline</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">type_curve</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">list_data_return_endline</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">data_analyze</span><span class="p">[</span><span class="n">data_analyze</span><span class="o">.</span><span class="n">argmax</span><span class="p">():]</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-            <span class="c1"># data_analyze_reverse = np.flip(</span>
-            <span class="c1"># data_analyze)</span>
             <span class="n">list_data_return_endline</span> <span class="o">=</span> <span class="n">data</span><span class="p">[(</span>
                 <span class="n">data</span> <span class="o">&lt;</span> <span class="n">line_pos_threshold</span><span class="p">)]</span>
             <span class="k">if</span> <span class="n">list_data_return_endline</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
@@ -864,7 +837,7 @@
             <span class="n">time_data</span><span class="p">,</span> <span class="n">f_parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">f_parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">f_parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">graphics</span><span class="p">[</span><span class="s1">&#39;fitted_Pull&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fitted</span>
 
-        <span class="c1">############## calcul return point and transition ######################</span>
+        <span class="c1">############## calcul return point and transition point ######################</span>
         <span class="n">index_return_endline</span> <span class="o">=</span> <span class="n">Curve</span><span class="o">.</span><span class="n">retrieve_retour_line_end</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">y_smooth</span><span class="p">,</span> <span class="n">line_pos_threshold</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">type_curve</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">index_return_endline</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -874,7 +847,6 @@
             <span class="c1"># self.features[&#39;point_transition&#39;] = {</span>
             <span class="c1">#             &#39;index&#39;: index_transition, &#39;value (pN)&#39;: y_smooth[index_transition]}</span>
             <span class="n">derive_smooth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">search_transition_point</span><span class="p">(</span><span class="n">time_data</span><span class="p">,</span> <span class="n">force_data</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">derive_smooth</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;point_return_endline&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="s1">&#39;NaN&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="s1">&#39;NaN&#39;</span><span class="p">}</span>
@@ -959,15 +931,17 @@
                     <span class="c1"># else:</span>
                     <span class="n">index_force_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;force_max_curve&#39;</span><span class="p">][</span><span class="s1">&#39;index&#39;</span><span class="p">]</span>
                     <span class="c1">##################### calcul jump ########################</span>
-                    <span class="n">jump_force_start_pull</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphics</span><span class="p">[</span><span class="s1">&#39;y_smooth_Pull&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span> <span class="o">-</span> \
+                    <span class="n">jump_force_start_pull</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphics</span><span class="p">[</span><span class="s1">&#39;y_smooth_Pull&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">graphics</span><span class="p">[</span><span class="s1">&#39;y_smooth_Pull&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">argmax</span><span class="p">()]</span> <span class="o">-</span> \
                         <span class="bp">self</span><span class="o">.</span><span class="n">graphics</span><span class="p">[</span><span class="s1">&#39;y_smooth_Pull&#39;</span><span class="p">][</span><span class="n">index_release</span><span class="p">]</span>
                     <span class="n">jump_nb_points_start</span> <span class="o">=</span> <span class="n">index_force_max</span> <span class="o">-</span> <span class="n">index_release</span>
                     <span class="n">jump_nb_points_end</span> <span class="o">=</span> <span class="n">index_return_endline</span> <span class="o">-</span> <span class="n">index_force_max</span>
 
-                    <span class="n">jump_force_end_pull</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphics</span><span class="p">[</span><span class="s1">&#39;y_smooth_Pull&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span> <span class="o">-</span> \
+                    <span class="n">jump_force_end_pull</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graphics</span><span class="p">[</span><span class="s1">&#39;y_smooth_Pull&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">graphics</span><span class="p">[</span><span class="s1">&#39;y_smooth_Pull&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">argmax</span><span class="p">()]</span> <span class="o">-</span> \
                         <span class="bp">self</span><span class="o">.</span><span class="n">graphics</span><span class="p">[</span><span class="s1">&#39;y_smooth_Pull&#39;</span><span class="p">][</span><span class="n">index_return_endline</span><span class="p">]</span>
+
                     <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;jump_force_start_pull (pN)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jump_force_start_pull</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;jump_force_end_pull (pN)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jump_force_end_pull</span>
+                    
                     <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;jump_nb_points_start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jump_nb_points_start</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;jump_nb_points_end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jump_nb_points_end</span>
 
@@ -999,7 +973,7 @@
                         <span class="bp">self</span><span class="o">.</span><span class="n">fit_linear_classification</span><span class="p">(</span>
                             <span class="n">index_start</span><span class="p">,</span> <span class="n">index_end</span><span class="p">,</span> <span class="s2">&quot;fitted_classification_max&quot;</span><span class="p">)</span>
 
-                        <span class="c1">###### fit release ######</span>
+                        <span class="c1">###### fit release #####transition_point#</span>
                         <span class="n">index_start</span> <span class="o">=</span> <span class="n">index_release</span>
                         <span class="n">index_end</span> <span class="o">=</span> <span class="n">index_release</span><span class="o">+</span><span class="n">jump_nb_points_start</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">fit_linear_classification</span><span class="p">(</span>
@@ -1007,8 +981,6 @@
 
                         <span class="c1">####### fit max transition ####</span>
                         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;transition_point&#39;</span><span class="p">][</span><span class="s1">&#39;index&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;NaN&#39;</span><span class="p">:</span>
-                            <span class="nb">print</span><span class="p">(</span><span class="n">y_smooth_pull</span><span class="o">.</span><span class="n">argmax</span><span class="p">())</span>
-                            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;transition_point&#39;</span><span class="p">][</span><span class="s1">&#39;index&#39;</span><span class="p">])</span>
                             <span class="n">index_start</span> <span class="o">=</span> <span class="n">y_smooth_pull</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span> <span class="o">+</span> <span class="mi">2</span>
                             <span class="n">index_end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;transition_point&#39;</span><span class="p">][</span><span class="s1">&#39;index&#39;</span><span class="p">]</span>
                             <span class="k">if</span> <span class="n">index_start</span> <span class="o">&lt;</span> <span class="n">index_end</span><span class="p">:</span>
@@ -1029,7 +1001,7 @@
                         <span class="n">jump_distance_end_pull</span> <span class="o">=</span> <span class="p">(</span>
                             <span class="n">speed</span><span class="o">*</span><span class="mf">1e9</span><span class="p">)</span> <span class="o">*</span> <span class="n">jump_time_end_pull</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;jump_distance_end_pull (nm)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jump_distance_end_pull</span>
-
+                    
                     <span class="c1">############### determination AD ou FTU ###############</span>
                     <span class="k">if</span> <span class="n">jump_nb_points_end</span> <span class="o">&lt;</span> <span class="n">methods</span><span class="p">[</span><span class="s1">&#39;jump_point&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">jump_distance_end_pull</span> <span class="o">&lt;</span> <span class="n">methods</span><span class="p">[</span><span class="s1">&#39;jump_distance&#39;</span><span class="p">]:</span>
                         <span class="n">type_curve</span> <span class="o">=</span> <span class="s1">&#39;AD&#39;</span>
@@ -1038,8 +1010,29 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">index_force_max</span> <span class="o">=</span> <span class="n">force_data</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">type_curve</span> <span class="o">==</span> <span class="s2">&quot;ITU&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;transition_point&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">force_data</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">force_data</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">force_data</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]}</span>
+                <span class="n">index_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;transition_point&#39;</span><span class="p">][</span><span class="s1">&#39;index&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2000</span>
+                <span class="n">index_end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;transition_point&#39;</span><span class="p">][</span><span class="s1">&#39;index&#39;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fit_linear_classification</span><span class="p">(</span>
+                                <span class="n">index_start</span><span class="p">,</span> <span class="n">index_end</span><span class="p">,</span> <span class="s2">&quot;fitted_classification_max_transition&quot;</span><span class="p">)</span>
+                
+                <span class="n">jump_distance_end_pull</span> <span class="o">=</span> <span class="n">distance_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;transition_point&#39;</span><span class="p">][</span><span class="s1">&#39;index&#39;</span><span class="p">]]</span> <span class="o">-</span> \
+                            <span class="n">distance_data</span><span class="p">[</span><span class="n">index_force_max</span><span class="p">]</span>
+                <span class="n">jump_force_end_pull</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;transition_point&#39;</span><span class="p">][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">force_data</span><span class="p">[</span><span class="n">index_force_max</span><span class="p">]:</span>
+                    <span class="n">jump_force_end_pull</span> <span class="o">=</span> <span class="n">force_data</span><span class="p">[</span><span class="n">index_force_max</span><span class="p">]</span> <span class="o">-</span> \
+                        <span class="n">force_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;transition_point&#39;</span><span class="p">][</span><span class="s1">&#39;index&#39;</span><span class="p">]]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">jump_force_end_pull</span> <span class="o">=</span> <span class="n">force_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;transition_point&#39;</span><span class="p">][</span><span class="s1">&#39;index&#39;</span><span class="p">]]</span> <span class="o">-</span> \
+                        <span class="n">force_data</span><span class="p">[</span><span class="n">index_force_max</span><span class="p">]</span>
+                
+                <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;jump_distance_end_pull (nm)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jump_distance_end_pull</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;jump_force_end_pull (pN)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jump_force_end_pull</span>
+                
         <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;force_max_pull&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="n">index_force_max</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">force_data</span><span class="p">[</span><span class="n">index_force_max</span><span class="p">]}</span>
+            
 
         <span class="k">return</span> <span class="n">type_curve</span></div>
 

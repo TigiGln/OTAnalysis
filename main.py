@@ -7,7 +7,6 @@ main module to launch the optical tweezers curve analysis and classification too
 """
 import os
 import sys
-from time import time
 from pathlib import Path
 from PyQt5.QtWidgets import QApplication
 from otanalysis.view.mainview import View
@@ -29,8 +28,6 @@ def main():
     view.show()
     app.exec()
 
-START_TIME = time()
 PATH_FILE = Path('data_test' + os.sep + 'txt' + os.sep)
 PATH_FILE_JPK = Path("data_test" + os.sep + 'jpk_nt_force' + os.sep)
 main()
-print("--- %s seconds ---" % (time() - START_TIME))

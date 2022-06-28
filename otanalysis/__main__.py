@@ -7,13 +7,14 @@ main module to launch the optical tweezers curve analysis and classification too
 """
 import os
 import sys
-from pathlib import Path
+from datetime import datetime
 from PyQt5.QtWidgets import QApplication
 from .view.mainview import View
 from .controller.controller import Controller
 
-PATH_FILE = Path('data_test' + os.sep + 'txt' + os.sep)
-PATH_FILE_JPK = Path("data_test" + os.sep + 'jpk_nt_force' + os.sep)
+
+TODAY = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
+DATA_DIR = os.path.expanduser('~') + os.sep + "OTanalysis_result_" + TODAY
 
 def main():
     """

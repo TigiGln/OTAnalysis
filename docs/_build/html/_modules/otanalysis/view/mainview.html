@@ -40,10 +40,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#otanalysis">OTAnalysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#tool-for-managing-the-results-of-optical-tweezers">Tool for managing the results of optical tweezers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#install-miniconda-create-conda-environment">Install MiniConda &amp;&amp; Create conda environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#dependencies">Dependencies</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#install-package">Install package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#launch-project">Launch project</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#documentation">Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules.html">OTAnalysis</a></li>
 </ul>
 
@@ -74,6 +70,8 @@
   <h1>Source code for otanalysis.view.mainview</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># @author Thierry GALLIANO</span>
+<span class="c1"># @contributors Pierre-Henri PUECH, Laurent LIMOZIN, Guillaume GAY</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Class View</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -81,8 +79,8 @@
 <span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">sep</span>
 <span class="kn">import</span> <span class="nn">traceback</span>
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">setup_logger</span> <span class="kn">import</span> <span class="n">create_logger</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span><span class="p">,</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">..setup_logger</span> <span class="kn">import</span> <span class="n">create_logger</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">re</span> <span class="kn">import</span> <span class="n">match</span>
 <span class="kn">import</span> <span class="nn">webbrowser</span>
@@ -123,7 +121,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">msg_box</span> <span class="o">=</span> <span class="n">QMessageBox</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">keyPressed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_key</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nb_save_graph</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowIcon</span><span class="p">(</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;pictures&#39;</span> <span class="o">+</span> <span class="n">sep</span> <span class="o">+</span> <span class="s1">&#39;icon.png&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowIcon</span><span class="p">(</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;../pictures&#39;</span> <span class="o">+</span> <span class="n">sep</span> <span class="o">+</span> <span class="s1">&#39;icon.png&#39;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">setWindowIcon</span><span class="p">(</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;../pictures&#39;</span> <span class="o">+</span> <span class="n">sep</span> <span class="o">+</span> <span class="s1">&#39;icon.png&#39;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;View&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">size_window</span><span class="p">()</span>
@@ -183,6 +181,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">check_plot_bilan</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_cid</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_logger</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_legend</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">create_checkbox_logger</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_description</span><span class="p">()</span>
@@ -247,7 +246,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span>
-            <span class="s2">&quot;https://otanalysis.readthedocs.io/en/latest/index.html&quot;</span><span class="p">)</span></div>
+            <span class="s2">&quot;http://otanalysis.free.fr/&quot;</span><span class="p">)</span></div>
+            <span class="c1">#&quot;https://otanalysis.readthedocs.io/en/latest/index.html&quot;)</span>
 
     <span class="c1">###################################################################################</span>
 
@@ -441,6 +441,7 @@
         <span class="n">directory</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">controller</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loading file&quot;</span><span class="p">)</span>
+        
         <span class="k">if</span> <span class="n">select</span> <span class="o">==</span> <span class="s1">&#39;files&#39;</span><span class="p">:</span>
             <span class="n">files</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="o">.</span><span class="n">getOpenFileNames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;.&quot;</span><span class="p">,</span>
                                                  <span class="sa">u</span><span class="s2">&quot;JPK Files (*.jpk-nt-force) ;; Text files(*.txt)&quot;</span><span class="p">)</span>
@@ -568,11 +569,13 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">controller</span><span class="o">.</span><span class="n">create_dict_curves</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">methods</span><span class="p">,</span> <span class="n">list_files</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">controller</span><span class="o">.</span><span class="n">dict_curve</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
             <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">controller</span><span class="o">.</span><span class="n">dict_curve</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">choices_option</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">create_button_select_data</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">info_processing</span><span class="p">(</span><span class="s1">&#39;0/0&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">button_launch_analyze</span><span class="o">.</span><span class="n">deleteLater</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_methods</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">button_load</span><span class="o">.</span><span class="n">deleteLater</span><span class="p">()</span></div>
@@ -634,18 +637,21 @@
 <span class="sd">        creation of the information window on the progress of the curve analysis</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">num_curve</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ratio_curve</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
-
-        <span class="k">if</span> <span class="n">num_curve</span> <span class="o">&lt;</span> <span class="n">length</span><span class="p">:</span>
-            <span class="c1"># self.PBEtatAvancement = QProgressBar()# Création de la bar de progression</span>
-            <span class="c1"># self.PBEtatAvancement.setRange(0, 100)</span>
-            <span class="n">loop</span> <span class="o">=</span> <span class="n">QEventLoop</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">msg_box</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">msg_box</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;Loading...</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ratio_curve</span><span class="p">))</span>
-            <span class="n">QTimer</span><span class="o">.</span><span class="n">singleShot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">loop</span><span class="o">.</span><span class="n">quit</span><span class="p">)</span>
-            <span class="n">loop</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">ratio_curve</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">num_curve</span> <span class="o">&lt;</span> <span class="n">length</span><span class="p">:</span>
+                <span class="n">loop</span> <span class="o">=</span> <span class="n">QEventLoop</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">msg_box</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">msg_box</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;Loading...</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ratio_curve</span><span class="p">))</span>
+                <span class="n">QTimer</span><span class="o">.</span><span class="n">singleShot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">loop</span><span class="o">.</span><span class="n">quit</span><span class="p">)</span>
+                <span class="n">loop</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">msg_box</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">info_processing_done</span><span class="p">(</span><span class="n">ratio_curve</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">msg_box</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">info_processing_done</span><span class="p">(</span><span class="n">ratio_curve</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Problem&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">set_info_curve</span><span class="p">(</span><span class="s2">&quot;problem files, try again&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
     <span class="c1">####################################################################################</span>
 
@@ -757,7 +763,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">display_legend</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="s2">&quot;Delete legend all graph&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">display_legend</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
             <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">controller</span><span class="o">.</span><span class="n">display_legend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">display_legend</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_legend</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">display_legend</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">display_legend</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        
+        
 
         <span class="n">help</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">&quot;Help&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
         <span class="n">help</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="s2">&quot;Ask help&quot;</span><span class="p">)</span>
@@ -897,7 +908,11 @@
                     <span class="k">if</span> <span class="n">label</span> <span class="o">==</span> <span class="s1">&#39;smooth&#39;</span><span class="p">:</span>
                         <span class="n">handles</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">label</span><span class="p">))</span>
                         <span class="n">labels</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">label</span><span class="p">))</span>
-                <span class="n">graph</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower right&quot;</span><span class="p">)</span></div>
+                <span class="n">graph</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower right&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_legend</span><span class="p">:</span>
+                    <span class="n">graph</span><span class="o">.</span><span class="n">get_legend</span><span class="p">()</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">graph</span><span class="o">.</span><span class="n">get_legend</span><span class="p">()</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
 
     <span class="c1">########################################################################################</span>
 
@@ -945,7 +960,11 @@
                         <span class="k">if</span> <span class="n">label</span> <span class="o">==</span> <span class="s1">&#39;smooth&#39;</span><span class="p">:</span>
                             <span class="n">handles</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">label</span><span class="p">))</span>
                             <span class="n">labels</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">label</span><span class="p">))</span>
-                    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower right&quot;</span><span class="p">)</span></div>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower right&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_legend</span><span class="p">:</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">get_legend</span><span class="p">()</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">get_legend</span><span class="p">()</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
     <span class="c1">########################################################################################</span>
 
 <div class="viewcode-block" id="View.select_point"><a class="viewcode-back" href="../../../otanalysis.view.html#otanalysis.view.mainview.View.select_point">[docs]</a>    <span class="k">def</span> <span class="nf">select_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">name_point</span><span class="p">):</span>
@@ -979,6 +998,10 @@
                             <span class="n">handles</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">label</span><span class="p">))</span>
                             <span class="n">labels</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">label</span><span class="p">))</span>
                     <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower right&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_legend</span><span class="p">:</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">get_legend</span><span class="p">()</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">get_legend</span><span class="p">()</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
                     <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_children</span><span class="p">():</span>
                         <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">get_label</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;smooth&#39;</span><span class="p">:</span>
                             <span class="n">line</span><span class="o">.</span><span class="n">set_picker</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
@@ -992,8 +1015,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setMouseTracking</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_display</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1000</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_display</span><span class="o">.</span><span class="n">width</span><span class="p">(</span>
-            <span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_display</span><span class="o">.</span><span class="n">height</span><span class="p">()</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">screen_display</span><span class="o">.</span><span class="n">height</span><span class="p">()</span><span class="o">//</span><span class="mi">3</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_display</span><span class="o">.</span><span class="n">height</span><span class="p">()</span><span class="o">//</span><span class="mi">6</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_display</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span>
+                             <span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">screen_display</span><span class="o">.</span><span class="n">height</span><span class="p">()</span><span class="o">//</span><span class="mi">3</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_graph</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">select_plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">check_global_local_graph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">abscissa_curve</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">length_list_curve</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">controller</span><span class="o">.</span><span class="n">dict_curve</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
@@ -1037,7 +1060,9 @@
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">page</span> <span class="o">==</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">length_list_curve</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
                         <span class="n">button_next</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
                         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_supervised</span><span class="p">:</span>
-                            <span class="n">button_bilan</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s1">&#39;Bilan&#39;</span><span class="p">)</span>
+                            <span class="n">button_bilan</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s1">&#39;Summary plot&#39;</span><span class="p">)</span>
+                            <span class="n">button_bilan</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span>
+                <span class="s2">&quot;QPushButton {background-color: yellow;}&quot;</span><span class="p">)</span>
                             <span class="n">button_bilan</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">show_bilan</span><span class="p">)</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span>
                                 <span class="n">button_bilan</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
@@ -1098,6 +1123,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">valid_fit</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">toggle_optical_effect</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">type_supervised</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">report_problem</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">frame_supervised</span><span class="o">.</span><span class="n">setFrameStyle</span><span class="p">(</span><span class="n">QFrame</span><span class="o">.</span><span class="n">Box</span> <span class="o">|</span> <span class="n">QFrame</span><span class="o">.</span><span class="n">Raised</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">frame_supervised</span><span class="o">.</span><span class="n">setLineWidth</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">frame_supervised</span><span class="o">.</span><span class="n">setMidLineWidth</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
@@ -1283,7 +1309,6 @@
         <span class="n">group_button_type</span> <span class="o">=</span> <span class="n">QGroupBox</span><span class="p">(</span><span class="s1">&#39;Pull: Type?&#39;</span><span class="p">)</span>
         <span class="n">group_type</span> <span class="o">=</span> <span class="n">QButtonGroup</span><span class="p">()</span>
         <span class="n">vbox_type</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
-
         <span class="n">type_nad</span> <span class="o">=</span> <span class="n">QRadioButton</span><span class="p">(</span><span class="s2">&quot;NAD&quot;</span><span class="p">)</span>
         <span class="n">type_nad</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="s1">&#39;No Adhesion&#39;</span><span class="p">)</span>
         <span class="n">type_ad</span> <span class="o">=</span> <span class="n">QRadioButton</span><span class="p">(</span><span class="s2">&quot;AD&quot;</span><span class="p">)</span>
@@ -1315,6 +1340,26 @@
             <span class="n">button</span><span class="o">.</span><span class="n">setFocusPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">NoFocus</span><span class="p">)</span>
             <span class="n">button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modif_supervised</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grid_supervised</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">group_button_type</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span></div>
+
+    <span class="c1">##########################################################################################</span>
+<div class="viewcode-block" id="View.report_problem"><a class="viewcode-back" href="../../../otanalysis.view.html#otanalysis.view.mainview.View.report_problem">[docs]</a>    <span class="k">def</span> <span class="nf">report_problem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">group_button_report_problem</span> <span class="o">=</span> <span class="n">QGroupBox</span><span class="p">(</span><span class="s2">&quot;Report problem&quot;</span><span class="p">)</span>
+        <span class="n">group_report_problem</span> <span class="o">=</span> <span class="n">QButtonGroup</span><span class="p">()</span>
+        <span class="n">hbox_report_problem</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="n">true_report</span> <span class="o">=</span> <span class="n">QRadioButton</span><span class="p">(</span><span class="s1">&#39;True&#39;</span><span class="p">)</span>
+        <span class="n">false_report</span> <span class="o">=</span> <span class="n">QRadioButton</span><span class="p">(</span><span class="s1">&#39;False&#39;</span><span class="p">)</span>
+        <span class="n">hbox_report_problem</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">true_report</span><span class="p">)</span>
+        <span class="n">hbox_report_problem</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">false_report</span><span class="p">)</span>
+        <span class="n">group_report_problem</span><span class="o">.</span><span class="n">addButton</span><span class="p">(</span><span class="n">true_report</span><span class="p">)</span>
+        <span class="n">group_report_problem</span><span class="o">.</span><span class="n">addButton</span><span class="p">(</span><span class="n">false_report</span><span class="p">)</span>
+        <span class="n">group_button_report_problem</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">hbox_report_problem</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_curve</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;report_problem&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid_supervised</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">group_button_report_problem</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">button</span> <span class="ow">in</span> <span class="n">group_report_problem</span><span class="o">.</span><span class="n">buttons</span><span class="p">():</span>
+            <span class="n">button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modif_supervised</span><span class="p">(</span><span class="s1">&#39;report_problem&#39;</span><span class="p">))</span>
+            <span class="n">button</span><span class="o">.</span><span class="n">setFocusPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">NoFocus</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">button</span><span class="o">.</span><span class="n">text</span><span class="p">()</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_curve</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="s1">&#39;report_problem&#39;</span><span class="p">]):</span>
+                <span class="n">button</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
 
     <span class="c1">##########################################################################################</span>
 
@@ -1470,13 +1515,13 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                    <span class="s1">&#39;###########################################</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;###########################################&#39;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">error</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Index error&#39;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;###########################################&#39;</span><span class="p">)</span></div>
+                    <span class="s1">&#39;###########################################</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
+            <span class="c1"># print(&#39;###########################################&#39;)</span>
+            <span class="c1"># print(type(error).__name__, &#39;:&#39;)</span>
+            <span class="c1"># print(error)</span>
+            <span class="c1"># print(traceback.format_exc())</span>
+            <span class="c1"># print(&#39;Index error&#39;)</span>
+            <span class="c1"># print(&#39;###########################################&#39;)</span>
 
     <span class="c1">##################################################################################</span>
 
@@ -1500,7 +1545,8 @@
                         <span class="bp">self</span><span class="o">.</span><span class="n">dict_fig_open</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_curve</span><span class="o">.</span><span class="n">file</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods</span><span class="p">[</span><span class="s1">&#39;factor_noise&#39;</span><span class="p">])</span>
                     <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph_view</span><span class="o">.</span><span class="n">children</span><span class="p">():</span>
                         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">QPushButton</span><span class="p">):</span>
-                            <span class="n">child</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+                            <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">text</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Accept correction&quot;</span><span class="p">:</span>
+                                <span class="n">child</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">toggle</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">intreval_optical_effect</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
                     <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_fig_open</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_curve</span><span class="o">.</span><span class="n">file</span><span class="p">]</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1515,12 +1561,13 @@
                             <span class="bp">self</span><span class="o">.</span><span class="n">intreval_optical_effect</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_fig_open</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_curve</span><span class="o">.</span><span class="n">file</span><span class="p">])</span>
                         <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph_view</span><span class="o">.</span><span class="n">children</span><span class="p">():</span>
                             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">QPushButton</span><span class="p">):</span>
-                                <span class="n">child</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+                                <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">text</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Accept correction&quot;</span><span class="p">:</span>
+                                    <span class="n">child</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">intreval_optical_effect</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">intreval_optical_effect</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="n">canvas</span> <span class="o">=</span> <span class="n">FigureCanvasQTAgg</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">dict_fig_open</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_curve</span><span class="o">.</span><span class="n">file</span><span class="p">])</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">graph_view</span><span class="o">.</span><span class="n">main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">canvas</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">graph_view</span><span class="o">.</span><span class="n">main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">canvas</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">graph_view</span><span class="o">.</span><span class="n">showMaximized</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_logger</span><span class="p">:</span>
@@ -1565,7 +1612,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_bilan</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">check_bilan</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="n">today</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">())</span>
+            <span class="n">today</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">-%m-%Y&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">graph_bilan</span> <span class="o">=</span> <span class="n">GraphView</span><span class="p">()</span>
             <span class="n">hbox_bilan</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
             <span class="n">frame</span> <span class="o">=</span> <span class="n">QFrame</span><span class="p">()</span>
@@ -1651,33 +1698,32 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_output</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">directory_output</span> <span class="o">=</span> <span class="n">QFileDialog</span><span class="o">.</span><span class="n">getExistingDirectory</span><span class="p">(</span>
                 <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Open folder&quot;</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="n">QFileDialog</span><span class="o">.</span><span class="n">ShowDirsOnly</span><span class="p">)</span>
-        <span class="n">today</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">())</span>
-        <span class="n">time_today</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-            <span class="n">microsecond</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_graph</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">current_curve</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s1">&#39;treat_supervised&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">controller</span><span class="o">.</span><span class="n">output_save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory_output</span><span class="p">)</span>
-        <span class="n">methods</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">methods</span><span class="p">[</span><span class="s1">&#39;methods&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_output</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">output_methods</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
-            <span class="n">output_methods</span> <span class="o">=</span> <span class="n">output_methods</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">methods</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
-            <span class="n">list_labels_methods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;condition&#39;</span><span class="p">,</span> <span class="s1">&#39;drug&#39;</span><span class="p">,</span> <span class="s1">&#39;bead_radius&#39;</span><span class="p">,</span> <span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="s1">&#39;eta&#39;</span><span class="p">,</span>
-                                   <span class="s1">&#39;pulling_length&#39;</span><span class="p">,</span> <span class="s1">&#39;threshold_align&#39;</span><span class="p">,</span>
-                                   <span class="s1">&#39;jump_force&#39;</span><span class="p">,</span> <span class="s1">&#39;jump_distance&#39;</span><span class="p">,</span> <span class="s1">&#39;jump_point&#39;</span><span class="p">,</span>
-                                   <span class="s1">&#39;factor_noise&#39;</span><span class="p">,</span> <span class="s1">&#39;width_window_smooth&#39;</span><span class="p">,</span> <span class="s1">&#39;optical&#39;</span><span class="p">]</span>
-            <span class="n">output_methods</span> <span class="o">=</span> <span class="n">output_methods</span><span class="p">[</span><span class="n">list_labels_methods</span><span class="p">]</span>
-            <span class="n">output_methods</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory_output</span> <span class="o">+</span> <span class="n">sep</span> <span class="o">+</span> <span class="s1">&#39;methods_&#39;</span> <span class="o">+</span> <span class="n">today</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span>
-                                  <span class="n">time_today</span> <span class="o">+</span> <span class="s1">&#39;.tsv&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="n">na_rep</span><span class="o">=</span><span class="s2">&quot;NaN&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">controller</span><span class="o">.</span><span class="n">check_length_files</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">controller</span><span class="o">.</span><span class="n">dict_curve</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_graph</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_table</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
-            <span class="n">check_save_output</span> <span class="o">=</span> <span class="n">QMessageBox</span><span class="p">()</span>
-            <span class="n">check_save_output</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;Your output has been registered&quot;</span><span class="p">)</span>
-            <span class="n">check_save_output</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory_output</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">today</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">-%m-%Y_%H-%M-%S&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_graph</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_curve</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s1">&#39;treat_supervised&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">controller</span><span class="o">.</span><span class="n">output_save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory_output</span><span class="p">)</span>
+            <span class="n">methods</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">methods</span><span class="p">[</span><span class="s1">&#39;methods&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_output</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">output_methods</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+                <span class="n">output_methods</span> <span class="o">=</span> <span class="n">output_methods</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">methods</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+                <span class="n">list_labels_methods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;condition&#39;</span><span class="p">,</span> <span class="s1">&#39;drug&#39;</span><span class="p">,</span> <span class="s1">&#39;bead_radius&#39;</span><span class="p">,</span> <span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="s1">&#39;eta&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;pulling_length&#39;</span><span class="p">,</span> <span class="s1">&#39;threshold_align&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;jump_force&#39;</span><span class="p">,</span> <span class="s1">&#39;jump_distance&#39;</span><span class="p">,</span> <span class="s1">&#39;jump_point&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;factor_noise&#39;</span><span class="p">,</span> <span class="s1">&#39;width_window_smooth&#39;</span><span class="p">,</span> <span class="s1">&#39;optical&#39;</span><span class="p">]</span>
+                <span class="n">output_methods</span> <span class="o">=</span> <span class="n">output_methods</span><span class="p">[</span><span class="n">list_labels_methods</span><span class="p">]</span>
+                <span class="n">output_methods</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory_output</span> <span class="o">+</span> <span class="n">sep</span> <span class="o">+</span> <span class="s1">&#39;methods_&#39;</span> <span class="o">+</span> <span class="n">today</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;.tsv&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="n">na_rep</span><span class="o">=</span><span class="s2">&quot;NaN&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">controller</span><span class="o">.</span><span class="n">check_length_files</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">controller</span><span class="o">.</span><span class="n">dict_curve</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_graph</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_table</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+                <span class="n">check_save_output</span> <span class="o">=</span> <span class="n">QMessageBox</span><span class="p">()</span>
+                <span class="n">check_save_output</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;Your output has been registered&quot;</span><span class="p">)</span>
+                <span class="n">check_save_output</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">nb_output</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nb_output</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory_output</span></div>
 
     <span class="c1">####################################################################################</span>

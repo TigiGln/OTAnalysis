@@ -40,10 +40,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#otanalysis">OTAnalysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#tool-for-managing-the-results-of-optical-tweezers">Tool for managing the results of optical tweezers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#install-miniconda-create-conda-environment">Install MiniConda &amp;&amp; Create conda environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#dependencies">Dependencies</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#install-package">Install package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#launch-project">Launch project</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#documentation">Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules.html">OTAnalysis</a></li>
 </ul>
 
@@ -74,6 +70,8 @@
   <h1>Source code for otanalysis.view.toggle</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># @author Thierry GALLIANO</span>
+<span class="c1"># @contributors Pierre-Henri PUECH, Laurent LIMOZIN, Guillaume GAY</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Plan to build a custom Toggle button</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -220,7 +218,7 @@
                 <span class="n">pos_x</span> <span class="o">=</span> <span class="n">taille_cadre</span> <span class="o">-</span> <span class="n">length_word</span> <span class="o">+</span> <span class="p">((</span><span class="n">taille_cadre</span><span class="o">-</span><span class="mi">110</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">pos_x</span> <span class="o">=</span> <span class="n">taille_cadre</span> <span class="o">-</span> <span class="n">length_word</span> <span class="o">-</span> <span class="p">((</span><span class="n">taille_cadre</span><span class="o">-</span><span class="mi">110</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span>
-            <span class="n">painter</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">pos_x</span><span class="p">,</span> <span class="n">rect</span><span class="o">.</span><span class="n">height</span><span class="p">()</span><span class="o">//</span><span class="mf">1.5</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">inactive_text</span><span class="p">)</span>
+            <span class="n">painter</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">pos_x</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">height</span><span class="p">()</span><span class="o">//</span><span class="mf">1.5</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">inactive_text</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># DRAW BG</span>
@@ -235,7 +233,7 @@
             <span class="c1"># Write Text</span>
             <span class="n">painter</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">QColor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bg_color</span><span class="p">))</span>
             <span class="n">painter</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">QFont</span><span class="p">(</span><span class="s1">&#39;Arial Black&#39;</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="n">QFont</span><span class="o">.</span><span class="n">Bold</span><span class="p">))</span>
-            <span class="n">painter</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">rect</span><span class="o">.</span><span class="n">height</span><span class="p">()</span><span class="o">//</span><span class="mf">1.5</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_text</span><span class="p">)</span>
+            <span class="n">painter</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">height</span><span class="p">()</span><span class="o">//</span><span class="mf">1.5</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_text</span><span class="p">)</span>
 
         <span class="c1"># END DRAW</span>
         <span class="n">painter</span><span class="o">.</span><span class="n">end</span><span class="p">()</span></div></div>

@@ -22,10 +22,11 @@ from pandas.core.tools.numeric import to_numeric
 from matplotlib.figure import Figure
 from matplotlib import gridspec
 import matplotlib.pyplot as plt
-from .. import DATA_DIR
+from ..__init__ import DATA_DIR
 from ..model.curve import Curve
 from ..model.segment_curve import Segment
 from ..extractor.jpk_extractor import JPKFile
+
 
 
 class Controller:
@@ -1440,6 +1441,7 @@ class Controller:
         ax1 = fig.add_subplot(gs[0, 0])
         ax2 = fig.add_subplot(gs[0, 1])
         color_dict = {'AD': 'red', 'FTU': 'green', 'ITU': 'blue'}
+        artist_plot = []
         for curve in self.dict_curve.values():
             if curve.features['type'] in ('AD', 'FTU', 'ITU'):
                 text_annot=curve.file + '/page ' + str(list(self.dict_curve.values()).index(curve)+1)
@@ -1448,6 +1450,7 @@ class Controller:
                 annotations_ax1.append(ax1.annotate(text_annot, xy=(curve.features['jump_distance_end_pull (nm)'],
                                                                     curve.features['jump_force_end_pull (pN)']), xytext=(-60, 10),
                                                     textcoords="offset points", bbox=dict(boxstyle="round", fc="w"), visible=False))
+                
                 if 'slope_fit_classification_transition' in curve.features:
                     ax2.plot(curve.features["slope_fit_classification_transition"],
                                 curve.features['jump_force_end_pull (pN)'], marker='o', color=color_dict[curve.features['type']],
@@ -1459,6 +1462,10 @@ class Controller:
                 annotations_ax2.append(ax2.annotate(text_annot, xy=(curve.features["slope_fitted_classification_max_transition"],
                                                                     curve.features['jump_force_end_pull (pN)']), xytext=(-100, 10),
                                                     textcoords="offset points", bbox=dict(boxstyle="round", fc="w"), visible=False))
+                
+                # h, l = ax1.get_legend())
+                # print(h)
+                # print(l)
         # max_xlim = ax2.get_xlim()[1]
         # ax2.set_xlim(-max_xlim, max_xlim)
         ax1.axvline(self.view.methods['jump_distance'], ls='-.')
@@ -1474,6 +1481,11 @@ class Controller:
         fig.canvas.mpl_connect("pick_event", lambda event: self.click_curve(
             event, ax2, fig, annotations_ax2, 0.01, 10))
         fig.subplots_adjust(wspace=0.5)
+        pos_x = 0.45
+        pos_y = 0.95
+        for type, color in color_dict.items():
+            fig.text(pos_x, pos_y, u"\u25CF " + type, color=color)
+            pos_x += 0.05
         return fig
 
     #########################################################################################################

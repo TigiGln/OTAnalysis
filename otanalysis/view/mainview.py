@@ -176,7 +176,8 @@ class View(QMainWindow, QWidget):
         """
 
         webbrowser.open(
-            "https://otanalysis.readthedocs.io/en/latest/index.html")
+            "http://otanalysis.free.fr/")
+            #"https://otanalysis.readthedocs.io/en/latest/index.html")
 
     ###################################################################################
 
@@ -989,7 +990,7 @@ class View(QMainWindow, QWidget):
                     if self.page == (self.length_list_curve-1):
                         button_next.setDisabled(True)
                         if self.check_supervised:
-                            button_bilan = QPushButton('Bilan')
+                            button_bilan = QPushButton('Summary plot')
                             button_bilan.setStyleSheet(
                 "QPushButton {background-color: yellow;}")
                             button_bilan.clicked.connect(self.show_bilan)
@@ -1627,31 +1628,32 @@ class View(QMainWindow, QWidget):
         if self.nb_output == 0:
             self.directory_output = QFileDialog.getExistingDirectory(
                 self, "Open folder", "..", QFileDialog.ShowDirsOnly)
-        today = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
-        if self.check_graph:
-            self.current_curve.output['treat_supervised'] = True
-        self.controller.output_save(self.directory_output)
-        methods = {}
-        methods['methods'] = self.methods
-        if self.nb_output == 0:
-            output_methods = pd.DataFrame()
-            output_methods = output_methods.from_dict(methods, orient='index')
-            list_labels_methods = ['condition', 'drug', 'bead_radius', 'model', 'eta',
-                                   'pulling_length', 'threshold_align',
-                                   'jump_force', 'jump_distance', 'jump_point',
-                                   'factor_noise', 'width_window_smooth', 'optical']
-            output_methods = output_methods[list_labels_methods]
-            output_methods.to_csv(self.directory_output + sep + 'methods_' + today + '_' +
-                                  '.tsv', sep='\t', encoding='utf-8', na_rep="NaN")
-        if not self.controller.check_length_files:
-            self.controller.dict_curve = {}
-        elif self.check_graph or self.save_table.isChecked():
-            check_save_output = QMessageBox()
-            check_save_output.setText("Your output has been registered")
-            check_save_output.exec()
-            self.close()
+        if self.directory_output != "":
+            today = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
+            if self.check_graph:
+                self.current_curve.output['treat_supervised'] = True
+            self.controller.output_save(self.directory_output)
+            methods = {}
+            methods['methods'] = self.methods
+            if self.nb_output == 0:
+                output_methods = pd.DataFrame()
+                output_methods = output_methods.from_dict(methods, orient='index')
+                list_labels_methods = ['condition', 'drug', 'bead_radius', 'model', 'eta',
+                                    'pulling_length', 'threshold_align',
+                                    'jump_force', 'jump_distance', 'jump_point',
+                                    'factor_noise', 'width_window_smooth', 'optical']
+                output_methods = output_methods[list_labels_methods]
+                output_methods.to_csv(self.directory_output + sep + 'methods_' + today + '_' +
+                                    '.tsv', sep='\t', encoding='utf-8', na_rep="NaN")
+            if not self.controller.check_length_files:
+                self.controller.dict_curve = {}
+            elif self.check_graph or self.save_table.isChecked():
+                check_save_output = QMessageBox()
+                check_save_output.setText("Your output has been registered")
+                check_save_output.exec()
+                self.close()
 
-        self.nb_output += 1
+            self.nb_output += 1
         return self.directory_output
 
     ####################################################################################

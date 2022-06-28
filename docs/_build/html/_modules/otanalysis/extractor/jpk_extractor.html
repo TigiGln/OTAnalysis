@@ -40,10 +40,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#otanalysis">OTAnalysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#tool-for-managing-the-results-of-optical-tweezers">Tool for managing the results of optical tweezers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#install-miniconda-create-conda-environment">Install MiniConda &amp;&amp; Create conda environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#dependencies">Dependencies</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#install-package">Install package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#launch-project">Launch project</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html#documentation">Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules.html">OTAnalysis</a></li>
 </ul>
 
@@ -72,7 +68,11 @@
            <div itemprop="articleBody">
              
   <h1>Source code for otanalysis.extractor.jpk_extractor</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="ch">#!/usr/bin/python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># @author Thierry GALLIANO</span>
+<span class="c1"># @contributors Pierre-Henri PUECH, Laurent LIMOZIN, Guillaume GAY</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">JPK archive extractor for comprehensive processing of optical tweezer curves</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
@@ -700,10 +700,11 @@
             <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot; as read from the segment&#39;s header file.&quot;</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-        <span class="c1"># décodage données</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">unpack_from</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;!</span><span class="si">{</span><span class="n">num_points</span><span class="si">}{</span><span class="n">type_code</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">))</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>  <span class="c1"># Transformation liste en matrice</span>
+        
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">unpack_from</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;!</span><span class="si">{</span><span class="n">num_points</span><span class="si">}{</span><span class="n">type_code</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">))</span><span class="c1"># data decoding</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>  <span class="c1"># Transformation from list to matrix</span>
         <span class="k">return</span> <span class="n">data</span></div>
+        
 
     <span class="c1">###########################################################################################################</span>
 

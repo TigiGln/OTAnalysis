@@ -9,16 +9,9 @@ import math
 import traceback
 import numpy as np
 import pandas as pd
-
-# import matplotlib.pyplot as plt
-# from matplotlib.figure import Figure
 from scipy.optimize import curve_fit
 from scipy.signal import savgol_filter
-# from scipy.interpolate import UnivariateSpline
-# from lmfit import Model
 from .optical_effect import OpticalEffect
-
-# logger = logging.getLogger('logger_otanalysis.curve')
 
 
 class Curve:
@@ -774,7 +767,7 @@ class Curve:
             time_data, f_parameters[0][0], f_parameters[0][1], f_parameters[0][2])
         self.graphics['fitted_Pull'] = fitted
 
-        ############## calcul return point and transition ######################
+        ############## calcul return point and transition point ######################
         index_return_endline = Curve.retrieve_retour_line_end(
             self, y_smooth, line_pos_threshold[0], type_curve)
         if index_return_endline is not None:

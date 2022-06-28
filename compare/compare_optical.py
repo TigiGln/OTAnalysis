@@ -1,8 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-import os
-from pathlib import Path
+
 
 
 class CompareOptical:
@@ -61,7 +60,7 @@ class CompareOptical:
                 ax.set_title(col)
                 ax.set_xlabel(self.name_df1)
                 ax.set_ylabel(self.name_df2)
-            handle = ax.get_legend_handles_labels()
+            #handle = ax.get_legend_handles_labels()
             pos_graph += 1
         plt.subplots_adjust(wspace=0.5, hspace=0.8)
         # if len(columns) >= 6:
