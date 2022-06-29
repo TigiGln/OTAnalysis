@@ -74,7 +74,7 @@ chmod +x Miniconda3-latest-Linux-x86_64.sh
 ./Miniconda3-latest-Linux-x86_64.sh
 conda create -n newenv
 conda activate newenv
-
+```
 
 
 # Install package
