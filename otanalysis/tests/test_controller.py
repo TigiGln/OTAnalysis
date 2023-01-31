@@ -1,5 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
 """
 change a line in the misc.py file
 from imp import reload by from importlib import reload
@@ -13,28 +11,30 @@ file path:
 
 from os import sep
 import pandas as pd
-from ..controller.controller import Controller
+from otanalysis.controller.controller import Controller
 
 
 class TestController:
     """
     Test class of the controller for the application of processing of the optical tweezers curves
     """
+
     @classmethod
     def setup_class(cls):
         """
-        This function is launched at each test to create the Controller object 
+        This function is launched at each test to create the Controller object
         and do the repetitive tasks before launching the test
         """
-        directory_test = 'otanalysis' + sep + 'tests' + \
-            sep + 'data_test' + sep + 'verif'
+        directory_test = (
+            "otanalysis" + sep + "tests" + sep + "data_test" + sep + "verif"
+        )
         cls.controller = Controller(None, directory_test)
 
     ######################################################################################
 
     def test_create_list_files(self):
         """
-        Test that the create_list_files() function of the controller returns 
+        Test that the create_list_files() function of the controller returns
         a list of files to analyze
         """
         assert len(self.controller.files) > 0
@@ -43,7 +43,7 @@ class TestController:
 
     def test_length_dict_curve(self):
         """
-        Test that the length of the dictionary of curves of the controller after 
+        Test that the length of the dictionary of curves of the controller after
         analysis is not empty
         """
         print(self.controller.files)
@@ -56,12 +56,15 @@ class TestController:
         """
         Test the completeness of a curve file
         """
-        file_incomplete = 'otanalysis/tests/data_test/verif/b5c5-2021.06.07-15.10.03.254.jpk-nt-force'
+        file_incomplete = (
+            "otanalysis/tests/data_test/verif/b5c5-2021.06.07-15.10.03.254.jpk-nt-force"
+        )
         name_file = file_incomplete.split(sep)[-1]
-        name_file = name_file.split('-')
-        name_file = str(name_file[0][0:4]) + '-' + '-'.join(name_file[1:])
+        name_file = name_file.split("-")
+        name_file = str(name_file[0][0:4]) + "-" + "-".join(name_file[1:])
         new_curve, check_incomplete_file = Controller.create_object_curve(
-            file_incomplete, name_file, 30, 50)
+            file_incomplete, name_file, 30, 50
+        )
         assert new_curve == None and check_incomplete_file == True
 
     #########################################################################################
@@ -72,12 +75,11 @@ class TestController:
 
         :parameters:
             tmpdir: object
-                allows you to create a temporary repository 
+                allows you to create a temporary repository
         """
-        repository_output = tmpdir.mkdir('Result')
-        name_file = self.controller.output_save(
-            ["--dest", str(repository_output)])
-        with open(name_file, 'r') as file_test:
+        repository_output = tmpdir.mkdir("Result")
+        name_file = self.controller.output_save(["--dest", str(repository_output)])
+        with open(name_file, "r") as file_test:
             assert file_test.readline()
 
     #########################################################################################
@@ -85,7 +87,7 @@ class TestController:
     @classmethod
     def teardown_class(cls):
         """
-        This function is run at the end of each test to destroy 
+        This function is run at the end of each test to destroy
         all the elements created in the setup_class()
         """
         if cls.controller:
