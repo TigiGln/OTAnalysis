@@ -62,6 +62,7 @@ class TestController:
             "drug": "NaN",
             "condition": "NaN",
             "optical": None,
+            'width_window_smooth': 10,
         }
         self.controller.create_dict_curves(methods)
 
@@ -113,8 +114,8 @@ class TestController:
         }
         self.controller.create_dict_curves(methods)
 
-        name_file = self.controller.output_save(["--dest", str(repository_output)])
-        with open(name_file, "r") as file_test:
+        name_file = self.controller.output_save(str(repository_output))
+        with open(name_file, "r", encoding="utf-8") as file_test:
             assert file_test.readline()
 
     #########################################################################################
